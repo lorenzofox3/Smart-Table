@@ -6,3 +6,5 @@ build.xml
 .project
 .settings
 .idea/*
+
+node_modules
