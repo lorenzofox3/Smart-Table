@@ -6,5 +6,6 @@ build.xml
 .project
 .settings
 .idea/*
+*.iml
 
 node_modules
