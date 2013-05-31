@@ -15,6 +15,7 @@ var smartTableColumnModule = angular.module('smartTable.column', ['smartTable.te
     formatParameter: '',
     filterPredicate: '',
     cellTemplateUrl: '',
+    cellTemplate: '',
     headerClass: '',
     cellClass: ''
 });
