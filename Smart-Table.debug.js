@@ -15,6 +15,7 @@ var smartTableColumnModule = angular.module('smartTable.column', ['smartTable.te
     formatParameter: '',
     filterPredicate: '',
     cellTemplateUrl: '',
+    cellTemplate: '',
     headerClass: '',
     cellClass: ''
 });
@@ -213,11 +214,9 @@ angular.module('smartTable.directives', ['smartTable.templateUrlList', 'smartTab
                 }
 
                 scope.$watch('column.cellTemplateUrl', function (value) {
-
                     if (value) {
                         //we have to load the template (and cache it) : a kind of ngInclude
                         http.get(value, {cache: templateCache}).success(function (response) {
-
                             //create a scope
                             childScope = scope.$new();
                             //compile the element with its new content and new scope
@@ -227,6 +226,16 @@ angular.module('smartTable.directives', ['smartTable.templateUrlList', 'smartTab
 
                     } else {
                         defaultContent();
+                    }
+                });
+
+                scope.$watch('column.cellTemplate', function (value) {
+                    if (value) {
+                        //create a scope
+                        childScope = scope.$new();
+                        //compile the element with its new content and new scope
+                        element.html(value);
+                        compile(element.contents())(childScope);
                     }
                 });
             }
