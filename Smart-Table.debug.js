@@ -52,7 +52,6 @@ angular.module('smartTable.directives', ['smartTable.templateUrlList', 'smartTab
             restrict: 'E',
             scope: {
                 columnCollection: '=columns',
-                dataCollection: '=rows',
                 config: '='
             },
             replace: 'true',
@@ -332,26 +331,21 @@ angular.module('smartTable.table', ['smartTable.column', 'smartTable.utilities',
         sortAlgorithm: '',
         filterAlgorithm: ''
     })
-    .controller('TableCtrl', ['$scope', 'Column', '$filter', 'ArrayUtility', 'DefaultTableConfiguration', function (scope, Column, filter, arrayUtility, defaultConfig) {
+    .controller('TableCtrl', ['$scope', 'Column', '$filter', 'ArrayUtility', 'DefaultTableConfiguration', '$http', '$log', function (scope, Column, filter, arrayUtility, defaultConfig, http, log) {
 
         scope.columns = [];
-        scope.dataCollection = scope.dataCollection || [];
+
         scope.displayedCollection = []; //init empty array so that if pagination is enabled, it does not spoil performances
-        scope.numberOfPages = calculateNumberOfPages(scope.dataCollection);
+        scope.numberOfPages = calculateNumberOfPages();
         scope.currentPage = 1;
 
         var predicate = {},
             lastColumnSort;
 
-        function calculateNumberOfPages(array) {
+        function calculateNumberOfPages() {
 
-            if (!angular.isArray(array)) {
-                return 1;
-            }
-            if (array.length === 0 || scope.itemsByPage < 1) {
-                return 1;
-            }
-            return Math.ceil(array.length / scope.itemsByPage);
+            //should come from the server, here we simply put a random value
+            return 5;
         }
 
         function sortDataRow(array, column) {
@@ -363,7 +357,6 @@ angular.module('smartTable.table', ['smartTable.column', 'smartTable.utilities',
             }
         }
 
-        //TODO check if it would be better not to 'pollute' the dataModel itself and use a wrapper/decorator for all the stuff related to the table features like we do for column (then we could emit event)
         function selectDataRow(array, selectionMode, index, select) {
 
             var dataRow;
@@ -401,7 +394,7 @@ angular.module('smartTable.table', ['smartTable.column', 'smartTable.utilities',
         this.changePage = function (page) {
             if (angular.isNumber(page.page)) {
                 scope.currentPage = page.page;
-                scope.displayedCollection = this.pipe(scope.dataCollection);
+                this.pipe();
             }
         };
 
@@ -425,7 +418,7 @@ angular.module('smartTable.table', ['smartTable.column', 'smartTable.utilities',
                 }
             }
 
-            scope.displayedCollection = this.pipe(scope.dataCollection);
+            this.pipe();
         };
 
         /**
@@ -449,7 +442,7 @@ angular.module('smartTable.table', ['smartTable.column', 'smartTable.utilities',
             for (var j = 0, l = scope.columns.length; j < l; j++) {
                 predicate[scope.columns[j].map] = scope.columns[j].filterPredicate;
             }
-            scope.displayedCollection = this.pipe(scope.dataCollection);
+            this.pipe();
 
         };
 
@@ -458,14 +451,22 @@ angular.module('smartTable.table', ['smartTable.column', 'smartTable.utilities',
          * @param array
          * @returns Array, an array result of the operations on input array
          */
-        this.pipe = function (array) {
-            var filterAlgo = (scope.filterAlgorithm && angular.isFunction(scope.filterAlgorithm)) === true ? scope.filterAlgorithm : filter('filter'),
-                output;
-            //filter and sort are commutative
-            output = sortDataRow(arrayUtility.filter(array, filterAlgo, predicate), lastColumnSort);
-            scope.numberOfPages = calculateNumberOfPages(output);
-            return scope.isPaginationEnabled ? arrayUtility.fromTo(output, (scope.currentPage - 1) * scope.itemsByPage, scope.itemsByPage) : output;
-        }
+        this.pipe = function () {
+            //use the scope and private data to build a request :
+            // here the content of a post request, but can be an url, ... depends on the server API
+            var postData = {
+                orderBy: lastColumnSort || null,
+                filter: predicate,
+                page: scope.currentPage || 1,
+                numberOfItems: scope.numberOfItems || 10
+            };
+
+            log.log(JSON.stringify(postData));
+
+            http.post('dummyServlet/dont/care/about/url', postData).success(function (res) {
+                    scope.displayedCollection = res;
+                });
+        };
 
         /*////////////
          Column API
@@ -538,7 +539,6 @@ angular.module('smartTable.table', ['smartTable.column', 'smartTable.utilities',
          */
         this.removeDataRow = function (rowIndex) {
             var toRemove = arrayUtility.removeAt(scope.displayedCollection, rowIndex);
-            arrayUtility.removeAt(scope.dataCollection, scope.dataCollection.indexOf(toRemove));
         };
 
         /**

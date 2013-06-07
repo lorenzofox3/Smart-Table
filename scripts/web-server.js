@@ -274,7 +274,7 @@ ApiServlet.prototype.handleRequest = function (req, res) {
     }
 
     var dataItems = [];
-    for (var j = 0; j < 200; j++) {
+    for (var j = 0; j < 10; j++) {
         dataItems.push(createRandomItem());
     }
 
