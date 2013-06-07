@@ -18,9 +18,9 @@ angular.module('smartTable.table', ['smartTable.column', 'smartTable.utilities',
     .controller('TableCtrl', ['$scope', 'Column', '$filter', 'ArrayUtility', 'DefaultTableConfiguration', function (scope, Column, filter, arrayUtility, defaultConfig) {
 
         scope.columns = [];
-        scope.dataCollection = scope.dataCollection || [];
+
         scope.displayedCollection = []; //init empty array so that if pagination is enabled, it does not spoil performances
-        scope.numberOfPages = calculateNumberOfPages(scope.dataCollection);
+        scope.numberOfPages = calculateNumberOfPages();
         scope.currentPage = 1;
 
         var predicate = {},
@@ -84,7 +84,7 @@ angular.module('smartTable.table', ['smartTable.column', 'smartTable.utilities',
         this.changePage = function (page) {
             if (angular.isNumber(page.page)) {
                 scope.currentPage = page.page;
-                scope.displayedCollection = this.pipe(scope.dataCollection);
+                scope.displayedCollection = this.pipe();
             }
         };
 
@@ -108,7 +108,7 @@ angular.module('smartTable.table', ['smartTable.column', 'smartTable.utilities',
                 }
             }
 
-            scope.displayedCollection = this.pipe(scope.dataCollection);
+            scope.displayedCollection = this.pipe();
         };
 
         /**
@@ -132,7 +132,7 @@ angular.module('smartTable.table', ['smartTable.column', 'smartTable.utilities',
             for (var j = 0, l = scope.columns.length; j < l; j++) {
                 predicate[scope.columns[j].map] = scope.columns[j].filterPredicate;
             }
-            scope.displayedCollection = this.pipe(scope.dataCollection);
+            scope.displayedCollection = this.pipe();
 
         };
 
@@ -221,7 +221,6 @@ angular.module('smartTable.table', ['smartTable.column', 'smartTable.utilities',
          */
         this.removeDataRow = function (rowIndex) {
             var toRemove = arrayUtility.removeAt(scope.displayedCollection, rowIndex);
-            arrayUtility.removeAt(scope.dataCollection, scope.dataCollection.indexOf(toRemove));
         };
 
         /**

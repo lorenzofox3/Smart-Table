@@ -5,7 +5,6 @@ angular.module('smartTable.directives', ['smartTable.templateUrlList', 'smartTab
             restrict: 'E',
             scope: {
                 columnCollection: '=columns',
-                dataCollection: '=rows',
                 config: '='
             },
             replace: 'true',
