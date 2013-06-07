@@ -20,6 +20,7 @@
         <tfoot ng-show="isPaginationEnabled">
         <tr class="smart-table-footer-row">
             <td colspan="{{columns.length}}">
+                <span>number of items loaded from server : {{dataCollection.length}}</span>
                 <pagination num-pages="numberOfPages" max-size="maxSize" current-page="currentPage"></pagination>
             </td>
         </tr>

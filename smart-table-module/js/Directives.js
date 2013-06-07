@@ -5,7 +5,6 @@ angular.module('smartTable.directives', ['smartTable.templateUrlList', 'smartTab
             restrict: 'E',
             scope: {
                 columnCollection: '=columns',
-                dataCollection: '=rows',
                 config: '='
             },
             replace: 'true',
@@ -54,12 +53,8 @@ angular.module('smartTable.directives', ['smartTable.templateUrlList', 'smartTab
                     }
                 }, true);
 
-                //if item are added or removed into the data model from outside the grid
-                scope.$watch('dataCollection.length', function (oldValue, newValue) {
-                    if (oldValue !== newValue) {
-                        ctrl.sortBy();//it will trigger the refresh... some hack ?
-                    }
-                });
+                //load the first set of data
+                ctrl.changePage({page: 1});
 
             }
         };

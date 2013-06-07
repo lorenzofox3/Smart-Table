@@ -24,7 +24,8 @@ angular.module("partials/editableCell.html", []).run(["$templateCache", function
 angular.module("partials/globalSearchCell.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/globalSearchCell.html",
     "<label>Search :</label>\n" +
-    "<input type=\"text\" ng-model=\"searchValue\"/>");
+    "<input type=\"text\" ng-model=\"searchValue\"/>\n" +
+    "");
 }]);
 
 angular.module("partials/pagination.html", []).run(["$templateCache", function($templateCache) {
@@ -71,6 +72,7 @@ angular.module("partials/smartTable.html", []).run(["$templateCache", function($
     "        <tfoot ng-show=\"isPaginationEnabled\">\n" +
     "        <tr class=\"smart-table-footer-row\">\n" +
     "            <td colspan=\"{{columns.length}}\">\n" +
+    "                <span>number of items loaded from server : {{dataCollection.length}}</span>\n" +
     "                <pagination num-pages=\"numberOfPages\" max-size=\"maxSize\" current-page=\"currentPage\"></pagination>\n" +
     "            </td>\n" +
     "        </tr>\n" +

@@ -9,32 +9,29 @@ angular.module('smartTable.table', ['smartTable.column', 'smartTable.utilities',
         displaySelectionCheckbox: false,
         isPaginationEnabled: true,
         itemsByPage: 10,
-        maxSize: 5,
+        maxSize: 1,
 
         //just to remind available option
         sortAlgorithm: '',
         filterAlgorithm: ''
     })
-    .controller('TableCtrl', ['$scope', 'Column', '$filter', 'ArrayUtility', 'DefaultTableConfiguration', function (scope, Column, filter, arrayUtility, defaultConfig) {
+    .controller('TableCtrl', ['$scope', 'Column', '$filter', 'ArrayUtility', 'DefaultTableConfiguration', '$http', function (scope, Column, filter, arrayUtility, defaultConfig, http) {
 
         scope.columns = [];
         scope.dataCollection = scope.dataCollection || [];
         scope.displayedCollection = []; //init empty array so that if pagination is enabled, it does not spoil performances
-        scope.numberOfPages = calculateNumberOfPages(scope.dataCollection);
+        scope.numberOfPages = calculateNumberOfPages();
         scope.currentPage = 1;
+
+
 
         var predicate = {},
             lastColumnSort;
 
-        function calculateNumberOfPages(array) {
+        function calculateNumberOfPages() {
 
-            if (!angular.isArray(array)) {
-                return 1;
-            }
-            if (array.length === 0 || scope.itemsByPage < 1) {
-                return 1;
-            }
-            return Math.ceil(array.length / scope.itemsByPage);
+            //arbitrary number (should come from server)
+            return 25;
         }
 
         function sortDataRow(array, column) {
@@ -84,7 +81,20 @@ angular.module('smartTable.table', ['smartTable.column', 'smartTable.utilities',
         this.changePage = function (page) {
             if (angular.isNumber(page.page)) {
                 scope.currentPage = page.page;
-                scope.displayedCollection = this.pipe(scope.dataCollection);
+
+                //we already have loaded the data
+                if (scope.dataCollection.length >= page.page * scope.itemsByPage) {
+                    scope.displayedCollection = this.pipe(scope.dataCollection);
+                } else {
+                    var pipe = this.pipe;
+                    http.post('dummyServlet/dont/care/about/url', {}).success(function (res) {
+                        for (var i = 0, l = res.length; i < l; i++) {
+                            scope.dataCollection.push(res[i]);
+                        }
+
+                        scope.displayedCollection = pipe(scope.dataCollection);
+                    });
+                }
             }
         };
 
