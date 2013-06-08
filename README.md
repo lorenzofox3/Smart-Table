@@ -30,6 +30,10 @@ from the server [see commit](https://github.com/lorenzofox3/Smart-Table/commit/3
 1. Launch the web server `node web-server.js`
 2. Browse to your [localhost](http://localhost:8000/example-app/index.html)
 
+## Alternative without touching smart table code at all
+
+You can as well disable the build in pagination and reproduce it outside the table module. As the table is bound to a 
+data collection ("rows" attribute on the directive element) any change on the bound collection will be propagated inside the table
 ## License
 
 Smart Table module is under MIT license:
