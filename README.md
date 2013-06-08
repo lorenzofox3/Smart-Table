@@ -21,7 +21,7 @@ from the server [see commit](https://github.com/lorenzofox3/Smart-Table/commit/3
 
 2. In `Table.js` inject a service as your HTTP interface ($http in my example), and change the `this.changePage` to load data from server if required [see commit](https://github.com/lorenzofox3/Smart-Table/commit/32b7c32e15771c943d28f5c31985020b564ce6d0#L5R81)
 
-3. On the main directive trigger the first load of data [see commit](https://github.com/lorenzofox3/Smart-Table/commit/32b7c32e15771c943d28f5c31985020b564ce6d0#L1R105).
+3. On the main directive trigger the first load of data [see commit](https://github.com/lorenzofox3/Smart-Table/commit/32b7c32e15771c943d28f5c31985020b564ce6d0#L4R56).
 
 4. That is (<10 lines), then you can add fine tuning (loading indicator, etc)
 
