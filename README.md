@@ -1,50 +1,33 @@
-# Smart Table— an easy to use table/grid 
+# Smart Table with all logic on server side
 
-This project is a lightweight table/grid builder. It is meant to be easy configurable but also easy customisable
-(if you want to use it as a base for your own grid development). In The current version (0.1.0) the features are
+This is a short example on how to customise [smart-table module](https://github.com/lorenzofox3/Smart-Table) so that you move all the logic on server side (sort, filter, etc)
 
-* table markup: it is a table and follows the semantic of an HTML table.
-* manage your layout: you can choose the number of columns and how the should be mapped to your data model
-* format data: you can choose how the data are formatted within a given column:
-    * by giving your own format function
-    * using one of the built-in angular filters
-* Sort data
-    * using your own algorithm
-    * using the 'orderBy' angular algorithm: in this case you'll be able to provide predicates as explained in [orderBy filter documentation](http://docs.angularjs.org/api/ng.filter:orderBy)
-* Filter data
-    * using a global search input box
-    * using the controller API to filter according to a particular column
-* Select data row(s) according to different modes:
-    * single: one row selected at the time
-    * multiple: many row selected at the time. In this case you can also add a selection column with checkboxes
-* Simple style: you can easily give class name to all the cells of a given column and to the header as well
-* template cell:
-    * you can provide template for a given column header (it will be compiled so that you can attach directves to it)
-    * same for the data cells
-* Edit cells: you can make cells editable and specify a type for the input so that validation rules, etc will be applied
-* Client side pagination : you can choose the number of rows you want to display and use the [angular-ui.bootstrap](http://angular-ui.github.io/bootstrap/) pagination directive to navigate.
-* All the directives of the table use the table controller API. It means that you can easily change the templates and directives but still using the API to perform any operation
+## Dummy server
 
-You'll find running examples and more documentation at [the demo website](http://lorenzofox3.github.io/smart-table-website/)
+The server provided by the [angular seed](https://github.com/angular/angular-seed) has been changed a bit to return a random set of ten items on any POST
+request (see [commit](https://github.com/lorenzofox3/Smart-Table/commit/2b305a34bf981212594c30a6df59b44f4010c13d)).
+Even if HTTP POST request is not the best semantic for our purpose, I have used it only because GET was already mapped (So it just for convenience purpose).
+Anyway, the only thing important here is to know that on any POST request the server will return a set of 10 items.
 
-## How to use Smart-Table
+But please note :
+ **No logic was implemented on the server side, it only returns random set of data. So if you expect see sorted, filtered data you will be disapointed. It is just
+  because I was lazy. But the idea is the same, when you click on sort an appropriate request is sent to the server**
 
-* You can clone the repository: the source code will be under smart-table-module directory.
-* You can add the Smart-Table.min.js file to your application and then add the module 'smartTable.table' to your own app module. The build includes all the template in the $templateCache
-so you need only this file.
+## Understand how smart table module work
 
-### Running the app during development
+I strongly advice to read the dedicated paragraph on the [README.md](https://github.com/lorenzofox3/Smart-Table#how-does-smart-table-work-) of the master branch before going further
 
-Follow the steps:
+##The few changes to do
 
-1. clone this repository
-2. install node.js and run `scripts/web-server.js`
-3. you'll find a running example app at http://localhost:<port>/example-app/index.html after you have started the web-server
+1. Remove the binding to the dataCollection from the smart-table directives (in Directive.js) and any reference to `scope.dataCollection` in `Table.js`. (Everything is done by the server now) [commit](https://github.com/lorenzofox3/Smart-Table/commit/2a36d7199233c908b1bf6f327cbe23bb6d504918)
+2. In `Table.js` inject a service as your HTTP interface ($http in my example), and change the `this.pipe` function  to build the appropriate http request [see commit](https://github.com/lorenzofox3/Smart-Table/commit/b89954ee94ccbfa6e8c78d6945a212ee72cca826#L0R454)
+3. That is (<10 lines), then you can add fine tuning (loading indicator, etc)
 
-### Running unit tests
+## see the example running
 
-Tests can be run with [Testacular](http://karma-runner.github.io/0.8/index.html): you'll find the config file under config folder. Note, the coverage is done by [Istanbul.js](http://gotwarlost.github.io/istanbul/)
-        
+1. Launch the web server `node web-server.js`
+2. Browse to your [localhost](http://localhost:8000/example-app/index.html)
+
 ## License
 
 Smart Table module is under MIT license:
