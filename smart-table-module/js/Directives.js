@@ -40,7 +40,7 @@
                     //TODO add a way to clean all columns
                     scope.$watch('columnCollection', function (oldValue, newValue) {
                         if (scope.columnCollection) {
-                            if(scope.cleanColumns){
+                            if(scope.replaceColumnsOnChange){
                                 scope.columns = []
                             }
                             for (var i = 0, l = scope.columnCollection.length; i < l; i++) {
