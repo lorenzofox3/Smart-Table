@@ -98,7 +98,8 @@
                     if(!scope.enableRemotePagination){
                         scope.displayedCollection = this.pipe(scope.dataCollection);
                     }else{
-                        $q.when(scope.config.loadData(page, scope.config.itemsByPage, scope.sort)).then(function (response) {
+                        page.itemsByPage = scope.config.itemsByPage
+                        $q.when(scope.config.loadData(page)).then(function (response) {
                             scope.displayedCollection = response.data
                             scope.totalCount = parseInt(response.headers(scope.totalCountPaginationHeader),10)
                             totalCount.resolve(scope.totalCount)
@@ -129,11 +130,13 @@
                     }
                 }
                 if(scope.enableRemotePagination){
-                    scope.sort = {
-                        property: column.map,
-                        order   : column.reverse === true ? 'asc' : 'desc'
-                    }
-                    this.changePage({page:1})
+                    this.changePage({
+                        page:1,
+                        sort: {
+                            property: column.map,
+                            order   : column.reverse === true ? 'asc' : 'desc'
+                        }
+                    })
                 }else{
                     scope.displayedCollection = this.pipe(scope.dataCollection);
                 }
