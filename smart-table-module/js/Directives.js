@@ -59,12 +59,17 @@
                         }
                     }, true);
 
-                    //if item are added or removed into the data model from outside the grid
-                    scope.$watch('dataCollection.length', function (oldValue, newValue) {
-                        if (oldValue !== newValue) {
-                            ctrl.sortBy();//it will trigger the refresh... some hack ?
-                        }
-                    });
+                    //if remote pagination is enabled load directly the first page
+                    if(!scope.enableRemotePagination){
+                        //if item are added or removed into the data model from outside the grid
+                        scope.$watch('dataCollection.length', function (oldValue, newValue) {
+                            if (oldValue !== newValue) {
+                                ctrl.sortBy();//it will trigger the refresh... some hack ?
+                            }
+                        });
+                    }else{
+                        ctrl.changePage({page:1})
+                    }
 
                 }
             };

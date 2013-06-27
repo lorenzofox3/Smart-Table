@@ -15,19 +15,26 @@
             sortAlgorithm: '',
             filterAlgorithm: ''
         })
-        .controller('TableCtrl', ['$scope', 'Column', '$filter', '$parse', 'ArrayUtility', 'DefaultTableConfiguration', function (scope, Column, filter, parse, arrayUtility, defaultConfig) {
+        .controller('TableCtrl', ['$scope', 'Column', '$filter', '$parse', 'ArrayUtility', 'DefaultTableConfiguration','$q', function (scope, Column, filter, parse, arrayUtility, defaultConfig,$q) {
 
             scope.columns = [];
             scope.dataCollection = scope.dataCollection || [];
             scope.displayedCollection = []; //init empty array so that if pagination is enabled, it does not spoil performances
+            scope.enableRemotePagination = scope.config && scope.config.enableRemotePagination;
             scope.numberOfPages = calculateNumberOfPages(scope.dataCollection);
             scope.currentPage = 1;
 
             var predicate = {},
-                lastColumnSort;
+                lastColumnSort,
+                totalCount;
 
             function calculateNumberOfPages(array) {
-
+                if(scope.enableRemotePagination){
+                    totalCount = $q.defer()
+                    return totalCount.promise.then(function(totalCount){
+                        return Math.ceil(totalCount / scope.itemsByPage)
+                    })
+                }
                 if (!angular.isArray(array)) {
                     return 1;
                 }
@@ -87,7 +94,18 @@
                 var oldPage = scope.currentPage;
                 if (angular.isNumber(page.page)) {
                     scope.currentPage = page.page;
-                    scope.displayedCollection = this.pipe(scope.dataCollection);
+                    
+                    if(!scope.enableRemotePagination){
+                        scope.displayedCollection = this.pipe(scope.dataCollection);
+                    }else{
+                        page.itemsByPage = scope.config.itemsByPage
+                        $q.when(scope.config.loadData(page)).then(function (response) {
+                            scope.displayedCollection = response.data
+                            scope.totalCount = parseInt(response.headers(scope.totalCountPaginationHeader),10)
+                            totalCount.resolve(scope.totalCount)
+                        })
+                    }
+                    
                     scope.$emit('changePage', {oldValue: oldPage, newValue: scope.currentPage});
                 }
             };
@@ -111,8 +129,17 @@
                         lastColumnSort = column;
                     }
                 }
-
-                scope.displayedCollection = this.pipe(scope.dataCollection);
+                if(scope.enableRemotePagination){
+                    this.changePage({
+                        page:1,
+                        sort: {
+                            property: column.map,
+                            order   : column.reverse === true ? 'asc' : 'desc'
+                        }
+                    })
+                }else{
+                    scope.displayedCollection = this.pipe(scope.dataCollection);
+                }
             };
 
             /**

@@ -34,6 +34,31 @@ You'll find running examples and more documentation at [the demo website](http:/
 so you need only this file.
 * use [bower](https://github.com/bower/bower) and run the command `bower install smart-table`
 
+## Pluggable server side pagination
+```
+$scope.config = {
+  // enable server side pagination
+  enableRemotePagination:true,
+  // header to check to get the total number of items of the table (needed to calculate the number of pages)
+  totalCountPaginationHeader:'X-totalCount', 
+  /**
+  * @page: smartTable page object augmented with itemsByPage property and sort information
+  * es {
+  *   page:1,
+  *   itemsByPage: 20,
+  *   sort: {
+  *     property:'name',
+  *     order:'asc'
+  *   }
+  *  }
+  * @return: collection to visualize or a promise
+  */
+  loadData: function(page){ ... }
+}
+```
+* Sorting clicking on column headers reset to the first page
+* Filtering not yet supported
+
 ## Smart Table for developers
 
 ### the branches
