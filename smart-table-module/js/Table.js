@@ -105,8 +105,10 @@
                             totalCount.resolve(scope.totalCount)
                         })
                     }
-                    
-                    scope.$emit('changePage', {oldValue: oldPage, newValue: scope.currentPage});
+
+                    scope.$emit('changePage',angular.extend({
+                        oldValue: oldPage
+                    },page));
                 }
             };
 
