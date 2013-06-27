@@ -447,7 +447,6 @@
 
                     scope.$emit('changePage',angular.extend({
                         oldValue: oldPage
-                        ,newValue: scope.currentPage
                     },page));
                 }
             };
