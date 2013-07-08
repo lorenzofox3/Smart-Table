@@ -364,14 +364,14 @@
             scope.currentPage = 1;
 
             var predicate = {},
-                lastColumnSort,
-                totalCount;
+                lastColumnSort;
 
             function calculateNumberOfPages(array) {
                 if(scope.enableRemotePagination){
-                    totalCount = $q.defer()
-                    return totalCount.promise.then(function(totalCount){
-                        return Math.ceil(totalCount / scope.itemsByPage)
+                    scope.$watch('totalCount',function (totalCount,oldTotalCount) {
+                        if(totalCount && totalCount != oldTotalCount){
+                            scope.numberOfPages = Math.ceil(totalCount / scope.itemsByPage)
+                        }
                     })
                 }
                 if (!angular.isArray(array)) {
@@ -380,7 +380,6 @@
                 if (array.length === 0 || scope.itemsByPage < 1) {
                     return 1;
                 }
-                return Math.ceil(array.length / scope.itemsByPage);
             }
 
             function sortDataRow(array, column) {
@@ -441,7 +440,6 @@
                         $q.when(scope.config.loadData(page)).then(function (response) {
                             scope.displayedCollection = response.data
                             scope.totalCount = parseInt(response.headers(scope.totalCountPaginationHeader),10)
-                            totalCount.resolve(scope.totalCount)
                         })
                     }
 
