@@ -93,6 +93,9 @@
                     //TODO add a way to clean all columns
                     scope.$watch('columnCollection', function (oldValue, newValue) {
                         if (scope.columnCollection) {
+                            if(scope.replaceColumnsOnChange){
+                                scope.columns = []
+                            }
                             for (var i = 0, l = scope.columnCollection.length; i < l; i++) {
                                 ctrl.insertColumn(scope.columnCollection[i]);
                             }
@@ -109,12 +112,17 @@
                         }
                     }, true);
 
-                    //if item are added or removed into the data model from outside the grid
-                    scope.$watch('dataCollection.length', function (oldValue, newValue) {
-                        if (oldValue !== newValue) {
-                            ctrl.sortBy();//it will trigger the refresh... some hack ?
-                        }
-                    });
+                    //if remote pagination is enabled load directly the first page
+                    if(!scope.enableRemotePagination){
+                        //if item are added or removed into the data model from outside the grid
+                        scope.$watch('dataCollection.length', function (oldValue, newValue) {
+                            if (oldValue !== newValue) {
+                                ctrl.sortBy();//it will trigger the refresh... some hack ?
+                            }
+                        });
+                    }else{
+                        ctrl.changePage({page:1})
+                    }
 
                 }
             };
@@ -346,11 +354,12 @@
             sortAlgorithm: '',
             filterAlgorithm: ''
         })
-        .controller('TableCtrl', ['$scope', 'Column', '$filter', '$parse', 'ArrayUtility', 'DefaultTableConfiguration', function (scope, Column, filter, parse, arrayUtility, defaultConfig) {
+        .controller('TableCtrl', ['$scope', 'Column', '$filter', '$parse', 'ArrayUtility', 'DefaultTableConfiguration','$q', function (scope, Column, filter, parse, arrayUtility, defaultConfig,$q) {
 
             scope.columns = [];
             scope.dataCollection = scope.dataCollection || [];
             scope.displayedCollection = []; //init empty array so that if pagination is enabled, it does not spoil performances
+            scope.enableRemotePagination = scope.config && scope.config.enableRemotePagination;
             scope.numberOfPages = calculateNumberOfPages(scope.dataCollection);
             scope.currentPage = 1;
 
@@ -358,14 +367,19 @@
                 lastColumnSort;
 
             function calculateNumberOfPages(array) {
-
+                if(scope.enableRemotePagination){
+                    scope.$watch('totalCount',function (totalCount,oldTotalCount) {
+                        if(totalCount && totalCount != oldTotalCount){
+                            scope.numberOfPages = Math.ceil(totalCount / scope.itemsByPage)
+                        }
+                    })
+                }
                 if (!angular.isArray(array)) {
                     return 1;
                 }
                 if (array.length === 0 || scope.itemsByPage < 1) {
                     return 1;
                 }
-                return Math.ceil(array.length / scope.itemsByPage);
             }
 
             function sortDataRow(array, column) {
@@ -418,8 +432,20 @@
                 var oldPage = scope.currentPage;
                 if (angular.isNumber(page.page)) {
                     scope.currentPage = page.page;
-                    scope.displayedCollection = this.pipe(scope.dataCollection);
-                    scope.$emit('changePage', {oldValue: oldPage, newValue: scope.currentPage});
+                    
+                    if(!scope.enableRemotePagination){
+                        scope.displayedCollection = this.pipe(scope.dataCollection);
+                    }else{
+                        page.itemsByPage = scope.config.itemsByPage
+                        $q.when(scope.config.loadData(page)).then(function (response) {
+                            scope.displayedCollection = response.data
+                            scope.totalCount = parseInt(response.headers(scope.totalCountPaginationHeader),10)
+                        })
+                    }
+
+                    scope.$emit('changePage',angular.extend({
+                        oldValue: oldPage
+                    },page));
                 }
             };
 
@@ -442,8 +468,17 @@
                         lastColumnSort = column;
                     }
                 }
-
-                scope.displayedCollection = this.pipe(scope.dataCollection);
+                if(scope.enableRemotePagination){
+                    this.changePage({
+                        page:1,
+                        sort: {
+                            property: column.map,
+                            order   : column.reverse === true ? 'asc' : 'desc'
+                        }
+                    })
+                }else{
+                    scope.displayedCollection = this.pipe(scope.dataCollection);
+                }
             };
 
             /**
