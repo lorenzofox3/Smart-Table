@@ -111,7 +111,17 @@
 
                     //if the data model changes from outside the grid
                     scope.$watchCollection('dataCollection', function (newValue, oldValue) {
-                        ctrl.sortBy();//it will trigger the refresh... some hack ?
+                        var columnDefault;
+                        for (var j = 0, l = scope.columns.length; j < l; j++) {
+                            if(scope.columns[j].map === scope.config.sortByDefault.map){
+                                if(!scope.config.sortByDefault.reverse)
+                                    scope.columns[j].reverse=true;
+                                columnDefault = scope.columns[j]
+                                break;
+                            }
+                        }
+
+                        ctrl.sortBy(columnDefault);
                     });
 
                 }
@@ -335,6 +345,7 @@
             isPaginationEnabled: true,
             itemsByPage: 10,
             maxSize: 5,
+            sortByDefault: '',
 
             //just to remind available option
             sortAlgorithm: '',
@@ -379,6 +390,8 @@
                 if (column) {
                     return arrayUtility.sort(array, sortAlgo, column.sortPredicate, column.reverse);
                 } else {
+                    if(scope.sortByDefault.map)
+                        return arrayUtility.sort(array, sortAlgo, scope.sortByDefault.map, scope.sortByDefault.reverse);
                     return array;
                 }
             }

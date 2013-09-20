@@ -10,6 +10,7 @@
             isPaginationEnabled: true,
             itemsByPage: 10,
             maxSize: 5,
+            sortByDefault: '',
 
             //just to remind available option
             sortAlgorithm: '',
@@ -54,6 +55,8 @@
                 if (column) {
                     return arrayUtility.sort(array, sortAlgo, column.sortPredicate, column.reverse);
                 } else {
+                    if(scope.sortByDefault.map)
+                        return arrayUtility.sort(array, sortAlgo, scope.sortByDefault.map, scope.sortByDefault.reverse);
                     return array;
                 }
             }
