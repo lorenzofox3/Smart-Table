@@ -11,6 +11,7 @@ This project is a lightweight table/grid builder. It is meant to be easy configu
 * Sort data
     * using your own algorithm
     * using the 'orderBy' angular algorithm: in this case you'll be able to provide predicates as explained in [orderBy filter documentation](http://docs.angularjs.org/api/ng.filter:orderBy)
+    * using 'sortByDefault' in the config to have a default sorting at start: e.g. {map:'statistics.lastLogin',reverse:true}
 * Filter data
     * using a global search input box
     * using the controller API to filter according to a particular column

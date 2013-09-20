@@ -58,7 +58,17 @@
 
                     //if the data model changes from outside the grid
                     scope.$watchCollection('dataCollection', function (newValue, oldValue) {
-                        ctrl.sortBy();//it will trigger the refresh... some hack ?
+                        var columnDefault;
+                        for (var j = 0, l = scope.columns.length; j < l; j++) {
+                            if(scope.columns[j].map === scope.config.sortByDefault.map){
+                                if(!scope.config.sortByDefault.reverse)
+                                    scope.columns[j].reverse=true;
+                                columnDefault = scope.columns[j]
+                                break;
+                            }
+                        }
+
+                        ctrl.sortBy(columnDefault);
                     });
 
                 }
