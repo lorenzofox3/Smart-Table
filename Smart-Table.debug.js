@@ -638,7 +638,7 @@ angular.module("partials/editableCell.html", []).run(["$templateCache", function
 
 angular.module("partials/globalSearchCell.html", []).run(["$templateCache", function ($templateCache) {
     $templateCache.put("partials/globalSearchCell.html",
-        "<label>Search :</label>\n" +
+        "<label>Filter :</label>\n" +
             "<input type=\"text\" ng-model=\"searchValue\"/>");
 }]);
 
@@ -664,12 +664,12 @@ angular.module("partials/selectionCheckbox.html", []).run(["$templateCache", fun
 
 angular.module("partials/smartTable.html", []).run(["$templateCache", function ($templateCache) {
     $templateCache.put("partials/smartTable.html",
-        "<table class=\"smart-table\">\n" +
+        " <div>   <div class=\"smart-table-global-search-row\" ng-show=\"isGlobalSearchActivated\">\n" +
+        "        <div class=\"smart-table-global-search\" column-span=\"{{columns.length}}\" colspan=\"{{columnSpan}}\">\n" +
+        "        </div>\n" +
+        "    </div>\n" +
+        "<table  class=\"smart-table\">\n" +
             "    <thead>\n" +
-            "    <tr class=\"smart-table-global-search-row\" ng-show=\"isGlobalSearchActivated\">\n" +
-            "        <td class=\"smart-table-global-search\" column-span=\"{{columns.length}}\" colspan=\"{{columnSpan}}\">\n" +
-            "        </td>\n" +
-            "    </tr>\n" +
             "    <tr class=\"smart-table-header-row\">\n" +
             "        <th ng-repeat=\"column in columns\" ng-include=\"column.headerTemplateUrl\"\n" +
             "            class=\"smart-table-header-cell {{column.headerClass}}\" scope=\"col\">\n" +
@@ -689,7 +689,7 @@ angular.module("partials/smartTable.html", []).run(["$templateCache", function (
             "        </td>\n" +
             "    </tr>\n" +
             "    </tfoot>\n" +
-            "</table>\n" +
+            "</table>\n</div>" +
             "\n" +
             "\n" +
             "");
@@ -940,4 +940,3 @@ angular.module("partials/smartTable.html", []).run(["$templateCache", function (
             };
         }]);
 })(angular);
-
