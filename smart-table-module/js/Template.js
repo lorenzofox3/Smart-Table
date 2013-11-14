@@ -59,7 +59,7 @@ angular.module("partials/smartTable.html", []).run(["$templateCache", function($
     "        </th>\n" +
     "    </tr>\n" +
     "    <tr class=\"smart-table-global-search-row\" ng-show=\"isGlobalSearchActivated\">\n" +
-    "        <td class=\"smart-table-global-search smart-table-first-cell\" column-span=\"{{columns.length}}\" colspan=\"{{columnSpan}}\">\n" +
+    "        <td class=\"smart-table-global-search\" column-span=\"{{columns.length}}\" colspan=\"{{columnSpan}}\">\n" +
     "        </td>\n" +
     "    </tr>\n" +
     "    <tr class=\"smart-table-header-row\">\n" +
