@@ -4,8 +4,10 @@
     "use strict";
     angular.module('smartTable.table', ['smartTable.column', 'smartTable.utilities', 'smartTable.directives', 'smartTable.filters', 'ui.bootstrap.pagination.smartTable'])
         .constant('DefaultTableConfiguration', {
+            expandMode: 'none',
             selectionMode: 'none',
             isGlobalSearchActivated: false,
+            displayExpandMarker: false,
             displaySelectionCheckbox: false,
             isPaginationEnabled: true,
             itemsByPage: 10,
@@ -37,6 +39,17 @@
                 }
                 return true;
             }
+            
+            function isAllExpanded() {
+                var i,
+                    l = scope.displayedCollection.length;
+                for (i=0; i < l; i++) {
+                    if (scope.displayCollection[i].isExpanded !== true) {
+                        return false;
+                    }
+                }
+                return true;
+            }
 
             function calculateNumberOfPages(array) {
 
@@ -55,6 +68,31 @@
                 }
             }
 
+            function expandDataRow(array, expandMode, index, expand) {
+
+                var dataRow, oldValue;
+
+                if ((!angular.isArray(array)) || (expandMode !== 'multiple' && expandMode !== 'single')) {
+                    return;
+                }
+
+                if (index >= 0 && index < array.length) {
+                    dataRow = array[index];
+                    if (expandMode === 'single') {
+                        //collapse all the others
+                        for (var i = 0, l = array.length; i < l; i++) {
+                            oldValue = array[i].isExpanded;
+                            array[i].isExpanded = false;
+                            if (oldValue === true) {
+                                scope.$emit('expandChange', {item: array[i]});
+                            }
+                        }
+                    }
+                    dataRow.isExpanded = expand;
+                    scope.holder.isAllExpended = isAllExpended();
+                    scope.$emit('expandChange', {item: dataRow});
+                }
+            }
             function selectDataRow(array, selectionMode, index, select) {
 
                 var dataRow, oldValue;
@@ -99,6 +137,7 @@
                     scope.currentPage = page.page;
                     scope.displayedCollection = this.pipe(scope.dataCollection);
                     scope.holder.isAllSelected = isAllSelected();
+                    scope.holder.isAllExpanded = isAllExpanded();
                     scope.$emit('changePage', {oldValue: oldPage, newValue: scope.currentPage});
                 }
             };
@@ -210,6 +249,17 @@
              */
 
             /**
+             * expand/collapse the item of the displayedCollection with the expand mode set in the scope
+             * @param dataRow
+             */
+            this.toggleExpand = function (dataRow) {
+                var index = scope.dataCollection.indexOf(dataRow);
+                if (index !== -1) {
+                    expandDataRow(scope.dataCollection, scope.selectionMode, index, dataRow.isExpended !== true);
+                }
+            };
+
+            /**
              * select or unselect the item of the displayedCollection with the selection mode set in the scope
              * @param dataRow
              */
@@ -217,6 +267,22 @@
                 var index = scope.dataCollection.indexOf(dataRow);
                 if (index !== -1) {
                     selectDataRow(scope.dataCollection, scope.selectionMode, index, dataRow.isSelected !== true);
+                }
+            };
+
+            /**
+             * expand/collapse all the currently displayed rows
+             * @param value if true select, else unselect
+             */
+            this.toggleExpandAll = function (value) {
+                var i = 0,
+                    l = scope.displayedCollection.length;
+
+                if (scope.expandMode !== 'multiple') {
+                    return;
+                }
+                for (; i < l; i++) {
+                    expandDataRow(scope.displayedCollection, scope.selectionMode, i, value === true);
                 }
             };
 
