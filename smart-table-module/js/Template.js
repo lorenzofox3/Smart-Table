@@ -39,12 +39,22 @@ angular.module("partials/pagination.html", []).run(["$templateCache", function($
 
 angular.module("partials/selectAllCheckbox.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/selectAllCheckbox.html",
-    "<input class=\"smart-table-select-all\"  type=\"checkbox\" ng-model=\"holder.isAllSelected\"/>");
+    "<input class=\"smart-table-select-all\" type=\"checkbox\" title=\"Select All\" ng-model=\"holder.isAllSelected\"/>");
 }]);
 
 angular.module("partials/selectionCheckbox.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/selectionCheckbox.html",
-    "<input type=\"checkbox\" ng-model=\"dataRow.isSelected\" stop-event=\"click\"/>");
+    "<input type=\"checkbox\" ng-model=\"dataRow.isSelected\" title=\"Select\" stop-event=\"click\"/>");
+}]);
+
+angular.module("partials/expandMarkerHeader.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("partials/expandMarkerHeader.html",
+    "&nbsp;");
+}]);
+
+angular.module("partials/expandMarker.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("partials/expandMarker.html",
+    "<input type=\"checkbox\" ng-model=\"dataRow.isExpanded\" title=\"Expand\" stop-event=\"click\"/>");
 }]);
 
 angular.module("partials/smartTable.html", []).run(["$templateCache", function($templateCache) {
@@ -61,9 +71,9 @@ angular.module("partials/smartTable.html", []).run(["$templateCache", function($
     "        </th>\n" +
     "    </tr>\n" +
     "    </thead>\n" +
-    "    <tbody>\n" +
-    "    <tr ng-repeat=\"dataRow in displayedCollection\" ng-class=\"{selected:dataRow.isSelected}\"\n" +
+    "    <tbody ng-repeat=\"dataRow in displayedCollection\" ng-class=\"{selected:dataRow.isSelected}\"\n" +
     "        class=\"smart-table-data-row\">\n" +
+    "    <tr>\n" +
     "        <td ng-repeat=\"column in columns\" class=\"smart-table-data-cell {{column.cellClass}}\"></td>\n" +
     "    </tr>\n" +
     "    </tbody>\n" +

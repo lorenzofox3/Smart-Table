@@ -5,6 +5,8 @@
             smartTable: 'partials/smartTable.html',
             smartTableGlobalSearch: 'partials/globalSearchCell.html',
             editableCell: 'partials/editableCell.html',
+            expandMarker: 'partials/expandMarker.html',
+            expandMarkerHeader: 'partials/expandMarkerHeader.html',
             selectionCheckbox: 'partials/selectionCheckbox.html',
             selectAllCheckbox: 'partials/selectAllCheckbox.html',
             defaultHeader: 'partials/defaultHeader.html',

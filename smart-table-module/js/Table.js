@@ -4,7 +4,7 @@
     "use strict";
     angular.module('smartTable.table', ['smartTable.column', 'smartTable.utilities', 'smartTable.directives', 'smartTable.filters', 'ui.bootstrap.pagination.smartTable'])
         .constant('DefaultTableConfiguration', {
-            expandMode: 'none',
+            expandMode: 'multiple',
             selectionMode: 'none',
             isGlobalSearchActivated: false,
             displayExpandMarker: false,
