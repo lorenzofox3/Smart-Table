@@ -16,6 +16,7 @@
         formatFunction: '',
         formatParameter: '',
         filterPredicate: '',
+		cellTemplate: '',
         cellTemplateUrl: '',
         headerClass: '',
         cellClass: ''

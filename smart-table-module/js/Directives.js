@@ -162,6 +162,8 @@
                     }, true);
 
                     function defaultContent() {
+						isSimpleCell = true;
+						
                         if (column.isEditable) {
                             element.html('<div editable-cell="" row="dataRow" column="column" type="column.type"></div>');
                             compile(element.contents())(scope);
@@ -169,25 +171,37 @@
                             element.text(scope.formatedValue);
                         }
                     }
+					
+					function cellTemplateContent(template) {
+						isSimpleCell = false;
 
-                    scope.$watch('column.cellTemplateUrl', function (value) {
+						//create a scope
+						childScope = scope.$new();
+						//compile the element with its new content and new scope
+						element.html(template);
+						compile(element.contents())(childScope);
+					}
 
-                        if (value) {
-                            //we have to load the template (and cache it) : a kind of ngInclude
-                            http.get(value, {cache: templateCache}).success(function (response) {
-
-                                isSimpleCell = false;
-
-                                //create a scope
-                                childScope = scope.$new();
-                                //compile the element with its new content and new scope
-                                element.html(response);
-                                compile(element.contents())(childScope);
-                            }).error(defaultContent);
-
+					function cellContent(cellTemplate, cellTemplateUrl) {
+                        if (cellTemplate) {
+							cellTemplateContent(cellTemplate);
                         } else {
-                            defaultContent();
+                            if(column.cellTemplateUrl) {
+								//we have to load the template (and cache it) : a kind of ngInclude
+								http.get(value, {cache: templateCache}).success(function (response) {
+									cellTemplateContent(response);
+								}).error(defaultContent);
+							}
+							else {
+								defaultContent();
+							}
                         }
+					}
+                    scope.$watch('column.cellTemplate', function (value) {
+                        cellContent(value, column.cellTemplateUrl);
+                    });
+                    scope.$watch('column.cellTemplateUrl', function (value) {
+                        cellContent(column.cellTemplate, value);
                     });
                 }
             };

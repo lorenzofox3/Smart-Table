@@ -11,11 +11,11 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="dataRow in displayedCollection" ng-class="{selected:dataRow.isSelected}"
-        class="smart-table-data-row">
+    <tr  ng-repeat="dataRow in displayedCollection" ng-class="{selected:dataRow.isSelected}"
+		class="smart-table-data-row">
         <td ng-repeat="column in columns" class="smart-table-data-cell {{column.cellClass}}"></td>
     </tr>
-    </tbody>
+	</tbody>
     <tfoot ng-show="isPaginationEnabled">
     <tr class="smart-table-footer-row">
         <td colspan="{{columns.length}}">
