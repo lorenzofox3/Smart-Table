@@ -15,10 +15,7 @@
 		class="smart-table-data-row">
         <td ng-repeat="column in columns" class="smart-table-data-cell {{column.cellClass}}"></td>
     </tr>
-	<tr ng-show="dataRow.isExpanded">
-		<td ng-attr-colspan="{{columns.length}}" class="smart-table-data-expanded">&nbsp;</td>
-	</tr>
-    </tbody>
+	</tbody>
     <tfoot ng-show="isPaginationEnabled">
     <tr class="smart-table-footer-row">
         <td colspan="{{columns.length}}">

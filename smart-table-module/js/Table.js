@@ -210,17 +210,6 @@
              */
 
             /**
-             * expand/collapse the item of the displayedCollection with the expand mode set in the scope
-             * @param dataRow
-             */
-            this.toggleExpand = function (dataRow) {
-                var index = scope.dataCollection.indexOf(dataRow);
-                if (index !== -1) {
-                    expandDataRow(scope.dataCollection, scope.selectionMode, index, dataRow.isExpended !== true);
-                }
-            };
-
-            /**
              * select or unselect the item of the displayedCollection with the selection mode set in the scope
              * @param dataRow
              */
