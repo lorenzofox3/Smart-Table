@@ -34,18 +34,6 @@
                             //add selection box column if required
                             ctrl.insertColumn({cellTemplateUrl: templateList.selectionCheckbox, headerTemplateUrl: templateList.selectAllCheckbox, isSelectionColumn: true}, 0);
                         }
-
-                        //remove the expand column if needed
-                        if ((newConfig.expandMode !== 'multiple') && (newConfig.expandMode !== 'single') || newConfig.displayExpandMarker !== true) {
-                            for (var i = length - 1; i >= 0; i--) {
-                                if (scope.columns[i].isExpandColumn === true) {
-                                    ctrl.removeColumn(i);
-                                }
-                            }
-                        } else {
-                            //add expand column if required
-                            ctrl.insertColumn({cellTemplateUrl: templateList.expandMarker, headerTemplateUrl: templateList.expandMarkerHeader, isExpandColumn: true}, 0);
-                        }
                     }, true);
 
                     //insert columns from column config
@@ -169,7 +157,7 @@
                     scope.$watch('dataRow', function (value) {
                         scope.formatedValue = format(getter(row), column.formatFunction, column.formatParameter);
                         if (isSimpleCell === true) {
-                            element.text(scope.formatedValue); // TODO: check if this is a bug in the case of an editedable cell that its dataRow is updated
+                            element.text(scope.formatedValue);
                         }
                     }, true);
 

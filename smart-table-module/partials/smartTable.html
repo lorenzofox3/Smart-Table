@@ -1,6 +1,6 @@
 <table class="smart-table">
     <thead>
-    <tr class="smart-table-global-search-row" ng-if="isGlobalSearchActivated">
+    <tr class="smart-table-global-search-row" ng-show="isGlobalSearchActivated">
         <td class="smart-table-global-search" column-span="{{columns.length}}" colspan="{{columnSpan}}">
         </td>
     </tr>
@@ -10,16 +10,16 @@
         </th>
     </tr>
     </thead>
-    <tbody ng-repeat="dataRow in displayedCollection" ng-class="{selected:dataRow.isSelected, expanded:dataRow.isExpanded}"
-        class="smart-table-data-item">
-    <tr class="smart-table-data-row">
+    <tbody>
+    <tr  ng-repeat="dataRow in displayedCollection" ng-class="{selected:dataRow.isSelected, expanded:dataRow.isExpanded}"
+		class="smart-table-data-row">
         <td ng-repeat="column in columns" class="smart-table-data-cell {{column.cellClass}}"></td>
     </tr>
-	<tr ng-if="dataRow.isExpanded">
+	<tr ng-show="dataRow.isExpanded">
 		<td ng-attr-colspan="{{columns.length}}" class="smart-table-data-expanded">&nbsp;</td>
 	</tr>
     </tbody>
-    <tfoot ng-if="isPaginationEnabled">
+    <tfoot ng-show="isPaginationEnabled">
     <tr class="smart-table-footer-row">
         <td colspan="{{columns.length}}">
             <div pagination-smart-table="" num-pages="numberOfPages" max-size="maxSize" current-page="currentPage"></div>
