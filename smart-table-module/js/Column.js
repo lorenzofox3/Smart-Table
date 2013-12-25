@@ -9,6 +9,7 @@
 
 
         //it is useless to have that empty strings, but it reminds what is available
+		headerTemplate: '',
         headerTemplateUrl: '',
         map: '',
         label: '',
@@ -16,6 +17,7 @@
         formatFunction: '',
         formatParameter: '',
         filterPredicate: '',
+		cellTemplate: '',
         cellTemplateUrl: '',
         headerClass: '',
         cellClass: ''

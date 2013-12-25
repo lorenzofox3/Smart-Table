@@ -1,6 +1,6 @@
 <table class="smart-table">
     <thead>
-    <tr class="smart-table-global-search-row" ng-show="isGlobalSearchActivated">
+    <tr class="smart-table-global-search-row" ng-if="isGlobalSearchActivated">
         <td class="smart-table-global-search" column-span="{{columns.length}}" colspan="{{columnSpan}}">
         </td>
     </tr>
@@ -15,11 +15,11 @@
     <tr class="smart-table-data-row">
         <td ng-repeat="column in columns" class="smart-table-data-cell {{column.cellClass}}"></td>
     </tr>
-	<tr ng-show="dataRow.isExpanded">
+	<tr ng-if="dataRow.isExpanded">
 		<td ng-attr-colspan="{{columns.length}}" class="smart-table-data-expanded">&nbsp;</td>
 	</tr>
     </tbody>
-    <tfoot ng-show="isPaginationEnabled">
+    <tfoot ng-if="isPaginationEnabled">
     <tr class="smart-table-footer-row">
         <td colspan="{{columns.length}}">
             <div pagination-smart-table="" num-pages="numberOfPages" max-size="maxSize" current-page="currentPage"></div>
