@@ -57,13 +57,13 @@ angular.module("partials/smartTable.html", []).run(["$templateCache", function($
     "    </tr>\n" +
     "    <tr class=\"smart-table-header-row\">\n" +
     "        <th ng-repeat=\"column in columns\" ng-include=\"column.headerTemplateUrl\"\n" +
-    "            class=\"smart-table-header-cell {{column.headerClass}}\" scope=\"col\">\n" +
+    "            class=\"smart-table-header-cell\" ngClass=\"column.headerClass\" scope=\"col\">\n" +
     "        </th>\n" +
     "    </tr>\n" +
     "    </thead>\n" +
     "    <tbody>\n" +
     "    <tr ng-repeat=\"dataRow in displayedCollection\" ng-class=\"{selected:dataRow.isSelected}\"\n" +
-    "        class=\"smart-table-data-row\">\n" +
+    "        class=\"smart-table-data-row\" ngClassEven=\"rowClassEven\" ngClassOdd=\"rowClassOdd\">\n" +
     "        <td ng-repeat=\"column in columns\" class=\"smart-table-data-cell\" ngClass=\"column.cellClass\" ngStyle=\"column.cellStyle\"></td>\n" +
     "    </tr>\n" +
     "    </tbody>\n" +

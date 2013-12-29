@@ -13,7 +13,9 @@
 
             //just to remind available option
             sortAlgorithm: '',
-            filterAlgorithm: ''
+            filterAlgorithm: '',
+			rowClassEven: '',
+			rowClassOdd: ''
         })
         .controller('TableCtrl', ['$scope', 'Column', '$filter', '$parse', 'ArrayUtility', 'DefaultTableConfiguration', function (scope, Column, filter, parse, arrayUtility, defaultConfig) {
 
