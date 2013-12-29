@@ -19,6 +19,7 @@
 		cellTemplate: '',
         cellTemplateUrl: '',
         headerClass: '',
+		headerStyle: '',
         cellClass: '',
         cellStyle: ''
     });

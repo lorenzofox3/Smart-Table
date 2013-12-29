@@ -155,7 +155,8 @@
 
                     //can be useful for child directives
                     scope.$watch('dataRow', function (value) {
-                        scope.formatedValue = format(getter(row), column.formatFunction, column.formatParameter);
+						scope.value = getter(row);
+                        scope.formatedValue = format(scope.value, column.formatFunction, column.formatParameter);
                         if (isSimpleCell === true) {
                             element.text(scope.formatedValue);
                         }
