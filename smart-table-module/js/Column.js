@@ -19,7 +19,8 @@
 		cellTemplate: '',
         cellTemplateUrl: '',
         headerClass: '',
-        cellClass: ''
+        cellClass: '',
+        cellStyle: ''
     });
 
     function ColumnProvider(DefaultColumnConfiguration, templateUrlList) {
