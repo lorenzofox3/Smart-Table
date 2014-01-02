@@ -109,6 +109,7 @@
              * @param column
              */
             this.sortBy = function (column) {
+                column = column || scope.columns[scope.config.defaultSortColumn];
                 var index = scope.columns.indexOf(column);
                 if (index !== -1) {
                     if (column.isSortable === true) {
@@ -118,7 +119,7 @@
                         }
 
                         column.sortPredicate = column.sortPredicate || column.map;
-                        column.reverse = column.reverse !== true;
+                        column.reverse = column.reverse === false;
                         lastColumnSort = column;
                     }
                 }

@@ -451,29 +451,33 @@ describe('Table module', function () {
                 //by id
                 ctrl.sortBy(scope.columns[0]);
                 expect(scope.displayedCollection).toEqual([
-                    {id: 2, secondProperty: true, thirdProperty: 1},
+                    {id: 0, secondProperty: true, thirdProperty: 2},
                     {id: 1, secondProperty: true, thirdProperty: 3},
-                    {id: 0, secondProperty: true, thirdProperty: 2}
+                    {id: 2, secondProperty: true, thirdProperty: 1}
                 ]);
                 //switch to another column sortable
                 ctrl.sortBy(scope.columns[2]);
                 expect(scope.displayedCollection).toEqual([
-                    {id: 1, secondProperty: true, thirdProperty: 3},
+                    {id: 2, secondProperty: true, thirdProperty: 1},
                     {id: 0, secondProperty: true, thirdProperty: 2},
-                    {id: 2, secondProperty: true, thirdProperty: 1}
+                    {id: 1, secondProperty: true, thirdProperty: 3}
                 ]);
 
                 //come back to the first one
                 ctrl.sortBy(scope.columns[0]);
                 expect(scope.displayedCollection).toEqual([
-                    {id: 2, secondProperty: true, thirdProperty: 1},
+                    {id: 0, secondProperty: true, thirdProperty:2},
                     {id: 1, secondProperty: true, thirdProperty: 3},
-                    {id: 0, secondProperty: true, thirdProperty: 2}
+                    {id: 2, secondProperty: true, thirdProperty: 1}
                 ]);
 
                 //descent
                 ctrl.sortBy(scope.columns[0]);
-                expect(scope.displayedCollection).toEqual(refArray);
+                expect(scope.displayedCollection).toEqual([
+                    {id: 2, secondProperty: true, thirdProperty: 1},
+                    {id: 1, secondProperty: true, thirdProperty: 3},
+                    {id: 0, secondProperty: true, thirdProperty: 2}
+                ]);
             });
 
         });
