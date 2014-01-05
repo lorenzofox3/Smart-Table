@@ -19,9 +19,9 @@
 		cellTemplate: '',
         cellTemplateUrl: '',
         headerClass: '',
-		headerStyle: '',
         cellClass: '',
-        cellStyle: ''
+		width: '',
+		style: {}
     });
 
     function ColumnProvider(DefaultColumnConfiguration, templateUrlList) {
@@ -31,6 +31,12 @@
                 return new Column(config);
             }
             angular.extend(this, config);
+		
+			this.style = angular.copy(this.style);
+			
+			if (this.width) {
+				this.style.width = this.width;
+			}
         }
 
         this.setDefaultOption = function (option) {
@@ -695,7 +701,7 @@ angular.module("partials/smartTable.html", []).run(["$templateCache", function($
     "<table class=\"smart-table\">\n" +
     "    <thead>\n" +
     "    <tr class=\"smart-table-layout-row\">\n" +
-    "        <th ng-repeat=\"column in columns\" class=\"smart-table-layout-cell\" style=\"width:{{column.width}};\" scope=\"col\">\n" +
+    "        <th ng-repeat=\"column in columns\" class=\"smart-table-layout-cell\" ng-style=\"column.style\" scope=\"col\" ng-class=\"{'smart-table-first-cell': $first, 'smart-table-last-cell': $last}\">\n" +
     "        </th>\n" +
     "    </tr>\n" +
     "    <tr class=\"smart-table-global-search-row\" ng-show=\"isGlobalSearchActivated\">\n" +
@@ -703,7 +709,7 @@ angular.module("partials/smartTable.html", []).run(["$templateCache", function($
     "        </td>\n" +
     "    </tr>\n" +
     "    <tr class=\"smart-table-header-row\">\n" +
-    "        <th ng-repeat=\"column in columns\" ng-include=\"column.headerTemplateUrl\"\n" +
+    "        <th ng-repeat=\"column in columns\" ng-include=\"column.headerTemplateUrl\" ng-style=\"column.style\"\n" +
     "            class=\"smart-table-header-cell {{column.headerClass}}\" ng-class=\"{'smart-table-first-cell': $first, 'smart-table-last-cell': $last}\" scope=\"col\">\n" +
     "        </th>\n" +
     "    </tr>\n" +
@@ -711,7 +717,7 @@ angular.module("partials/smartTable.html", []).run(["$templateCache", function($
     "    <tbody>\n" +
     "    <tr ng-repeat=\"dataRow in displayedCollection\" ng-class=\"{selected:dataRow.isSelected}\"\n" +
     "        class=\"smart-table-data-row\">\n" +
-    "        <td ng-repeat=\"column in columns\" class=\"smart-table-data-cell {{column.cellClass}}\" ng-class=\"{'smart-table-first-cell': $first, 'smart-table-last-cell': $last}\"></td>\n" +
+    "        <td ng-repeat=\"column in columns\" class=\"smart-table-data-cell {{column.cellClass}}\" ng-style=\"column.style\" ng-class=\"{'smart-table-first-cell': $first, 'smart-table-last-cell': $last}\"></td>\n" +
     "    </tr>\n" +
     "	</tbody>\n" +
     "    <tfoot ng-show=\"isPaginationEnabled\">\n" +

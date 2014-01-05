@@ -19,9 +19,9 @@
 		cellTemplate: '',
         cellTemplateUrl: '',
         headerClass: '',
-		headerStyle: '',
         cellClass: '',
-        cellStyle: ''
+		width: '',
+		style: {}
     });
 
     function ColumnProvider(DefaultColumnConfiguration, templateUrlList) {
@@ -31,6 +31,12 @@
                 return new Column(config);
             }
             angular.extend(this, config);
+		
+			this.style = angular.copy(this.style);
+			
+			if (this.width) {
+				this.style.width = this.width;
+			}
         }
 
         this.setDefaultOption = function (option) {
