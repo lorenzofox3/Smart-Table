@@ -32,7 +32,8 @@
                             }
                         } else {
                             //add selection box column if required
-                            ctrl.insertColumn({cellTemplateUrl: templateList.selectionCheckbox, headerTemplateUrl: templateList.selectAllCheckbox, isSelectionColumn: true}, 0);
+                            //ATTN: Added width
+                            ctrl.insertColumn({cellTemplateUrl: templateList.selectionCheckbox, headerTemplateUrl: templateList.selectAllCheckbox, width: '29px', headerClass: "text-left", isSelectionColumn: true}, 0);
                         }
                     }, true);
 
@@ -74,12 +75,12 @@
                 require: '^smartTable',
                 restrict: 'C',
                 link: function (scope, element, attr, ctrl) {
-
-                    element.bind('click', function () {
-                        scope.$apply(function () {
-                            ctrl.toggleSelection(scope.dataRow);
-                        })
-                    });
+                    // // ATTN: Commented out so click can happen in cell
+                    // element.bind('click', function () {
+                    //     scope.$apply(function () {
+                    //         ctrl.toggleSelection(scope.dataRow);
+                    //     });
+                    // });
                 }
             };
         })

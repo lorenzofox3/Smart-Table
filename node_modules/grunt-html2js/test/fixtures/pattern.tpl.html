@@ -1,0 +1,4 @@
+<form>
+<span class="registration-error" ng-show="regForm.password.$error.pattern">- Fail to match..</span>
+<input type="password" ng-model="registerForm.password" name="password" ng-pattern="/^.*(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[\d\W]).*$/"  required/>
+</form>

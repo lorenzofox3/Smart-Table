@@ -1,4 +1,53 @@
-# Smart Table— an easy to use table/grid 
+# Smart Table— an easy to use table/grid
+
+## Morgan's Customizations
+
+I have added some code to the module such that a couple other things should work:
+
+*each column now has a tooltip property (which you have to use in a template of course)
+*each column now has a width property. make sure to leave one column without a width to fill out the table.
+
+Here's an example of how I use theses properties
+
+```js
+        scope.courseGroupsColumnCollection = [
+          {label: 'Course Group Name', map: 'Name'},
+          {label: 'Courses', map: 'Tests.length', width: "90px", cellClass: "text-center", tooltip:'Number of courses in group', headerTemplateUrl:'/app/partials/header_cell_tooltip_template.html'},
+          {label: 'View', width: "50px", cellClass: "text-center valign-middle",  select: 'selectCourseGroup(dataRow)', cellTemplateUrl:'/app/partials/view_icon_cell_template.html'}
+        ];
+        scope.courseGroupsConfig = {
+          isPaginationEnabled: true,
+          isGlobalSearchActivated:true,
+          itemsByPage:8,
+          maxSize:8,
+          selectCourseGroup: function(courseGroup) {
+            scope.startVerification(scope.onCourseGroupVerification);
+            if (scope.selectedCourseGroup && !scope.isCourseGroupClean())
+              $('#verify_modal').modal();
+            else
+              scope.deferredVerification.resolve();
+            scope.deferredVerification.promise.then(function() {
+              scope.isNewCourseGroup = false;
+              scope.selectedCourseGroup = courseGroup;
+              scope.originalCourseGroup = angular.copy(scope.selectedCourseGroup);
+              delete scope.deferredVerification;
+            });
+          }
+        };
+```
+
+And here is my tooltip partial in case...
+
+```html
+<span>{{column.label}}</span>
+<a href="#" class="info" tooltip="{{column.tooltip}}">
+  <i class="icon-question-sign"></i>
+</a>
+```
+
+
+## End of My Sub-Readme
+
 
 This fork contains some additional fixes and features
 * Fit order of sorting and add the ability to set up an initial sorting order - Beyers Cronje
@@ -91,7 +140,7 @@ To run it :
 
 Unit tests are provided for all the code except for Directive.js file which is a bit more experimental.
 Tests can be run with [Testacular](http://karma-runner.github.io/0.8/index.html): you'll find the config file under config folder. Note, the coverage is done by [Istanbul.js](http://gotwarlost.github.io/istanbul/)
-        
+
 ## License
 
 Smart Table module is under MIT license:
