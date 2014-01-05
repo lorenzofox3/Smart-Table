@@ -246,7 +246,7 @@
                         } else {
                             if(column.cellTemplateUrl) {
 								//we have to load the template (and cache it) : a kind of ngInclude
-								http.get(value, {cache: templateCache}).success(function (response) {
+								http.get(column.cellTemplateUrl, {cache: templateCache}).success(function (response) {
 									cellTemplateContent(response);
 								}).error(defaultContent);
 							}
