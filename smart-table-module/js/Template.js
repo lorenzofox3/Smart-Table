@@ -64,16 +64,16 @@ angular.module("partials/smartTable.html", []).run(["$templateCache", function($
     "    </tr>\n" +
     "    <tr class=\"smart-table-header-row\">\n" +
     "        <th ng-repeat=\"column in columns\" ng-include=\"column.headerTemplateUrl\"\n" +
-    "            class=\"smart-table-header-cell {{column.headerClass}}\" ng-class=\"{'smart-table-first-cell': $first, 'smart-table-last-cell': $last}\" ngStyle=\"column.headerStyle\" scope=\"col\">\n" +
+    "            class=\"smart-table-header-cell {{column.headerClass}}\" ng-class=\"{'smart-table-first-cell': $first, 'smart-table-last-cell': $last}\" scope=\"col\">\n" +
     "        </th>\n" +
     "    </tr>\n" +
     "    </thead>\n" +
     "    <tbody>\n" +
     "    <tr ng-repeat=\"dataRow in displayedCollection\" ng-class=\"{selected:dataRow.isSelected}\"\n" +
-    "        class=\"smart-table-data-row\" ngClassEven=\"rowClassEven\" ngClassOdd=\"rowClassOdd\">\n" +
+    "        class=\"smart-table-data-row\">\n" +
     "        <td ng-repeat=\"column in columns\" class=\"smart-table-data-cell {{column.cellClass}}\" ng-class=\"{'smart-table-first-cell': $first, 'smart-table-last-cell': $last}\"></td>\n" +
     "    </tr>\n" +
-    "    </tbody>\n" +
+    "	</tbody>\n" +
     "    <tfoot ng-show=\"isPaginationEnabled\">\n" +
     "    <tr class=\"smart-table-footer-row\">\n" +
     "        <td colspan=\"{{columns.length}}\" id=\"smart-table-footer-cell\">\n" +
