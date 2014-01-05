@@ -1,4 +1,11 @@
-# Smart Table— an easy to use table/grid
+﻿# Smart Table— an easy to use table/grid
+
+
+This fork contains some additional fixes and features
+* Fit order of sorting and add the ability to set up an initial sorting order - Beyers Cronje
+* Support in-line cellTemplate for easier customization and use - Lee Elenbaas
+* Support for column width and tooltip - Morgan
+
 
 ## Morgan's Customizations
 
@@ -45,13 +52,7 @@ And here is my tooltip partial in case...
 </a>
 ```
 
-
 ## End of My Sub-Readme
-
-
-This fork contains some additional fixes and features
-* Fit order of sorting and add the ability to set up an initial sorting order - Beyers Cronje
-* Support in-line cellTemplate for easier customization and use - Lee Elenbaas
 
 This project is a lightweight table/grid builder. It is meant to be easy configurable but also easy customisable
 (if you want to use it as a base for your own grid development). In The current version (0.1.0) the features are
