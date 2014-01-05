@@ -1,9 +1,8 @@
 <table class="smart-table">
+	<colgroup span="{{columns.length}}">
+		<col ng-repeat="column in columns" ng-style="column.style" ng-class="{'smart-table-first-cell': $first, 'smart-table-last-cell': $last}" />
+	</colgroup>
     <thead>
-    <tr class="smart-table-layout-row">
-        <th ng-repeat="column in columns" class="smart-table-layout-cell" ng-style="column.style" scope="col" ng-class="{'smart-table-first-cell': $first, 'smart-table-last-cell': $last}">
-        </th>
-    </tr>
     <tr class="smart-table-global-search-row" ng-show="isGlobalSearchActivated">
         <td class="smart-table-global-search" column-span="{{columns.length}}" colspan="{{columnSpan}}">
         </td>
@@ -15,7 +14,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="dataRow in displayedCollection" ng-class="{selected:dataRow.isSelected}"
+    <tr ng-repeat="dataRow in displayedCollection" ng-class="{selected:dataRow.isSelected}" ng-class-even="'{{rowClassEven}}'" ng-class-odd="'{{rowClassOdd}}'"
         class="smart-table-data-row">
         <td ng-repeat="column in columns" class="smart-table-data-cell {{column.cellClass}}" ng-style="column.style" ng-class="{'smart-table-first-cell': $first, 'smart-table-last-cell': $last}"></td>
     </tr>

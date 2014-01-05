@@ -53,11 +53,10 @@ angular.module("partials/selectionCheckbox.html", []).run(["$templateCache", fun
 angular.module("partials/smartTable.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/smartTable.html",
     "<table class=\"smart-table\">\n" +
+    "	<colgroup span=\"{{columns.length}}\">\n" +
+    "		<col ng-repeat=\"column in columns\" ng-style=\"column.style\" ng-class=\"{'smart-table-first-cell': $first, 'smart-table-last-cell': $last}\" />\n" +
+    "	</colgroup>\n" +
     "    <thead>\n" +
-    "    <tr class=\"smart-table-layout-row\">\n" +
-    "        <th ng-repeat=\"column in columns\" class=\"smart-table-layout-cell\" ng-style=\"column.style\" scope=\"col\" ng-class=\"{'smart-table-first-cell': $first, 'smart-table-last-cell': $last}\">\n" +
-    "        </th>\n" +
-    "    </tr>\n" +
     "    <tr class=\"smart-table-global-search-row\" ng-show=\"isGlobalSearchActivated\">\n" +
     "        <td class=\"smart-table-global-search\" column-span=\"{{columns.length}}\" colspan=\"{{columnSpan}}\">\n" +
     "        </td>\n" +
@@ -69,7 +68,7 @@ angular.module("partials/smartTable.html", []).run(["$templateCache", function($
     "    </tr>\n" +
     "    </thead>\n" +
     "    <tbody>\n" +
-    "    <tr ng-repeat=\"dataRow in displayedCollection\" ng-class=\"{selected:dataRow.isSelected}\"\n" +
+    "    <tr ng-repeat=\"dataRow in displayedCollection\" ng-class=\"{selected:dataRow.isSelected}\" ng-class-even=\"'{{rowClassEven}}'\" ng-class-odd=\"'{{rowClassOdd}}'\"\n" +
     "        class=\"smart-table-data-row\">\n" +
     "        <td ng-repeat=\"column in columns\" class=\"smart-table-data-cell {{column.cellClass}}\" ng-style=\"column.style\" ng-class=\"{'smart-table-first-cell': $first, 'smart-table-last-cell': $last}\"></td>\n" +
     "    </tr>\n" +
