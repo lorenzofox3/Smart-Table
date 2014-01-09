@@ -654,8 +654,8 @@ angular.module("partials/defaultCell.html", []).run(["$templateCache", function(
 
 angular.module("partials/defaultHeader.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/defaultHeader.html",
-    "<span class=\"header-content\">{{column.label}}</span>\n" +
-    "<i ng-class=\"{'icon-caret-up':column.reverse==true,'icon-caret-down':column.reverse==false}\"></i>");
+    "<span class=\"header-content\" ng-class=\"{'sort-ascent':column.reverse==true,'sort-descent':column.reverse==false}\">{{column.label}}</span>\n" +
+    "");
 }]);
 
 angular.module("partials/editableCell.html", []).run(["$templateCache", function($templateCache) {
@@ -705,7 +705,7 @@ angular.module("partials/smartTable.html", []).run(["$templateCache", function($
     "	</colgroup>\n" +
     "    <thead>\n" +
     "    <tr class=\"smart-table-global-search-row\" ng-show=\"isGlobalSearchActivated\">\n" +
-    "        <td class=\"smart-table-global-search\" column-span=\"{{columns.length}}\" colspan=\"{{columnSpan}}\">\n" +
+    "        <td class=\"smart-table-global-search smart-table-first-cell smart-table-last-cell\" column-span=\"{{columns.length}}\" colspan=\"{{columnSpan}}\">\n" +
     "        </td>\n" +
     "    </tr>\n" +
     "    <tr class=\"smart-table-header-row\">\n" +
@@ -722,7 +722,7 @@ angular.module("partials/smartTable.html", []).run(["$templateCache", function($
     "	</tbody>\n" +
     "    <tfoot ng-show=\"isPaginationEnabled\">\n" +
     "    <tr class=\"smart-table-footer-row\">\n" +
-    "        <td colspan=\"{{columns.length}}\" id=\"smart-table-footer-cell\">\n" +
+    "        <td colspan=\"{{columns.length}}\" id=\"smart-table-footer-cell smart-table-first-cell smart-table-last-cell\">\n" +
     "            <div pagination-smart-table=\"\" num-pages=\"numberOfPages\" max-size=\"maxSize\" current-page=\"currentPage\"></div>\n" +
     "        </td>\n" +
     "    </tr>\n" +
