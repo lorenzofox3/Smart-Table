@@ -1,24 +1,27 @@
 <table class="smart-table">
+	<colgroup span="{{columns.length}}">
+		<col ng-repeat="column in columns" ng-style="column.style" ng-class="{'smart-table-first-cell': $first, 'smart-table-last-cell': $last}" />
+	</colgroup>
     <thead>
     <tr class="smart-table-global-search-row" ng-show="isGlobalSearchActivated">
-        <td class="smart-table-global-search" column-span="{{columns.length}}" colspan="{{columnSpan}}">
+        <td class="smart-table-global-search smart-table-first-cell smart-table-last-cell" column-span="{{columns.length}}" colspan="{{columnSpan}}">
         </td>
     </tr>
     <tr class="smart-table-header-row">
-        <th ng-repeat="column in columns" ng-include="column.headerTemplateUrl"
-            class="smart-table-header-cell {{column.headerClass}}" scope="col">
+        <th ng-repeat="column in columns" ng-include="column.headerTemplateUrl" ng-style="column.style"
+            class="smart-table-header-cell {{column.headerClass}}" ng-class="{'smart-table-first-cell': $first, 'smart-table-last-cell': $last}" scope="col">
         </th>
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="dataRow in displayedCollection" ng-class="{selected:dataRow.isSelected}"
+    <tr ng-repeat="dataRow in displayedCollection" ng-class="{selected:dataRow.isSelected}" ng-class-even="'{{rowClassEven}}'" ng-class-odd="'{{rowClassOdd}}'"
         class="smart-table-data-row">
-        <td ng-repeat="column in columns" class="smart-table-data-cell {{column.cellClass}}"></td>
+        <td ng-repeat="column in columns" class="smart-table-data-cell {{column.cellClass}}" ng-style="column.style" ng-class="{'smart-table-first-cell': $first, 'smart-table-last-cell': $last}"></td>
     </tr>
-    </tbody>
+	</tbody>
     <tfoot ng-show="isPaginationEnabled">
     <tr class="smart-table-footer-row">
-        <td colspan="{{columns.length}}">
+        <td colspan="{{columns.length}}" id="smart-table-footer-cell smart-table-first-cell smart-table-last-cell">
             <div pagination-smart-table="" num-pages="numberOfPages" max-size="maxSize" current-page="currentPage"></div>
         </td>
     </tr>

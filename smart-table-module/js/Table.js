@@ -13,7 +13,9 @@
 
             //just to remind available option
             sortAlgorithm: '',
-            filterAlgorithm: ''
+            filterAlgorithm: '',
+			rowClassEven: '',
+			rowClassOdd: ''
         })
         .controller('TableCtrl', ['$scope', 'Column', '$filter', '$parse', 'ArrayUtility', 'DefaultTableConfiguration', function (scope, Column, filter, parse, arrayUtility, defaultConfig) {
 
@@ -109,6 +111,7 @@
              * @param column
              */
             this.sortBy = function (column) {
+                column = column || scope.columns[scope.config.defaultSortColumn];
                 var index = scope.columns.indexOf(column);
                 if (index !== -1) {
                     if (column.isSortable === true) {
@@ -118,7 +121,7 @@
                         }
 
                         column.sortPredicate = column.sortPredicate || column.map;
-                        column.reverse = column.reverse !== true;
+                        column.reverse = column.reverse === false;
                         lastColumnSort = column;
                     }
                 }

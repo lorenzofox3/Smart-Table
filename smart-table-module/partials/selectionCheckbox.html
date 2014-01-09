@@ -1,1 +1,1 @@
-<input type="checkbox" ng-model="dataRow.isSelected" stop-event="click"/>
+<input type="checkbox" ng-click="$emit('selectionChange', dataRow);" ng-model="dataRow.isSelected" stop-event="click"/>
