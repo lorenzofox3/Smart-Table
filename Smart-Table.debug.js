@@ -140,7 +140,7 @@
                     element.bind('click', function () {
 						if (scope.selectionMode == 'single' || (scope.selectionMode == 'multiple' && !scope.displaySelectionCheckbox)) {
 							scope.$apply(function () {
-								ctrl.toggleSelection(scope.datarow);
+								ctrl.toggleSelection(scope.dataRow);
 							});
 						}
                     });
