@@ -75,12 +75,13 @@
                 require: '^smartTable',
                 restrict: 'C',
                 link: function (scope, element, attr, ctrl) {
-                    // // ATTN: Commented out so click can happen in cell
-                    // element.bind('click', function () {
-                    //     scope.$apply(function () {
-                    //         ctrl.toggleSelection(scope.dataRow);
-                    //     });
-                    // });
+                    element.bind('click', function () {
+						if (scope.selectionMode == 'single' || (scope.selectionMode == 'multiple' && !scope.displaySelectionCheckbox)) {
+							scope.$apply(function () {
+								ctrl.toggleselection(scope.datarow);
+							});
+						}
+                    });
                 }
             };
         })

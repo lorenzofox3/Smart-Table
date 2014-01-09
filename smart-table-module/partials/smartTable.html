@@ -4,7 +4,7 @@
 	</colgroup>
     <thead>
     <tr class="smart-table-global-search-row" ng-show="isGlobalSearchActivated">
-        <td class="smart-table-global-search" column-span="{{columns.length}}" colspan="{{columnSpan}}">
+        <td class="smart-table-global-search smart-table-first-cell smart-table-last-cell" column-span="{{columns.length}}" colspan="{{columnSpan}}">
         </td>
     </tr>
     <tr class="smart-table-header-row">
@@ -21,7 +21,7 @@
 	</tbody>
     <tfoot ng-show="isPaginationEnabled">
     <tr class="smart-table-footer-row">
-        <td colspan="{{columns.length}}" id="smart-table-footer-cell">
+        <td colspan="{{columns.length}}" id="smart-table-footer-cell smart-table-first-cell smart-table-last-cell">
             <div pagination-smart-table="" num-pages="numberOfPages" max-size="maxSize" current-page="currentPage"></div>
         </td>
     </tr>
