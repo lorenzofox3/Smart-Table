@@ -217,7 +217,7 @@
                     scope.$watch('dataRow', function (value) {
                         scope.formatedValue = format(getter(row), column.formatFunction, column.formatParameter);
                         if (isSimpleCell === true) {
-                            element.text(scope.formatedValue);
+                            element.html(scope.formatedValue);
                         }
                     }, true);
 
@@ -226,7 +226,7 @@
                             element.html('<div editable-cell="" row="dataRow" column="column" type="column.type"></div>');
                             compile(element.contents())(scope);
                         } else {
-                            element.text(scope.formatedValue);
+                            element.html(scope.formatedValue);
                         }
                     }
 
@@ -645,7 +645,7 @@ angular.module("partials/globalSearchCell.html", []).run(["$templateCache", func
 angular.module("partials/pagination.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/pagination.html",
     "<div class=\"pagination\">\n" +
-    "    <ul>\n" +
+    "    <ul class=\"pagination\">\n" +
     "        <li ng-repeat=\"page in pages\" ng-class=\"{active: page.active, disabled: page.disabled}\"><a\n" +
     "                ng-click=\"selectPage(page.number)\">{{page.text}}</a></li>\n" +
     "    </ul>\n" +
