@@ -7,7 +7,7 @@ angular.module("partials/defaultCell.html", []).run(["$templateCache", function(
 
 angular.module("partials/defaultHeader.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/defaultHeader.html",
-    "<span class=\"header-content\" ng-class=\"{'sort-ascent':column.reverse==true,'sort-descent':column.reverse==false}\">{{column.label}}</span>");
+    "<span class=\"header-content\" ng-class=\"{'sort-ascent':column.reverse==flipSymbols,'sort-descent':column.reverse==!flipSymbols}\">{{column.label}}</span>");
 }]);
 
 angular.module("partials/editableCell.html", []).run(["$templateCache", function($templateCache) {

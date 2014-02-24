@@ -14,6 +14,9 @@
             //allows a third sorting option, which is the natural order
             isNaturalOrderEnabled: false,
 
+            // Which sort symbol preference to use
+            flipSymbols: false,
+
             //just to remind available option
             sortAlgorithm: '',
             filterAlgorithm: ''
