@@ -217,7 +217,7 @@
                     scope.$watch('dataRow', function (value) {
                         scope.formatedValue = format(getter(row), column.formatFunction, column.formatParameter);
                         if (isSimpleCell === true) {
-                            element.text(scope.formatedValue);
+                            element.html(scope.formatedValue);
                         }
                     }, true);
 
@@ -226,7 +226,7 @@
                             element.html('<div editable-cell="" row="dataRow" column="column" type="column.type"></div>');
                             compile(element.contents())(scope);
                         } else {
-                            element.text(scope.formatedValue);
+                            element.html(scope.formatedValue);
                         }
                     }
 
@@ -354,6 +354,8 @@
             isPaginationEnabled: true,
             itemsByPage: 10,
             maxSize: 5,
+            serverSideSort: false,
+            serverSideFilter: false,
 
             //just to remind available option
             sortAlgorithm: '',
@@ -492,12 +494,16 @@
              * @returns Array, an array result of the operations on input array
              */
             this.pipe = function (array) {
-                var filterAlgo = (scope.filterAlgorithm && angular.isFunction(scope.filterAlgorithm)) === true ? scope.filterAlgorithm : filter('filter'),
-                    output;
-                //filter and sort are commutative
-                output = sortDataRow(arrayUtility.filter(array, filterAlgo, predicate), lastColumnSort);
-                scope.numberOfPages = calculateNumberOfPages(output);
-                return scope.isPaginationEnabled ? arrayUtility.fromTo(output, (scope.currentPage - 1) * scope.itemsByPage, scope.itemsByPage) : output;
+                if (scope.serverSideFilter && scope.serverSideSort && !scope.isPaginationEnabled) {
+                    return array;
+                } else {
+                    var filterAlgo = (scope.filterAlgorithm && angular.isFunction(scope.filterAlgorithm)) === true ? scope.filterAlgorithm : filter('filter'),
+                        output;
+                    //filter and sort are commutative
+                    output = sortDataRow(arrayUtility.filter(array, filterAlgo, predicate), lastColumnSort);
+                    scope.numberOfPages = calculateNumberOfPages(output);
+                    return scope.isPaginationEnabled ? arrayUtility.fromTo(output, (scope.currentPage - 1) * scope.itemsByPage, scope.itemsByPage) : output;
+                }
             };
 
             /*////////////

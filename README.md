@@ -27,6 +27,13 @@ This project is a lightweight table/grid builder. It is meant to be easy configu
 
 You'll find running examples and more documentation at [the demo website](http://lorenzofox3.github.io/smart-table-website/)
 
+## Turn fork modifications
+
+### Options
+
+- `serverSideSort` (default: `false`)
+- `serverSideFilter` (default: `false`)
+
 ## How to use Smart-Table
 
 * You can clone the repository: the source code will be under smart-table-module directory.
