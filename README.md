@@ -30,6 +30,7 @@ You'll find running examples and more documentation at [the demo website](http:/
 ## Turn fork modifications
 
 - Added mock server in ./example-server
+- Example in ./example-app now loads data from mock server
 
 ### Options
 
