@@ -34,12 +34,12 @@ You'll find running examples and more documentation at [the demo website](http:/
 
 ### Events
 
-- `smartTable:sort`
-    ```js
-    scope.$on('smartTable:sort', function (event, column) {
-        ...
-    });
-    ```
+```js
+// sort
+scope.$on('smartTable:sort', function (event, column) {
+    ...
+});
+```
 
 ### Table options
 
