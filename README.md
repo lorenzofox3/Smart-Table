@@ -2,6 +2,42 @@
 
 [![Build Status](https://secure.travis-ci.org/turn/Smart-Table.png)](http://travis-ci.org/turn/Smart-Table)
 
+## Turn fork modifications
+
+- Added mock server in ./example-server
+- Example in ./example-app now loads data from mock server
+
+### Events
+
+```js
+// search
+scope.$on('search', function (event, column) {
+    ...
+});
+// sort
+scope.$on('sortColumn', function (event, column) {
+    ...
+});
+```
+
+### Table options
+
+- `serverSideSort` (default: `false`)
+- `serverSideFilter` (default: `false`)
+
+## How to use Smart-Table
+
+1. Install smart table: `npm install --save git://github.com/turn/Smart-Table.git#v0.2.8`
+2. Then require it in your module:
+
+```js
+require('Smart-Table');
+
+angular
+.module('myApp', ['smartTable.table'])
+...
+```
+
 This project is a lightweight table/grid builder. It is meant to be easy configurable but also easy customisable
 (if you want to use it as a base for your own grid development). In The current version (0.1.0) the features are
 
@@ -29,52 +65,7 @@ This project is a lightweight table/grid builder. It is meant to be easy configu
 
 You'll find running examples and more documentation at [the demo website](http://lorenzofox3.github.io/smart-table-website/)
 
-## Turn fork modifications
-
-- Added mock server in ./example-server
-- Example in ./example-app now loads data from mock server
-
-### Events
-
-```js
-// search
-scope.$on('search', function (event, column) {
-    ...
-});
-// sort
-scope.$on('sortColumn', function (event, column) {
-    ...
-});
-```
-
-### Table options
-
-- `serverSideSort` (default: `false`)
-- `serverSideFilter` (default: `false`)
-
-## How to use Smart-Table
-
-* You can clone the repository: the source code will be under smart-table-module directory.
-* You can add the Smart-Table.min.js file to your application and then add the module `smartTable.table` to your own app module. The build includes all the template in the $templateCache
-so you need only this file.
-* use [bower](https://github.com/bower/bower) and run the command `bower install smart-table`
-
 ## Smart Table for developers
-
-### the branches
-
-* The [master](https://github.com/lorenzofox3/Smart-Table) branch is the main branch where you can find stable/tested code for a fully client side table module.
-* The [cowboy](https://github.com/lorenzofox3/Smart-Table/tree/cowboy) branch is where we add some modifications on the `Directives.js` file. This part is not tested and is more an "experimental" branch
-* The [server-partial](https://github.com/lorenzofox3/Smart-Table/tree/server-partial) branch:
-I have quite a few times been asked :
-
-> " I have a huge set of data which I want to be loaded in the browser only on demand, how can I do that ?"
-
-This is somehow `server-side pagination`. You load the data on demand but keep the rest of the logic on the client side (sort,filter,...)
-This branch show you how to turn smart-table to be able to have this particular flow (~10 lines to change)
-* The [server-sample](https://github.com/lorenzofox3/Smart-Table/tree/server-sample) branch:
-This time is a small example on how to change smart-table to have the whole logic (sort, filter, ...) on the server side, and be able
-to send particular queries to the server (with proper filter value, sort value, etc)
 
 ### How does Smart-Table work ?
 
@@ -93,26 +84,34 @@ So, at the end you don't even have to use the provided directives and build your
 
 ###The build process
 
-1. install [node.js] (http://nodejs.org/) and run `npm install` to install the required node modules.
-2. the build tasks are [Grunt](http://gruntjs.com/).
+```bash
+npm install
+grunt build
+```
+
+The build tasks use [Grunt](http://gruntjs.com/):
 * if you run `grunt build` it will perform the following operations:
     * transform the template (.html) files into an angular module and load them in the [$templateCache](http://docs.angularjs.org/api/ng.$templateCache) (it will result with the `Template.js` file.
     * concatenate all the source files into a single one (Smart-Table.debug.js)
     * minify the debug file so you have a production ready file (Smart-Table.min.js)
-* if you run `grunt refApp` the two first steps are the same that the build task, but at the end it will simply copy
-the Smart-Table.debug.js into the example-app folder (see below)
+* if you run `grunt refApp` the two first steps are the same that the build task, but at the end it will simply copy the Smart-Table.debug.js into the example-app folder (see below)
 
 ### The example app
-The example app is a running example of the smart-table in action.
-To run it :
-1. use node to run `scripts/web-server.js`
-2. In your browser go to http://localhost:<port>/example-app/index.html
+The example app is a running example of smart-table in action. To run it (note that `port` defaults to `8000`):
+
+```bash
+npm install
+node example-server/index <port>
+```
 
 ### Running unit tests
 
-Unit tests are provided for all the code except for Directive.js file which is a bit more experimental.
-Tests can be run with [Testacular](http://karma-runner.github.io/0.8/index.html): you'll find the config file under config folder. Note, the coverage is done by [Istanbul.js](http://gotwarlost.github.io/istanbul/)
-        
+```bash
+npm install
+karma start config/karma.conf.js
+karma run
+```
+
 ## License
 
 Smart Table module is under MIT license:
@@ -138,7 +137,3 @@ Smart Table module is under MIT license:
 > ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 > CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 > SOFTWARE.
-
-## Contact
-
-For more information on Smart Table, please contact the author at laurent34azerty@gmail.com

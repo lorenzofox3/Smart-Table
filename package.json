@@ -2,7 +2,7 @@
   "name": "Smart-Table",
   "version": "0.2.8",
   "description": "a table/grid for AngularJS",
-  "main": "smart-table-module",
+  "main": "Smart-Table.debug",
   "directories": {
     "test": "test",
     "example": "example-app"
