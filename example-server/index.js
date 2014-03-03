@@ -1,6 +1,6 @@
 var express = require('express'),
-	rowFactory = require('rowFactory'),
-	cors = require('cors');
+	cors = require('cors'),
+	rowFactory = require('./rowFactory');
 
 var port = process.argv[2] || 8000;
 
