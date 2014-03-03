@@ -55,6 +55,15 @@ module.exports = function (grunt) {
                 src: ['<%= pkg.name %>.debug.js'],
                 dest: '<%= pkg.name %>.min.js'
             }
+        },
+        watch: {
+            scripts: {
+                files: ['smart-table-module/js/*.js'],
+                tasks: ['build'],
+                options: {
+                    interrupt: true
+                }
+            }
         }
     });
     grunt.loadNpmTasks('grunt-contrib-concat');
@@ -63,6 +72,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-html2js');
     grunt.loadNpmTasks('grunt-regex-replace');
+    grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.registerTask('refApp', ['html2js:smartTable', 'concat', 'copy:refApp']);
     grunt.registerTask('build', function() {
         grunt.task.run('html2js:smartTable');

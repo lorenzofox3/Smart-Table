@@ -31,6 +31,7 @@
     "grunt-contrib-uglify": "~0.2.1",
     "grunt-regex-replace": "~0.2.5",
     "grunt-karma": "~0.6.2",
-    "karma-complexity-preprocessor": "~0.1.0"
+    "karma-complexity-preprocessor": "~0.1.0",
+    "grunt-contrib-watch": "~0.5.3"
   }
 }
