@@ -476,6 +476,16 @@ describe('Table module', function () {
                 expect(scope.displayedCollection).toEqual(refArray);
             });
 
+            it('should not sort the displayed collection when serverSideFilter && serverSideSort && !isPaginationEnabled', function () {
+
+                scope.serverSideFilter = true;
+                scope.serverSideSort = true;
+                scope.isPaginationEnabled = false;
+
+                ctrl.sortBy(scope.columns[1]);
+                expect(scope.displayedCollection).toEqual(refArray);
+            });
+
         });
 
         describe('search data rows', function () {
