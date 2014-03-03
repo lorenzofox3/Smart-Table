@@ -1,5 +1,7 @@
 # Smart Table— an easy to use table/grid 
 
+[![Build Status](https://secure.travis-ci.org/turn/Smart-Table.png)](http://travis-ci.org/turn/Smart-Table)
+
 This project is a lightweight table/grid builder. It is meant to be easy configurable but also easy customisable
 (if you want to use it as a base for your own grid development). In The current version (0.1.0) the features are
 

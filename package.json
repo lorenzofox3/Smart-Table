@@ -8,6 +8,7 @@
     "example": "example-app"
   },
   "scripts": {
+    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS",
     "webServer": "scripts/web-server.js"
   },
   "repository": {
@@ -32,6 +33,7 @@
     "grunt-regex-replace": "~0.2.5",
     "grunt-karma": "~0.6.2",
     "karma-complexity-preprocessor": "~0.1.0",
-    "grunt-contrib-watch": "~0.5.3"
+    "grunt-contrib-watch": "~0.5.3",
+    "karma": "~0.10.9"
   }
 }
