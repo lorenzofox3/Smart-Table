@@ -40,11 +40,11 @@
 }
 
 .sort-ascent:before {
-    content: "\25B4";
+    content: "▲";
 }
 
 .sort-descent:before {
-    content: "\25BE";
+    content: "▼";
 }
 
 .pagination {

@@ -58,7 +58,7 @@ module.exports = function (grunt) {
         },
         watch: {
             scripts: {
-                files: ['smart-table-module/js/*.js'],
+                files: ['smart-table-module/js/*.js', 'example-app/js/*.js'],
                 tasks: ['build'],
                 options: {
                     interrupt: true

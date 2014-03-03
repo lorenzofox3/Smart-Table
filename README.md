@@ -32,7 +32,16 @@ You'll find running examples and more documentation at [the demo website](http:/
 - Added mock server in ./example-server
 - Example in ./example-app now loads data from mock server
 
-### Options
+### Events
+
+- `smartTable:sort`
+    ```js
+    scope.$on('smartTable:sort', function (event, column) {
+        ...
+    });
+    ```
+
+### Table options
 
 - `serverSideSort` (default: `false`)
 - `serverSideFilter` (default: `false`)

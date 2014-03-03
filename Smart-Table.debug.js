@@ -148,6 +148,7 @@
                 require: '^smartTable',
                 link: function (scope, element, attr, ctrl) {
                     element.bind('click', function () {
+                        scope.$emit('smartTable:sort', scope.column);
                         scope.$apply(function () {
                             ctrl.sortBy(scope.column);
                         });
