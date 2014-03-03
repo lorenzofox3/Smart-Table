@@ -8,7 +8,7 @@
     "example": "example-app"
   },
   "scripts": {
-    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS",
+    "test": "./node_modules/.bin/karma start config/karma.travis.conf.js",
     "webServer": "scripts/web-server.js"
   },
   "repository": {

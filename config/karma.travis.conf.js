@@ -14,7 +14,9 @@ module.exports = function (config) {
 
         autoWatch: false,
 
-        browsers: ['PhantomJS'],
+        singleRun: true,
+
+        browsers: ['PhantomJS', 'Firefox'],
 
         preprocessors: {
             'smart-table-module/js/Column.js': 'coverage',
@@ -24,17 +26,7 @@ module.exports = function (config) {
             'smart-table-module/js/Directives.js': 'coverage'
         },
 
-        reporters: ['progress', 'coverage'],
-
-        junitReporter: {
-            outputFile: 'test_out/unit.xml',
-            suite: 'unit'
-        },
-
-        coverageReporter: {
-            type: 'html',
-            dir: 'test_out/'
-        }
+        reporters: ['progress', 'coverage']
 
     });
 };

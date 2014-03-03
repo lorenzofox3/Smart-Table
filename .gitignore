@@ -9,3 +9,4 @@ build.xml
 
 test_out
 node_modules
+coverage
