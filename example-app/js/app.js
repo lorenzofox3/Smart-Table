@@ -24,6 +24,12 @@ angular
 
     angular.extend(scope, {
 
+        search: function (e, column) {
+
+            console.log(e, column);
+
+        },
+
         sort: function (e, column) {
 
             var field = column.map,
@@ -42,6 +48,7 @@ angular
 
     });
 
+    scope.$on('search', scope.search);
     scope.$on('sortColumn', scope.sort);
     
 }]);

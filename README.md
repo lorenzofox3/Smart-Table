@@ -35,6 +35,10 @@ You'll find running examples and more documentation at [the demo website](http:/
 ### Events
 
 ```js
+// search
+scope.$on('search', function (event, column) {
+    ...
+});
 // sort
 scope.$on('sortColumn', function (event, column) {
     ...

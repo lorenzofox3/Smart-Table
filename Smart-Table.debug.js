@@ -193,6 +193,7 @@
 
                     scope.$watch('searchValue', function (value) {
                         //todo perf improvement only filter on blur ?
+                        scope.$emit('search', value);
                         ctrl.search(value);
                     });
                 }
