@@ -29,6 +29,8 @@ You'll find running examples and more documentation at [the demo website](http:/
 
 ## Turn fork modifications
 
+- Added mock server in ./example-server
+
 ### Options
 
 - `serverSideSort` (default: `false`)

@@ -6,3 +6,6 @@ build.xml
 .project
 .settings
 .idea/*
+
+test_out
+node_modules
