@@ -7,5 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Boris Cherny <boris@performancejs.com> (http://performancejs.com/)",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "cors": "~2.1.1",
+    "express": "~3.4.8"
+  }
 }

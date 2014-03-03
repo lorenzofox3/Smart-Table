@@ -1,39 +1,24 @@
 'use strict';
 // Declare app level module which depends on filters, and services
 var app = angular.module('myApp', ['smartTable.table']).
-    controller('mainCtrl', ['$scope', function (scope) {
+    controller('mainCtrl', ['$scope', '$http', function (scope, http) {
 
-        var
-            nameAsset = ['Pierre', 'Pol', 'Jacques', 'Laurent', 'Nicolas'],
-            generateRandomItem = function (id) {
-                var
-                    age = Math.floor(Math.random() * 100),
-                    balance = Math.random() * 10000,
-                    name = nameAsset[Math.floor(Math.random() * 5)],
-                    email = name + balance + '@' + name + '.com';
+        http
+        .get('http://localhost:8000')
+        .then(function (res) {
 
+            scope.rowCollection = res.data;
+
+            scope.columnCollection = Object.keys(scope.rowCollection[0]).map(function (key) {
                 return {
-                    id: id,
-                    name: name,
-                    email: email,
-                    age: age,
-                    balance: balance
+                    label: key,
+                    map: key
                 };
-            };
+            });
 
-        scope.rowCollection = [];
-
-        for (var i = 0; i < 400; i++) {
-            scope.rowCollection.push(generateRandomItem(i));
-        }
-
-        scope.columnCollection = [
-            {label: 'id', map: 'id'},
-            {label: 'Name', map: 'name'},
-            {label: 'Age', map:'age'},
-            {label: 'Balance', map: 'balance', isEditable: true, type: 'number', formatFunction: 'currency', formatParameter: '$'},
-            {label: 'Email', map: 'email', type: 'email', isEditable: true}
-        ];
+        }, function (err) {
+            throw new Error (err);
+        });
 
         scope.globalConfig = {
             isPaginationEnabled: true,
@@ -41,14 +26,5 @@ var app = angular.module('myApp', ['smartTable.table']).
             itemsByPage: 200,
             syncColumns: false
         };
-
-        scope.shuffleColumns = function() {
-            function shuffle(o){ //v1.0
-                for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
-                return o;
-            };
-            var newColumns = scope.columnCollection.slice();
-            shuffle(newColumns);
-            scope.columnCollection = newColumns;
-        }
+        
     }]);

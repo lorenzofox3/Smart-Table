@@ -1,10 +1,12 @@
 var express = require('express'),
-	rowFactory = require('rowFactory');
+	rowFactory = require('rowFactory'),
+	cors = require('cors');
 
-var app = express(),
-	port = process.argv[2] || 8000;
+var port = process.argv[2] || 8000;
 
-app.get('/', function (req, res) {
+express()
+.use(cors())
+.get('/', function (req, res) {
 	"use strict";
 
 	res.send(
@@ -13,8 +15,7 @@ app.get('/', function (req, res) {
 		.map(rowFactory)
 	);
 
-});
-
-app.listen(port);
+})
+.listen(port);
 
 console.log('http server started on port', port, '...');
