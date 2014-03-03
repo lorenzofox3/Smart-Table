@@ -36,7 +36,7 @@ You'll find running examples and more documentation at [the demo website](http:/
 
 ```js
 // sort
-scope.$on('smartTable:sort', function (event, column) {
+scope.$on('sortColumn', function (event, column) {
     ...
 });
 ```

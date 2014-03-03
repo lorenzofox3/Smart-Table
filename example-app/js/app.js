@@ -36,12 +36,12 @@ angular
             isPaginationEnabled: false,
             isGlobalSearchActivated: true,
             serverSideFilter: true,
-            serverSideSort: true
+            serverSideSort: true,
+            selectionMode: 'single'
         }
 
     });
 
-    scope.$on('smartTable:sort', scope.sort);
-
+    scope.$on('sortColumn', scope.sort);
     
 }]);
