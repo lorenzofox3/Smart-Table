@@ -11,6 +11,12 @@
             itemsByPage: 10,
             maxSize: 5,
 
+            //allows a third sorting option, which is the natural order
+            isNaturalOrderEnabled: false,
+
+            // Which sort symbol preference to use
+            flipSymbols: false,
+
             //just to remind available option
             sortAlgorithm: '',
             filterAlgorithm: ''
@@ -48,7 +54,7 @@
 
             function sortDataRow(array, column) {
                 var sortAlgo = (scope.sortAlgorithm && angular.isFunction(scope.sortAlgorithm)) === true ? scope.sortAlgorithm : filter('orderBy');
-                if (column) {
+                if (column && !(column.reverse === undefined)) {
                     return arrayUtility.sort(array, sortAlgo, column.sortPredicate, column.reverse);
                 } else {
                     return array;
@@ -114,11 +120,26 @@
                     if (column.isSortable === true) {
                         // reset the last column used
                         if (lastColumnSort && lastColumnSort !== column) {
-                            lastColumnSort.reverse = 'none';
+                            lastColumnSort.reverse = undefined;
+                        }
+                        column.sortPredicate = column.sortPredicate || column.map;
+
+                        //handles case of natural order configuration
+                        if(scope.isNaturalOrderEnabled){
+                            if (column.reverse === undefined) {
+                                column.reverse = false;
+                            }
+                            else if (column.reverse === false) {
+                                column.reverse = true;
+                            }
+                            else {
+                                column.reverse = undefined;
+                            }
+                        }
+                        else {
+                            column.reverse = column.reverse !== true;
                         }
 
-                        column.sortPredicate = column.sortPredicate || column.map;
-                        column.reverse = column.reverse !== true;
                         lastColumnSort = column;
                     }
                 }
