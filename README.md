@@ -99,14 +99,21 @@ The build tasks use [Grunt](http://gruntjs.com/):
 * if you run `grunt refApp` the two first steps are the same that the build task, but at the end it will simply copy the Smart-Table.debug.js into the example-app folder (see below)
 
 ### The example app
-The example app is a running example of smart-table in action. To run it (note that `port` defaults to `8000`):
+The example app is a running example of smart-table in action. To run it:
 
 ```bash
-# install mock server dependencies
+# serve mock JSON from <portA>
 cd example-server
 npm install
-node index <port>
+node index <portA>
+
+# start static file server on <portB>
+npm install -g git://github.com/visionmedia/serve.git # NPM isn't up to date, so install directly from git
+cd Smart-Table
+serve . --port <portB>
 ```
+
+Then open [http://local:<port2>/example-app/](http://local:8000/example-app/) in a browser.
 
 ### Running unit tests
 
