@@ -1,6 +1,6 @@
-# Smart-Table an easy to use table/grid 
+# <%- name %> an easy to use table/grid 
 
-[![Build Status](https://secure.travis-ci.org/turn/Smart-Table.png)](http://travis-ci.org/turn/Smart-Table)
+[![Build Status](https://secure.travis-ci.org/turn/<%- name %>.png)](http://travis-ci.org/turn/<%- name %>)
 
 ## Turn fork modifications
 
@@ -29,11 +29,11 @@ scope.$on('sortColumn', function (event, column) {
 
 ## How to use Smart-Table
 
-1. Install smart table: `npm install --save git://github.com/turn/Smart-Table.git#v0.3.1`
+1. Install smart table: `npm install --save git://github.com/turn/Smart-Table.git#v<%- version %>`
 2. Then require it in your module:
 
 ```js
-require('Smart-Table');
+require('<%- name %>');
 
 angular
 .module('myApp', ['smartTable.table'])
@@ -98,7 +98,7 @@ The build tasks use [Grunt](http://gruntjs.com/):
     * minify the debug file so you have a production ready file (Smart-Table.min.js)
 
 ### Example app
-The example app is a running example of Smart-Table in action. To run it:
+The example app is a running example of <%- name %> in action. To run it:
 
 ```bash
 # serve mock JSON from <portA>
@@ -116,21 +116,21 @@ Then open [http://local:portB/example-app/](http://local:8000/example-app/) in a
 
 ### Developing Smart-Table
 
-Say you have Smart-Table in one folder, and your project (let's call it "Foo") that depends on Smart-Table in another folder. You want to make changes to Smart-Table, and see your changes reflected immediately in Foo:
+Say you have <%- name %> in one folder, and your project (let's call it "Foo") that depends on <%- name %> in another folder. You want to make changes to <%- name %>, and see your changes reflected immediately in Foo:
 
 ```bash
-cd Smart-Table
+cd <%- name %>
 npm install
 
-# watch for changes and automatically trigger rebuilds for Smart-Table.debug.js and Smart-Table.min.js
+# watch for changes and automatically trigger rebuilds for <%- name %>.debug.js and <%- name %>.min.js
 grunt watch
 
 # see npmjs.org/doc/cli/npm-link.html
 npm link
 
 cd Foo
-npm install --save git://github.com/turn/Smart-Table.git#v0.3.1
-npm link Smart-Table
+npm install --save git://github.com/turn/Smart-Table.git#v<%- version %>
+npm link <%- name %>
 ```
 
 ### Running unit tests
