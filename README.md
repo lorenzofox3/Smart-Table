@@ -7,7 +7,6 @@
 - Added mock server in ./example-server
 - Example in ./example-app now loads data from mock server
 - Set "sort-ascent"/"sort-descent" class on `<th>`'s directly (rather than on the `<span>` inside them)
-- Removed header template (defaultHeader.html)
 
 ### Events
 
@@ -29,7 +28,7 @@ scope.$on('sortColumn', function (event, column) {
 
 ## How to use Smart-Table
 
-1. Install smart table: `npm install --save git://github.com/turn/Smart-Table.git#v0.3.1`
+1. Install smart table: `npm install --save git://github.com/turn/Smart-Table.git#v0.3.2`
 2. Then require it in your module:
 
 ```js
@@ -129,7 +128,7 @@ grunt watch
 npm link
 
 cd Foo
-npm install --save git://github.com/turn/Smart-Table.git#v0.3.1
+npm install --save git://github.com/turn/Smart-Table.git#v0.3.2
 npm link Smart-Table
 ```
 
