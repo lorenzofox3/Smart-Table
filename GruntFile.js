@@ -44,12 +44,6 @@ module.exports = function (grunt) {
         clean: {
             test: ['test_out']
         },
-        copy: {
-            refApp: {
-                src: ['<%= pkg.name %>.debug.js'],
-                dest: 'example-app/js/'
-            }
-        },
         uglify: {
             main: {
                 src: ['<%= pkg.name %>.debug.js'],
@@ -64,6 +58,19 @@ module.exports = function (grunt) {
                     interrupt: true
                 }
             }
+        },
+        template: {
+            main: {
+                files: {
+                    'README.md': ['README.tmpl.md']
+                },
+                options: {
+                    data: {
+                        name: '<%= pkg.name %>',
+                        version: '<%= pkg.version %>'
+                    }
+                }
+            }
         }
     });
     grunt.loadNpmTasks('grunt-contrib-concat');
@@ -73,11 +80,13 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-html2js');
     grunt.loadNpmTasks('grunt-regex-replace');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.registerTask('refApp', ['html2js:smartTable', 'concat', 'copy:refApp']);
+    grunt.loadNpmTasks('grunt-template');
     grunt.registerTask('build', function() {
         grunt.task.run('html2js:smartTable');
         grunt.task.run('concat');
         if (grunt.option('startSymbol') && grunt.option('endSymbol')) grunt.task.run('regex-replace');
         grunt.task.run('uglify');
+        grunt.task.run('template');
     });
+    grunt.registerTask('default', 'build');
 };
