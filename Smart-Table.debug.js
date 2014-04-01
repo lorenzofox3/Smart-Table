@@ -619,11 +619,16 @@
 
 
 
-angular.module('smartTable.templates', ['partials/defaultCell.html', 'partials/editableCell.html', 'partials/globalSearchCell.html', 'partials/pagination.html', 'partials/selectAllCheckbox.html', 'partials/selectionCheckbox.html', 'partials/smartTable.html']);
+angular.module('smartTable.templates', ['partials/defaultCell.html', 'partials/defaultHeader.html', 'partials/editableCell.html', 'partials/globalSearchCell.html', 'partials/pagination.html', 'partials/selectAllCheckbox.html', 'partials/selectionCheckbox.html', 'partials/smartTable.html']);
 
 angular.module("partials/defaultCell.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/defaultCell.html",
     "{{formatedValue}}");
+}]);
+
+angular.module("partials/defaultHeader.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("partials/defaultHeader.html",
+    "{{column.label}}");
 }]);
 
 angular.module("partials/editableCell.html", []).run(["$templateCache", function($templateCache) {
@@ -672,7 +677,7 @@ angular.module("partials/smartTable.html", []).run(["$templateCache", function($
     "        </td>\n" +
     "    </tr>\n" +
     "    <tr class=\"smart-table-header-row\">\n" +
-    "        <th ng-repeat=\"column in columns\" scope=\"col\" class=\"smart-table-header-cell {{column.headerClass}}\" ng-class=\"{'sort-ascent':column.reverse==true, 'sort-descent':column.reverse==false}\">{{column.label}}</th>\n" +
+    "        <th ng-repeat=\"column in columns\" ng-include=\"column.headerTemplateUrl\" scope=\"col\" class=\"smart-table-header-cell {{column.headerClass}}\" ng-class=\"{'sort-ascent':column.reverse==false, 'sort-descent':column.reverse==true}\"></th>\n" +
     "    </tr>\n" +
     "    </thead>\n" +
     "    <tbody>\n" +

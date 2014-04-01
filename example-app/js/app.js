@@ -33,7 +33,7 @@ angular
         sort: function (e, column) {
 
             var field = column.map,
-                order = column.reverse ? 'DESC' : 'ASC'; // because the default sort order is ASC
+                order = column.reverse ? 'ASC' : 'DESC';
             
             console.log(field, order);
         },
