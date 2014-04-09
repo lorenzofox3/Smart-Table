@@ -74,14 +74,14 @@
                 require: '^smartTable',
                 restrict: 'C',
                 link: function (scope, element, attr, ctrl) {
-                    
+
                     var _config;
                     if ((_config = scope.config) != null) {
                         if (typeof _config.rowFunction === "function") {
                             _config.rowFunction(scope, element, attr, ctrl);
                         }
                     }
-                    
+
                     element.bind('click', function () {
                         scope.$apply(function () {
                             ctrl.toggleSelection(scope.dataRow);
@@ -157,12 +157,15 @@
                         isSimpleCell = !column.isEditable,
                         row = scope.dataRow,
                         format = filter('format'),
-                        getter = parse(column.map),
+                        // https://github.com/lorenzofox3/Smart-Table/issues/101
+                        getter = parse('row.'+column.map),
                         childScope;
 
                     //can be useful for child directives
-                    scope.$watch('dataRow', function (value) {
-                        scope.formatedValue = format(getter(row), column.formatFunction, column.formatParameter);
+                    scope.$watch('dataRow', function() {
+                        var preFormattedValue = getter({row: row});
+                        // TODO: fix misspelled "formatedValue" in a future breaking release
+                        scope.formatedValue = format(preFormattedValue, column.formatFunction, column.formatParameter);
                         if (isSimpleCell === true) {
                             element.html(scope.formatedValue);
                         }
@@ -226,12 +229,17 @@
                 link: function (scope, element, attrs, ctrl) {
                     var form = angular.element(element.children()[1]),
                         input = angular.element(form.children()[0]),
-                        getter = parse(scope.column.map);
+                        getter = parse('row.'+scope.column.map);
+
+                    // https://github.com/lorenzofox3/Smart-Table/issues/101
+                    function getWrappedRow() {
+                        return {row: scope.row};
+                    }
 
                     //init values
                     scope.isEditMode = false;
                     scope.$watch('row', function () {
-                        scope.value = getter(scope.row);
+                        scope.value = getter(getWrappedRow());
                     }, true);
 
 
@@ -245,7 +253,7 @@
                     };
 
                     scope.toggleEditMode = function () {
-                        scope.value = getter(scope.row);
+                        scope.value = getter(getWrappedRow());
                         scope.isEditMode = scope.isEditMode !== true;
                     };
 
