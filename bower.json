@@ -1,0 +1,16 @@
+{
+  "name": "Smart-Table",
+  "version": "0.3.3",
+  "homepage": "https://github.com/turn/Smart-Table",
+  "description": "a table/grid for AngularJS",
+  "main": "Smart-Table.debug.js",
+  "keywords": [
+    "table",
+    "grid",
+    "angularjs"
+  ],
+  "authors": [
+    "Boris Cherny <bcherny@turn.com>"
+  ],
+  "license": "Apache2"
+}
