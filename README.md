@@ -7,6 +7,7 @@
 - Added mock server in ./example-server
 - Example in ./example-app now loads data from mock server
 - Set "sort-ascent"/"sort-descent" class on `<th>`'s directly (rather than on the `<span>` inside them)
+- Removed `isGlobalSearchActivated` flag
 
 ### Events
 
