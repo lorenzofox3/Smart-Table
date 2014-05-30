@@ -29,7 +29,7 @@ scope.$on('sortColumn', function (event, column) {
 
 ## How to use Smart-Table
 
-1. Install smart table: `npm install --save git://github.com/turn/Smart-Table.git#v0.3.2`
+1. Install smart table: `npm install --save git://github.com/turn/Smart-Table.git#v0.3.3`
 2. Then require it in your module:
 
 ```js
@@ -129,7 +129,7 @@ grunt watch
 npm link
 
 cd Foo
-npm install --save git://github.com/turn/Smart-Table.git#v0.3.2
+npm install --save git://github.com/turn/Smart-Table.git#v0.3.3
 npm link Smart-Table
 ```
 

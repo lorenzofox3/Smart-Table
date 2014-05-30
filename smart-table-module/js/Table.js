@@ -115,11 +115,11 @@
                     if (column.isSortable === true) {
                         // reset the last column used
                         if (lastColumnSort && lastColumnSort !== column) {
-                            lastColumnSort.reverse = 'none';
+                            delete lastColumnSort.reverse;
                         }
 
                         column.sortPredicate = column.sortPredicate || column.map;
-                        column.reverse = column.reverse !== true;
+                        column.reverse = !column.reverse;
                         lastColumnSort = column;
                     }
                 }
