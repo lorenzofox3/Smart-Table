@@ -262,13 +262,11 @@
              */
             this.updateDataRow = function (dataRow, propertyName, newValue) {
                 var index = scope.displayedCollection.indexOf(dataRow),
-                    getter = parse(propertyName),
-                    setter = getter.assign,
                     oldValue;
                 if (index !== -1) {
-                    oldValue = getter(scope.displayedCollection[index]);
+                    oldValue = scope.displayedCollection[index][propertyName];
                     if (oldValue !== newValue) {
-                        setter(scope.displayedCollection[index], newValue);
+                        scope.displayedCollection[index][propertyName] = newValue;
                         scope.$emit('updateDataRow', {item: scope.displayedCollection[index]});
                     }
                 }
