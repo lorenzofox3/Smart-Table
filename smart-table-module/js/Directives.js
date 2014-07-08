@@ -219,6 +219,8 @@
         })
         //an editable content in the context of a cell (see row, column)
         .directive('editableCell', ['templateUrlList', '$parse', function (templateList, parse) {
+			var ESC = 27,
+				ENTER = 13;
             return {
                 restrict: 'EA',
                 require: '^smartTable',
@@ -240,7 +242,6 @@
                         scope.value = getter(scope.row);
                     }, true);
 
-
                     scope.submit = function () {
                         //update model if valid
                         if (scope.myForm.$valid === true) {
@@ -249,6 +250,13 @@
                         }
                         scope.toggleEditMode();
                     };
+
+					scope.restore = function () {
+						scope.$apply(function () {
+							scope.toggleEditMode();
+						});
+						scope.submit();
+					};
 
                     scope.toggleEditMode = function () {
                         scope.value = getter(scope.row);
@@ -267,6 +275,18 @@
                             scope.submit();
                         });
                     });
+
+					input.bind('keyup', function (event) {
+						if (event.keyCode === ESC) {
+							scope.restore();
+						}
+						if (event.keyCode === ENTER) {
+							scope.$apply(function () {
+								scope.submit();
+							});
+							scope.toggleEditMode();
+						}
+					});
                 }
             };
         }]);
