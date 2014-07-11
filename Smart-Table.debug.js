@@ -148,10 +148,12 @@
                 require: '^smartTable',
                 link: function (scope, element, attr, ctrl) {
                     element.bind('click', function () {
-                        scope.$emit('sortColumn', scope.column);
-                        scope.$apply(function () {
-                            ctrl.sortBy(scope.column);
-                        });
+                        if (scope.column.isSortable) {
+                            scope.$emit('sortColumn', scope.column);
+                            scope.$apply(function () {
+                                ctrl.sortBy(scope.column);
+                            });
+                        }
                     })
                 }
             };
