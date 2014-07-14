@@ -10,3 +10,8 @@ build.xml
 .test_out
 .logs
 .node_modules
+/Smart-Table.ipr
+/Smart-Table.iws
+/node_modules
+/Smart-Table.iml
+/copy-to-proto.bat
