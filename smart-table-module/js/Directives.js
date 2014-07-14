@@ -268,7 +268,8 @@
 						scope.submit();
 					};
 
-                    scope.toggleEditMode = function () {
+                    scope.toggleEditMode = function (event) {
+						event ? event.stopPropagation() : angular.noop();
                         scope.value = getter(scope.row);
                         scope.isEditMode = scope.isEditMode !== true;
                     };
