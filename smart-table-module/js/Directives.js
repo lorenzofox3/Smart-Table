@@ -41,6 +41,16 @@
 
                         ctrl.clearColumns();
 
+						// ADDED BY OM re this issue: https://github.com/lorenzofox3/Smart-Table/issues/83
+						//add selection box column if required
+						if (scope.selectionMode === 'multiple' && scope.displaySelectionCheckbox === true) {
+							ctrl.insertColumn({
+								cellTemplateUrl : templateList.selectionCheckbox,
+								headerTemplateUrl : templateList.selectAllCheckbox,
+								isSelectionColumn : true
+							}, 0);
+						}
+
                         if (scope.columnCollection) {
                             for (var i = 0, l = scope.columnCollection.length; i < l; i++) {
                                 ctrl.insertColumn(scope.columnCollection[i]);
