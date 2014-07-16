@@ -94,6 +94,7 @@
 
                         ctrl.clearColumns();
 
+						// ADDED BY OM re this issue: https://github.com/lorenzofox3/Smart-Table/issues/83
 						//add selection box column if required
 						if (scope.selectionMode === 'multiple' && scope.displaySelectionCheckbox === true) {
 							ctrl.insertColumn({
@@ -320,7 +321,8 @@
 						scope.submit();
 					};
 
-                    scope.toggleEditMode = function () {
+                    scope.toggleEditMode = function (event) {
+						event ? event.stopPropagation() : angular.noop();
                         scope.value = getter(scope.row);
                         scope.isEditMode = scope.isEditMode !== true;
                     };
