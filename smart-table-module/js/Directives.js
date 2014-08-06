@@ -61,45 +61,47 @@
                     }, true);
 
                     //insert columns from column config
-                    scope.$watchCollection(['columnCollection','columnGroupCollection'], function () {
+                    angular.forEach(['columnCollection','columnGroupCollection'], function(key){
+                        scope.$watchCollection(key, function () {
 
-                        ctrl.clearColumns(); // clears columns and column groups
+                            ctrl.clearColumns(); // clears columns and column groups
 
-                        if (scope.columnCollection) {
-                            for (var i = 0, l = scope.columnCollection.length; i < l; i++) {
-                                ctrl.insertColumn(scope.columnCollection[i]);
+                            if (scope.columnCollection) {
+                                for (var i = 0, l = scope.columnCollection.length; i < l; i++) {
+                                    ctrl.insertColumn(scope.columnCollection[i]);
+                                }
+                            } else {
+                                //or guess data Structure
+                                if (scope.dataCollection && scope.dataCollection.length > 0) {
+                                    templateObject = scope.dataCollection[0];
+                                    angular.forEach(templateObject, function (value, key) {
+                                        if (key[0] != '$') {
+                                            ctrl.insertColumn({label: key, map: key});
+                                        }
+                                    });
+                                }
                             }
-                        } else {
-                            //or guess data Structure
-                            if (scope.dataCollection && scope.dataCollection.length > 0) {
-                                templateObject = scope.dataCollection[0];
-                                angular.forEach(templateObject, function (value, key) {
-                                    if (key[0] != '$') {
-                                        ctrl.insertColumn({label: key, map: key});
+
+                            //after the column structure is defined, then build the column group structure.
+                            if(scope.columnGroupCollection){
+                                var colGroups = [];
+                                angular.forEach(scope.columns, function(column){
+
+                                    var lastColumnGroup = colGroups[colGroups.length - 1];
+                                    var currentColumnGroup = findMatchingColumnGroup(column.map);
+
+                                    if(lastColumnGroup && lastColumnGroup.id === currentColumnGroup.id){
+                                        lastColumnGroup.span++;
+                                    } else {
+                                        colGroups.push(angular.extend({span: 1}, currentColumnGroup));
                                     }
                                 });
+
+                                angular.forEach(colGroups, function(colGroup){
+                                    ctrl.insertColumnGroup(colGroup);
+                                });
                             }
-                        }
-
-                        //after the column structure is defined, then build the column group structure.
-                        if(scope.columnGroupCollection){
-                            var colGroups = [];
-                            angular.forEach(scope.columns, function(column){
-
-                                var lastColumnGroup = colGroups[colGroups.length - 1];
-                                var currentColumnGroup = findMatchingColumnGroup(column.map);
-
-                                if(lastColumnGroup && lastColumnGroup.id === currentColumnGroup.id){
-                                    lastColumnGroup.span++;
-                                } else {
-                                    colGroups.push(angular.extend({span: 1}, currentColumnGroup));
-                                }
-                            });
-
-                            angular.forEach(colGroups, function(colGroup){
-                                ctrl.insertColumnGroup(colGroup);
-                            });
-                        }
+                        });
                     });
 
                     //if item are added or removed into the data model from outside the grid
