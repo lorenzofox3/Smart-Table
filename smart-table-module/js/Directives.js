@@ -6,6 +6,7 @@
             return {
                 restrict: 'EA',
                 scope: {
+                    columnGroupCollection: '=?columnGroups',
                     columnCollection: '=columns',
                     dataCollection: '=rows',
                     config: '='
@@ -17,29 +18,52 @@
 
                     var templateObject;
 
+                    var findMatchingColumnGroup = function(columnKey){
+                        var columnGroup;
+                        for(var i= 0, len = scope.columnGroupCollection.length; i < len; i++){
+                            var thisColumnGroup = scope.columnGroupCollection[i];
+                            thisColumnGroup.id = i;
+                            if(thisColumnGroup.columns && thisColumnGroup.columns.indexOf(columnKey) !== -1){
+                                columnGroup = thisColumnGroup;
+                                break;
+                            }
+                        }
+
+                        return columnGroup || {label: '', id:-1, span: 1 }; // blanks have id -1 so
+                    };
+
                     scope.$watch('config', function (config) {
                         var newConfig = angular.extend({}, defaultConfig, config),
-                            length = scope.columns !== undefined ? scope.columns.length : 0;
+                            length = scope.columns !== undefined ? scope.columns.length : 0,
+                            groupLength = scope.columnGroups !== undefined ? scope.columnGroups.length : 0;
 
                         ctrl.setGlobalConfig(newConfig);
 
-                        //remove the checkbox column if needed
+                        //remove the checkbox column && column group if needed
                         if (newConfig.selectionMode !== 'multiple' || newConfig.displaySelectionCheckbox !== true) {
                             for (var i = length - 1; i >= 0; i--) {
                                 if (scope.columns[i].isSelectionColumn === true) {
                                     ctrl.removeColumn(i);
                                 }
                             }
+                            for(var j = groupLength - 1; j >= 0; j--){
+                                if (scope.columnGroups[i].isSelectionColumn === true){
+                                    ctrl.removeColumnGroup(i);
+                                }
+                            }
                         } else {
                             //add selection box column if required
                             ctrl.insertColumn({cellTemplateUrl: templateList.selectionCheckbox, headerTemplateUrl: templateList.selectAllCheckbox, isSelectionColumn: true}, 0);
+                            if(scope.columnGroupCollection){
+                                ctrl.insertColumnGroup({isSelectionColumn: true}, 0);
+                            }
                         }
                     }, true);
 
                     //insert columns from column config
-                    scope.$watchCollection('columnCollection', function (oldValue, newValue) {
+                    scope.$watchCollection(['columnCollection','columnGroupCollection'], function () {
 
-                        ctrl.clearColumns();
+                        ctrl.clearColumns(); // clears columns and column groups
 
                         if (scope.columnCollection) {
                             for (var i = 0, l = scope.columnCollection.length; i < l; i++) {
@@ -55,6 +79,26 @@
                                     }
                                 });
                             }
+                        }
+
+                        //after the column structure is defined, then build the column group structure.
+                        if(scope.columnGroupCollection){
+                            var colGroups = [];
+                            angular.forEach(scope.columns, function(column){
+
+                                var lastColumnGroup = colGroups[colGroups.length - 1];
+                                var currentColumnGroup = findMatchingColumnGroup(column.map);
+
+                                if(lastColumnGroup && lastColumnGroup.id === currentColumnGroup.id){
+                                    lastColumnGroup.span++;
+                                } else {
+                                    colGroups.push(angular.extend({span: 1}, currentColumnGroup));
+                                }
+                            });
+
+                            angular.forEach(colGroups, function(colGroup){
+                                ctrl.insertColumnGroup(colGroup);
+                            });
                         }
                     });
 
