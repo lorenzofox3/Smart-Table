@@ -2,7 +2,7 @@
 
 (function (angular) {
     "use strict";
-    angular.module('smartTable.table', ['smartTable.column', 'smartTable.utilities', 'smartTable.directives', 'smartTable.filters', 'ui.bootstrap.pagination.smartTable'])
+    angular.module('smartTable.table', ['smartTable.column', 'smartTable.columnGroup', 'smartTable.utilities', 'smartTable.directives', 'smartTable.filters', 'ui.bootstrap.pagination.smartTable'])
         .constant('DefaultTableConfiguration', {
             selectionMode: 'none',
             isGlobalSearchActivated: false,
@@ -15,9 +15,10 @@
             sortAlgorithm: '',
             filterAlgorithm: ''
         })
-        .controller('TableCtrl', ['$scope', 'Column', '$filter', '$parse', 'ArrayUtility', 'DefaultTableConfiguration', function (scope, Column, filter, parse, arrayUtility, defaultConfig) {
+        .controller('TableCtrl', ['$scope', 'Column', 'ColumnGroup', '$filter', '$parse', 'ArrayUtility', 'DefaultTableConfiguration', function (scope, Column, ColumnGroup, filter, parse, arrayUtility, defaultConfig) {
 
             scope.columns = [];
+            scope.columnGroups = [];
             scope.dataCollection = scope.dataCollection || [];
             scope.displayedCollection = []; //init empty array so that if pagination is enabled, it does not spoil performances
             scope.numberOfPages = calculateNumberOfPages(scope.dataCollection);
@@ -202,7 +203,31 @@
              */
             this.clearColumns = function () {
                 scope.columns.length = 0;
+                scope.columnGroups.length = 0;
             };
+
+
+            /*////////////////
+             Column Group API
+             ///////////*/
+            /**
+             * insert a new column in scope.collection at index or push at the end if no index
+             * @param columnGroupConfig column group configuration used to instantiate the new ColumnGruop
+             * @param index where to insert the column group (at the end if not specified)
+             */
+            this.insertColumnGroup = function (columnGroupConfig, index) {
+                var columnGroup = new ColumnGroup(columnGroupConfig);
+                arrayUtility.insertAt(scope.columnGroups, index, columnGroup);
+            };
+
+            /**
+             * remove the column at columnIndex from scope.columns
+             * @param columnGroupIndex index of the column group to be removed
+             */
+            this.removeColumnGroup = function (columnGroupIndex) {
+                arrayUtility.removeAt(scope.columnGroups, columnGroupIndex);
+            };
+
 
             /*///////////
              ROW API

@@ -1,4 +1,4 @@
-angular.module('smartTable.templates', ['partials/defaultCell.html', 'partials/defaultHeader.html', 'partials/editableCell.html', 'partials/globalSearchCell.html', 'partials/pagination.html', 'partials/selectAllCheckbox.html', 'partials/selectionCheckbox.html', 'partials/smartTable.html']);
+angular.module('smartTable.templates', ['partials/defaultCell.html', 'partials/defaultHeader.html', 'partials/defaultHeaderGroup.html', 'partials/editableCell.html', 'partials/globalSearchCell.html', 'partials/pagination.html', 'partials/selectAllCheckbox.html', 'partials/selectionCheckbox.html', 'partials/smartTable.html']);
 
 angular.module("partials/defaultCell.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/defaultCell.html",
@@ -8,6 +8,11 @@ angular.module("partials/defaultCell.html", []).run(["$templateCache", function(
 angular.module("partials/defaultHeader.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/defaultHeader.html",
     "<span class=\"header-content\" ng-class=\"{'sort-ascent':column.reverse==false,'sort-descent':column.reverse==true}\">{{column.label}}</span>");
+}]);
+
+angular.module("partials/defaultHeaderGroup.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("partials/defaultHeaderGroup.html",
+    "<span class=\"header-group-content\">{{columnGroup.label}}</span>");
 }]);
 
 angular.module("partials/editableCell.html", []).run(["$templateCache", function($templateCache) {
@@ -54,6 +59,12 @@ angular.module("partials/smartTable.html", []).run(["$templateCache", function($
     "    <tr class=\"smart-table-global-search-row\" ng-show=\"isGlobalSearchActivated\">\n" +
     "        <td class=\"smart-table-global-search\" column-span=\"{{columns.length}}\" colspan=\"{{columnSpan}}\">\n" +
     "        </td>\n" +
+    "    </tr>\n" +
+    "    <tr class=\"smart-table-header-group-row\" ng-if=\"columnGroups && columnGroups.length\">\n" +
+    "        <th ng-repeat=\"columnGroup in columnGroups\" colspan=\"{{columnGroup.span}}\"\n" +
+    "            ng-include=\"columnGroup.headerGroupTemplateUrl\"\n" +
+    "            class=\"smart-table-header-group-cell {{columnGroup.headerGroupClass}}\">\n" +
+    "        </th>\n" +
     "    </tr>\n" +
     "    <tr class=\"smart-table-header-row\">\n" +
     "        <th ng-repeat=\"column in columns\" ng-include=\"column.headerTemplateUrl\"\n" +

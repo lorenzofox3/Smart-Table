@@ -3,6 +3,7 @@ describe('Table module', function () {
     var
         scope,
         Column,
+        ColumnGroup,
         DefaultConfig,
         filter,
         ctrl,
@@ -24,6 +25,7 @@ describe('Table module', function () {
         beforeEach(inject(function ($controller, $rootScope, $filter, $injector) {
             scope = $rootScope.$new();
             Column = $injector.get('Column');
+            ColumnGroup = $injector.get('ColumnGroup');
             DefaultConfig = $injector.get('DefaultTableConfiguration');
             filter = $filter;
             ctrl = $controller('TableCtrl', {$scope: scope, Column: Column, DefaultTableConfig: DefaultConfig, $filter: filter
@@ -33,6 +35,7 @@ describe('Table module', function () {
         it('should init the config', function () {
 
             expect(angular.isArray(scope.columns)).toBe(true);
+            expect(angular.isArray(scope.columnGroups)).toBe(true);
             expect(angular.isArray(scope.displayedCollection)).toBe(true);
             expect(angular.isArray(scope.dataCollection)).toBe(true);
 
@@ -165,18 +168,25 @@ describe('Table module', function () {
                 beforeEach(function () {
                     //insert few columns
                     scope.columns = [];
+                    scope.columnGroups = [];
 
                     ctrl.insertColumn({id: 0});
                     ctrl.insertColumn({id: 1});
                     ctrl.insertColumn({id: 2});
                     ctrl.insertColumn({id: 3});
                     ctrl.insertColumn({id: 4});
+
+                    ctrl.insertColumnGroup({groupNum: 10});
+                    ctrl.insertColumnGroup({groupNum: 11});
+                    ctrl.insertColumnGroup({groupNum: 12});
                 });
 
                 it('should remove all columns', function () {
                     expect(scope.columns.length).toBe(5);
+                    expect(scope.columnGroups.length).toBe(3);
                     ctrl.clearColumns();
                     expect(scope.columns.length).toBe(0);
+                    expect(scope.columnGroups.length).toBe(0);
                 });
 
                 it('should have columns when adding after clear', function () {
@@ -184,11 +194,59 @@ describe('Table module', function () {
                     ctrl.insertColumn({id: 7});
                     ctrl.insertColumn({id: 8});
                     ctrl.insertColumn({id: 9});
+                    ctrl.insertColumnGroup({groupNum: 20});
+                    ctrl.insertColumnGroup({groupNum: 21});
+                    ctrl.insertColumnGroup({groupNum: 22});
                     expect(scope.columns[0].id).toBe(7);
                     expect(scope.columns[1].id).toBe(8);
                     expect(scope.columns[2].id).toBe(9);
+                    expect(scope.columnGroups[0].groupNum).toBe(20);
+                    expect(scope.columnGroups[1].groupNum).toBe(21);
+                    expect(scope.columnGroups[2].groupNum).toBe(22);
                 });
 
+            });
+        });
+
+        describe('ColumnGroup API', function () {
+
+            beforeEach(function () {
+                scope.columnGroups = [new ColumnGroup({groupNum: 0}), new ColumnGroup({groupNum: 1})];
+            });
+
+            it('should add column at proper index or put it at the end', function () {
+
+                expect(scope.columnGroups.length).toEqual(2);
+                //insert at a given index
+                ctrl.insertColumnGroup({groupNum: 3}, 1);
+                expect(scope.columnGroups.length).toBe(3);
+                expect(scope.columnGroups[1].groupNum).toBe(3);
+                expect(scope.columnGroups[2].groupNum).toBe(1);
+            });
+
+            it('should add Column at the end', function () {
+                expect(scope.columnGroups.length).toEqual(2);
+
+                ctrl.insertColumnGroup({groupNum: 666}, -1);
+                expect(scope.columnGroups.length).toBe(3);
+                expect(scope.columnGroups[2].groupNum).toBe(666);
+                ctrl.insertColumnGroup({groupNum: 99}, 99);
+                expect(scope.columnGroups.length).toBe(4);
+                expect(scope.columnGroups[3].groupNum).toBe(99);
+            });
+
+            it('should remove column at proper index or do nothing', function () {
+
+                expect(scope.columnGroups.length).toEqual(2);
+
+                ctrl.removeColumnGroup(0);
+                expect(scope.columnGroups.length).toBe(1);
+                expect(scope.columnGroups[0].groupNum).toBe(1);
+
+                ctrl.removeColumnGroup(666);
+                expect(scope.columnGroups.length).toBe(1);
+                ctrl.removeColumnGroup(-1);
+                expect(scope.columnGroups.length).toBe(1);
             });
         });
 

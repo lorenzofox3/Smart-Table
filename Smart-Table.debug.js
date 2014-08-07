@@ -51,6 +51,42 @@
 
 
 
+/* ColumnGroup module */
+
+(function (global, angular) {
+    "use strict";
+    var smartTableColumnGroupModule = angular.module('smartTable.columnGroup', ['smartTable.templateUrlList']).constant('DefaultColumnGroupConfiguration', {
+        //it is useless to have that empty strings, but it reminds what is available
+        headerGroupTemplateUrl: '',
+        columns: [],
+        label: '',
+        headerGroupClass: ''
+    });
+    function ColumnGroupProvider(DefaultColumnGroupConfiguration, templateUrlList){
+        function ColumnGroup(config){
+            if(!(this instanceof ColumnGroup)){
+                return new ColumnGroup(config);
+            }
+            angular.extend(this, config);
+        }
+
+        this.setDefaultOption = function(option){
+            angular.extend(ColumnGroup.prototype, option);
+        };
+
+        DefaultColumnGroupConfiguration.headerGroupTemplateUrl = templateUrlList.defaultHeaderGroup;
+        this.setDefaultOption(DefaultColumnGroupConfiguration);
+
+        this.$get = function(){
+            return ColumnGroup;
+        };
+    }
+
+    smartTableColumnGroupModule.provider('ColumnGroup',['DefaultColumnGroupConfiguration','templateUrlList',ColumnGroupProvider]);
+
+    //make it global so it can be tested
+    global.ColumnGroupProvider = ColumnGroupProvider;
+})(window, angular);
 /* Directives */
 (function (angular) {
     "use strict";
@@ -59,6 +95,7 @@
             return {
                 restrict: 'EA',
                 scope: {
+                    columnGroupCollection: '=?columnGroups',
                     columnCollection: '=columns',
                     dataCollection: '=rows',
                     config: '='
@@ -70,45 +107,90 @@
 
                     var templateObject;
 
+                    var findMatchingColumnGroup = function(columnKey){
+                        var columnGroup;
+                        for(var i= 0, len = scope.columnGroupCollection.length; i < len; i++){
+                            var thisColumnGroup = scope.columnGroupCollection[i];
+                            thisColumnGroup.id = i;
+                            if(thisColumnGroup.columns && thisColumnGroup.columns.indexOf(columnKey) !== -1){
+                                columnGroup = thisColumnGroup;
+                                break;
+                            }
+                        }
+
+                        return columnGroup || {label: '', id:-1, span: 1 }; // blanks have id -1 so
+                    };
+
                     scope.$watch('config', function (config) {
                         var newConfig = angular.extend({}, defaultConfig, config),
-                            length = scope.columns !== undefined ? scope.columns.length : 0;
+                            length = scope.columns !== undefined ? scope.columns.length : 0,
+                            groupLength = scope.columnGroups !== undefined ? scope.columnGroups.length : 0;
 
                         ctrl.setGlobalConfig(newConfig);
 
-                        //remove the checkbox column if needed
+                        //remove the checkbox column && column group if needed
                         if (newConfig.selectionMode !== 'multiple' || newConfig.displaySelectionCheckbox !== true) {
                             for (var i = length - 1; i >= 0; i--) {
                                 if (scope.columns[i].isSelectionColumn === true) {
                                     ctrl.removeColumn(i);
                                 }
                             }
+                            for(var j = groupLength - 1; j >= 0; j--){
+                                if (scope.columnGroups[j].isSelectionColumn === true){
+                                    ctrl.removeColumnGroup(j);
+                                }
+                            }
                         } else {
                             //add selection box column if required
                             ctrl.insertColumn({cellTemplateUrl: templateList.selectionCheckbox, headerTemplateUrl: templateList.selectAllCheckbox, isSelectionColumn: true}, 0);
+                            if(scope.columnGroupCollection){
+                                ctrl.insertColumnGroup({isSelectionColumn: true}, 0);
+                            }
                         }
                     }, true);
 
                     //insert columns from column config
-                    scope.$watchCollection('columnCollection', function (oldValue, newValue) {
+                    angular.forEach(['columnCollection','columnGroupCollection'], function(key){
+                        scope.$watchCollection(key, function () {
 
-                        ctrl.clearColumns();
+                            ctrl.clearColumns(); // clears columns and column groups
 
-                        if (scope.columnCollection) {
-                            for (var i = 0, l = scope.columnCollection.length; i < l; i++) {
-                                ctrl.insertColumn(scope.columnCollection[i]);
+                            if (scope.columnCollection) {
+                                for (var i = 0, l = scope.columnCollection.length; i < l; i++) {
+                                    ctrl.insertColumn(scope.columnCollection[i]);
+                                }
+                            } else {
+                                //or guess data Structure
+                                if (scope.dataCollection && scope.dataCollection.length > 0) {
+                                    templateObject = scope.dataCollection[0];
+                                    angular.forEach(templateObject, function (value, key) {
+                                        if (key[0] != '$') {
+                                            ctrl.insertColumn({label: key, map: key});
+                                        }
+                                    });
+                                }
                             }
-                        } else {
-                            //or guess data Structure
-                            if (scope.dataCollection && scope.dataCollection.length > 0) {
-                                templateObject = scope.dataCollection[0];
-                                angular.forEach(templateObject, function (value, key) {
-                                    if (key[0] != '$') {
-                                        ctrl.insertColumn({label: key, map: key});
+
+                            //after the column structure is defined, then build the column group structure.
+                            if(scope.columnGroupCollection){
+                                var colGroups = [];
+                                angular.forEach(scope.columns, function(column){
+
+                                    var lastColumnGroup = colGroups[colGroups.length - 1];
+                                    var currentColumnGroup = findMatchingColumnGroup(column.map);
+
+                                    if(lastColumnGroup && lastColumnGroup.id === currentColumnGroup.id){
+                                        lastColumnGroup.span++;
+                                    } else {
+                                        colGroups.push(angular.extend({span: 1}, currentColumnGroup));
                                     }
                                 });
+
+                                angular.forEach(colGroups, function(colGroup){
+                                    ctrl.insertColumnGroup(colGroup);
+                                });
                             }
-                        }
+                        });
                     });
 
                     //if item are added or removed into the data model from outside the grid
@@ -352,7 +434,7 @@
 
 (function (angular) {
     "use strict";
-    angular.module('smartTable.table', ['smartTable.column', 'smartTable.utilities', 'smartTable.directives', 'smartTable.filters', 'ui.bootstrap.pagination.smartTable'])
+    angular.module('smartTable.table', ['smartTable.column', 'smartTable.columnGroup', 'smartTable.utilities', 'smartTable.directives', 'smartTable.filters', 'ui.bootstrap.pagination.smartTable'])
         .constant('DefaultTableConfiguration', {
             selectionMode: 'none',
             isGlobalSearchActivated: false,
@@ -365,9 +447,10 @@
             sortAlgorithm: '',
             filterAlgorithm: ''
         })
-        .controller('TableCtrl', ['$scope', 'Column', '$filter', '$parse', 'ArrayUtility', 'DefaultTableConfiguration', function (scope, Column, filter, parse, arrayUtility, defaultConfig) {
+        .controller('TableCtrl', ['$scope', 'Column', 'ColumnGroup', '$filter', '$parse', 'ArrayUtility', 'DefaultTableConfiguration', function (scope, Column, ColumnGroup, filter, parse, arrayUtility, defaultConfig) {
 
             scope.columns = [];
+            scope.columnGroups = [];
             scope.dataCollection = scope.dataCollection || [];
             scope.displayedCollection = []; //init empty array so that if pagination is enabled, it does not spoil performances
             scope.numberOfPages = calculateNumberOfPages(scope.dataCollection);
@@ -552,7 +635,31 @@
              */
             this.clearColumns = function () {
                 scope.columns.length = 0;
+                scope.columnGroups.length = 0;
             };
+
+
+            /*////////////////
+             Column Group API
+             ///////////*/
+            /**
+             * insert a new column in scope.collection at index or push at the end if no index
+             * @param columnGroupConfig column group configuration used to instantiate the new ColumnGruop
+             * @param index where to insert the column group (at the end if not specified)
+             */
+            this.insertColumnGroup = function (columnGroupConfig, index) {
+                var columnGroup = new ColumnGroup(columnGroupConfig);
+                arrayUtility.insertAt(scope.columnGroups, index, columnGroup);
+            };
+
+            /**
+             * remove the column at columnIndex from scope.columns
+             * @param columnGroupIndex index of the column group to be removed
+             */
+            this.removeColumnGroup = function (columnGroupIndex) {
+                arrayUtility.removeAt(scope.columnGroups, columnGroupIndex);
+            };
+
 
             /*///////////
              ROW API
@@ -628,7 +735,7 @@
 
 
 
-angular.module('smartTable.templates', ['partials/defaultCell.html', 'partials/defaultHeader.html', 'partials/editableCell.html', 'partials/globalSearchCell.html', 'partials/pagination.html', 'partials/selectAllCheckbox.html', 'partials/selectionCheckbox.html', 'partials/smartTable.html']);
+angular.module('smartTable.templates', ['partials/defaultCell.html', 'partials/defaultHeader.html', 'partials/defaultHeaderGroup.html', 'partials/editableCell.html', 'partials/globalSearchCell.html', 'partials/pagination.html', 'partials/selectAllCheckbox.html', 'partials/selectionCheckbox.html', 'partials/smartTable.html']);
 
 angular.module("partials/defaultCell.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/defaultCell.html",
@@ -638,6 +745,11 @@ angular.module("partials/defaultCell.html", []).run(["$templateCache", function(
 angular.module("partials/defaultHeader.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/defaultHeader.html",
     "<span class=\"header-content\" ng-class=\"{'sort-ascent':column.reverse==false,'sort-descent':column.reverse==true}\">{{column.label}}</span>");
+}]);
+
+angular.module("partials/defaultHeaderGroup.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("partials/defaultHeaderGroup.html",
+    "<span class=\"header-group-content\">{{columnGroup.label}}</span>");
 }]);
 
 angular.module("partials/editableCell.html", []).run(["$templateCache", function($templateCache) {
@@ -685,6 +797,12 @@ angular.module("partials/smartTable.html", []).run(["$templateCache", function($
     "        <td class=\"smart-table-global-search\" column-span=\"{{columns.length}}\" colspan=\"{{columnSpan}}\">\n" +
     "        </td>\n" +
     "    </tr>\n" +
+    "    <tr class=\"smart-table-header-group-row\" ng-if=\"columnGroups && columnGroups.length\">\n" +
+    "        <th ng-repeat=\"columnGroup in columnGroups\" colspan=\"{{columnGroup.span}}\"\n" +
+    "            ng-include=\"columnGroup.headerGroupTemplateUrl\"\n" +
+    "            class=\"smart-table-header-group-cell {{columnGroup.headerGroupClass}}\">\n" +
+    "        </th>\n" +
+    "    </tr>\n" +
     "    <tr class=\"smart-table-header-row\">\n" +
     "        <th ng-repeat=\"column in columns\" ng-include=\"column.headerTemplateUrl\"\n" +
     "            class=\"smart-table-header-cell {{column.headerClass}}\" scope=\"col\">\n" +
@@ -720,6 +838,7 @@ angular.module("partials/smartTable.html", []).run(["$templateCache", function($
             selectionCheckbox: 'partials/selectionCheckbox.html',
             selectAllCheckbox: 'partials/selectAllCheckbox.html',
             defaultHeader: 'partials/defaultHeader.html',
+            defaultHeaderGroup: 'partials/defaultHeaderGroup.html',
             pagination: 'partials/pagination.html'
         });
 })(angular);

@@ -8,6 +8,7 @@
             selectionCheckbox: 'partials/selectionCheckbox.html',
             selectAllCheckbox: 'partials/selectAllCheckbox.html',
             defaultHeader: 'partials/defaultHeader.html',
+            defaultHeaderGroup: 'partials/defaultHeaderGroup.html',
             pagination: 'partials/pagination.html'
         });
 })(angular);

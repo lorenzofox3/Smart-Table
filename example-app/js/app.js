@@ -47,12 +47,16 @@ var app = angular.module('myApp', ['smartTable.table']).
             {label: 'Email', map: 'email', type: 'email', isEditable: true}
         ];
 
+        scope.columnGroupCollection = [ // column groups and columns out of order on purpose to test
+            {label: 'Group 2', columns: ['email','balance']},
+            {label: 'Group 1', columns: ['name','age']}
+        ];
+
         scope.globalConfig = {
             isPaginationEnabled: true,
             isGlobalSearchActivated: true,
             itemsByPage: 20,
             syncColumns: false
         };
-
 
     }]);
