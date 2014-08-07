@@ -47,8 +47,8 @@
                                 }
                             }
                             for(var j = groupLength - 1; j >= 0; j--){
-                                if (scope.columnGroups[i].isSelectionColumn === true){
-                                    ctrl.removeColumnGroup(i);
+                                if (scope.columnGroups[j].isSelectionColumn === true){
+                                    ctrl.removeColumnGroup(j);
                                 }
                             }
                         } else {
