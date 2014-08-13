@@ -41,9 +41,14 @@
 
                         ctrl.clearColumns();
 
+                        var columnToBeSortedByDefault = null;
+
                         if (scope.columnCollection) {
                             for (var i = 0, l = scope.columnCollection.length; i < l; i++) {
-                                ctrl.insertColumn(scope.columnCollection[i]);
+                                var column = ctrl.insertColumn(scope.columnCollection[i]);
+                                if(column.sortedByDefault) {
+                                    columnToBeSortedByDefault = column;
+                                }
                             }
                         } else {
                             //or guess data Structure
@@ -55,6 +60,10 @@
                                     }
                                 });
                             }
+                        }
+
+                        if(columnToBeSortedByDefault) {
+                            ctrl.sortBy(columnToBeSortedByDefault);
                         }
                     });
 

@@ -94,9 +94,14 @@
 
                         ctrl.clearColumns();
 
+                        var columnToBeSortedByDefault = null;
+
                         if (scope.columnCollection) {
                             for (var i = 0, l = scope.columnCollection.length; i < l; i++) {
-                                ctrl.insertColumn(scope.columnCollection[i]);
+                                var column = ctrl.insertColumn(scope.columnCollection[i]);
+                                if(column.sortedByDefault) {
+                                    columnToBeSortedByDefault = column;
+                                }
                             }
                         } else {
                             //or guess data Structure
@@ -108,6 +113,10 @@
                                     }
                                 });
                             }
+                        }
+
+                        if(columnToBeSortedByDefault) {
+                            ctrl.sortBy(columnToBeSortedByDefault);
                         }
                     });
 
@@ -474,8 +483,10 @@
                         else if (column.reverse === false) {
                             column.reverse = true;
                         }
-                        else {
+                        else if (!scope.disableUnsort) {
                             column.reverse = undefined;
+                        } else {
+                            column.reverse = !column.reverse;
                         }
 
                         lastColumnSort = column;
@@ -524,10 +535,12 @@
              * insert a new column in scope.collection at index or push at the end if no index
              * @param columnConfig column configuration used to instantiate the new Column
              * @param index where to insert the column (at the end if not specified)
+             * @returns the column object that was inserted
              */
             this.insertColumn = function (columnConfig, index) {
                 var column = new Column(columnConfig);
                 arrayUtility.insertAt(scope.columns, index, column);
+                return column;
             };
 
             /**
@@ -637,7 +650,7 @@ angular.module("partials/defaultCell.html", []).run(["$templateCache", function(
 
 angular.module("partials/defaultHeader.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/defaultHeader.html",
-    "<span class=\"header-content\" ng-class=\"{'sort-ascent':column.reverse==false,'sort-descent':column.reverse==true}\">{{column.label}}</span>");
+    "<span class=\"header-content\" ng-class=\"{'sort-ascent':column.reverse==true,'sort-descent':column.reverse==false}\">{{column.label}}</span>");
 }]);
 
 angular.module("partials/editableCell.html", []).run(["$templateCache", function($templateCache) {

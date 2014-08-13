@@ -124,8 +124,10 @@
                         else if (column.reverse === false) {
                             column.reverse = true;
                         }
-                        else {
+                        else if (!scope.disableUnsort) {
                             column.reverse = undefined;
+                        } else {
+                            column.reverse = !column.reverse;
                         }
 
                         lastColumnSort = column;
@@ -174,10 +176,12 @@
              * insert a new column in scope.collection at index or push at the end if no index
              * @param columnConfig column configuration used to instantiate the new Column
              * @param index where to insert the column (at the end if not specified)
+             * @returns the column object that was inserted
              */
             this.insertColumn = function (columnConfig, index) {
                 var column = new Column(columnConfig);
                 arrayUtility.insertAt(scope.columns, index, column);
+                return column;
             };
 
             /**
