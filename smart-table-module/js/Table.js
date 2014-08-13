@@ -124,8 +124,10 @@
                         else if (column.reverse === false) {
                             column.reverse = true;
                         }
-                        else {
+                        else if (!scope.disableUnsort) {
                             column.reverse = undefined;
+                        } else {
+                            column.reverse = !column.reverse;
                         }
 
                         lastColumnSort = column;
