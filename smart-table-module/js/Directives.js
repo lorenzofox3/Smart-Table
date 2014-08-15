@@ -128,9 +128,7 @@
             return {
                 restrict: 'C',
                 require: '^smartTable',
-                scope: {
-                    columnSpan: '@'
-                },
+                scope: {},
                 templateUrl: templateList.smartTableGlobalSearch,
                 replace: false,
                 link: function (scope, element, attr, ctrl) {

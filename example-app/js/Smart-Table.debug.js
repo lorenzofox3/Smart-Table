@@ -181,9 +181,7 @@
             return {
                 restrict: 'C',
                 require: '^smartTable',
-                scope: {
-                    columnSpan: '@'
-                },
+                scope: {},
                 templateUrl: templateList.smartTableGlobalSearch,
                 replace: false,
                 link: function (scope, element, attr, ctrl) {
@@ -682,7 +680,7 @@ angular.module("partials/smartTable.html", []).run(["$templateCache", function($
     "<table class=\"smart-table\">\n" +
     "    <thead>\n" +
     "    <tr class=\"smart-table-global-search-row\" ng-show=\"isGlobalSearchActivated\">\n" +
-    "        <td class=\"smart-table-global-search\" column-span=\"{{columns.length}}\" colspan=\"{{columnSpan}}\">\n" +
+    "        <td class=\"smart-table-global-search\" column-span=\"{{columns.length}}\" colspan=\"{{columns.length}}\">\n" +
     "        </td>\n" +
     "    </tr>\n" +
     "    <tr class=\"smart-table-header-row\">\n" +
