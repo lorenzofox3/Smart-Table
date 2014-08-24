@@ -7,7 +7,7 @@
                 require: '^stTable',
                 link: function (scope, element, attr, ctrl) {
 
-                    var predicate = attr.stSort;
+                    var predicate = function(row){ return row[attr.stSort];};;
                     var getter = $parse(predicate);
                     var index = 0;
                     var states = ['descent', 'ascent', 'natural'];
