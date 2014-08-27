@@ -5,7 +5,10 @@
             return {
                 restrict: 'EA',
                 require: '^stTable',
-                scope: {},
+                scope: {
+                  currentPage: '=',
+                  pages:       '='
+                },
                 template: '<div class="pagination"><ul class="pagination"><li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li></ul></div>',
                 replace: true,
                 link: function (scope, element, attrs, ctrl) {
