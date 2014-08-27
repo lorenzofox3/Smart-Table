@@ -301,8 +301,8 @@
                 restrict: 'EA',
                 require: '^stTable',
                 scope: {
-                  currentPage: '=',
-                  pages:       '='
+                  currentPage: '=?',
+                  pages:       '=?'
                 },
                 template: '<div class="pagination"><ul class="pagination"><li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li></ul></div>',
                 replace: true,
