@@ -20,7 +20,7 @@
             var ctrl = this;
 
             function copyRefs(src) {
-                return [].concat(src);
+                return src ? [].concat(src) : [];
             }
 
             function updateSafeCopy() {
@@ -32,6 +32,10 @@
 
             if ($attrs.stSafeSrc) {
                 safeGetter = $parse($attrs.stSafeSrc);
+                
+                if (safeCopy.length == 0)
+                    updateSafeCopy();
+                
                 $scope.$watch(function () {
                     var safeSrc = safeGetter($scope);
                     return safeSrc ? safeSrc.length : 0;
