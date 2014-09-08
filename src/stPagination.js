@@ -6,7 +6,7 @@
                 restrict: 'EA',
                 require: '^stTable',
                 scope: {},
-                template: '<div class="pagination"><ul class="pagination"><li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li></ul></div>',
+                templateUrl: 'template/smart-table/pagination.html',
                 replace: true,
                 link: function (scope, element, attrs, ctrl) {
 

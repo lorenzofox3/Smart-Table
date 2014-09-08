@@ -1,6 +1,6 @@
 (function (ng) {
     'use strict';
-    ng.module('smart-table',[]);
+    ng.module('smart-table',['smart-table-tpls']);
 })(angular);
 
 (function (ng, undefined) {
@@ -167,6 +167,14 @@
         });
 })(angular);
 
+angular.module('smart-table-tpls', ['template/smart-table/pagination.html']);
+
+angular.module('template/smart-table/pagination.html', []).run(['$templateCache', function($templateCache) {
+  $templateCache.put('template/smart-table/pagination.html',
+      '<div class="pagination"><ul class="pagination">' +
+      '<li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li>' +
+      '</ul></div>');
+}]);
 (function (ng) {
     'use strict';
     ng.module('smart-table')
@@ -308,7 +316,7 @@
                 restrict: 'EA',
                 require: '^stTable',
                 scope: {},
-                template: '<div class="pagination"><ul class="pagination"><li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li></ul></div>',
+                templateUrl: 'template/smart-table/pagination.html',
                 replace: true,
                 link: function (scope, element, attrs, ctrl) {
 

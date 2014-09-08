@@ -7,7 +7,7 @@ var stylish = require('jshint-stylish');
 var pluginList = ['stSearch', 'stSelectRow', 'stSort', 'stPagination', 'stPipe'];
 var disFolder = './dist/';
 
-var src = (['smart-table.module', 'stTable']).concat(pluginList).map(function (val) {
+var src = (['smart-table.module', 'stTable', 'smart-table-tpls']).concat(pluginList).map(function (val) {
     return 'src/' + val + '.js';
 });
 
