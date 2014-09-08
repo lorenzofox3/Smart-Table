@@ -14,8 +14,8 @@
                         return !(typeof value === 'number' && isNaN(value));
                     }
 
-                    var itemsByPage = isNotNan(parseInt(attrs.stItemsByPage, 10)) == true ? parseInt(attrs.stItemsByPage, 10) : 10;
-                    var displayedPages = isNotNan(parseInt(attrs.stDisplayedPages, 10)) == true ? parseInt(attrs.stDisplayedPages, 10) : 5;
+                    var itemsByPage = isNotNan(parseInt(attrs.stItemsByPage, 10)) === true ? parseInt(attrs.stItemsByPage, 10) : 10;
+                    var displayedPages = isNotNan(parseInt(attrs.stDisplayedPages, 10)) === true ? parseInt(attrs.stDisplayedPages, 10) : 5;
 
                     scope.currentPage = 1;
                     scope.pages = [];
