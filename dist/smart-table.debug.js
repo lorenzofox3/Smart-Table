@@ -14,13 +14,15 @@
             var orderBy = $filter('orderBy');
             var filter = $filter('filter');
             var safeCopy = copyRefs(displayGetter($scope));
-            var tableState = {
+            var initTableState = {
                 sort: {},
                 search: {},
+                searchSelect: {},
                 pagination: {
                     start: 0
                 }
             };
+            var tableState = initTableState;
             var pipeAfterSafeCopy = true;
             var ctrl = this;
 
@@ -82,10 +84,39 @@
             };
 
             /**
+             * search matching rows
+             * @param input the input string
+             * @param predicate [optional] the property name against you want to check the match, otherwise it will search on all properties
+             */
+            this.searchSelect = function searchSelect(input, predicate) {
+                var predicateObject = tableState.searchSelect.predicateObject || {};
+                var prop = predicate ? predicate : '$';
+                predicateObject[prop] = input;
+                tableState.searchSelect.predicateObject = predicateObject;
+                tableState.pagination.start = 0;
+                this.pipe();
+            };
+
+            this.resetTableState = function resetTableState() {
+              tableState = initTableState;
+              this.pipe();
+            };
+
+            /**
              * this will chain the operations of sorting and filtering based on the current table state (sort options, filtering, ect)
              */
             this.pipe = function pipe() {
+
+                // filter original
                 var filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject) : safeCopy;
+
+                // added searchSelect
+                if (tableState.searchSelect.predicateObject) {
+                  filtered = filter(filtered, tableState.searchSelect.predicateObject, function(actual, expected) {
+                    return expected ? actual == expected : true;
+                  });
+                }
+
                 filtered = orderBy(filtered, tableState.sort.predicate, tableState.sort.reverse);
                 if (tableState.pagination.number !== undefined) {
                     tableState.pagination.numberOfPages = filtered.length > 0 ? Math.ceil(filtered.length / tableState.pagination.number) : 1;
@@ -156,6 +187,29 @@
             this.preventPipeOnWatch = function preventPipe() {
                 pipeAfterSafeCopy = false;
             };
+
+            /**
+             * Convenient method to determine the unique values for a given predicate.
+             * This method is used in stSearchSelect to determine the options for the select element.
+             */
+            this.getUniqueValues = function(predicate) {
+              var seen;
+              var getter = $parse(predicate);
+              var ar = safeCopy
+                .map(function(el) {
+                  return getter(el);
+                })
+                .sort()
+                .filter(function(el) {
+                  if (!seen || seen !== el) {
+                    seen = el;
+                    return true;
+                  }
+                  return false;
+                });
+
+              return ar;
+            };
         }])
         .directive('stTable', function () {
             return {
@@ -210,6 +264,48 @@ angular.module('template/smart-table/pagination.html', []).run(['$templateCache'
                 }
             };
         }]);
+})(angular);
+
+(function (ng) {
+  'use strict';
+  ng.module('smart-table')
+    .directive('stSearchSelect', function () {
+      return {
+        replace: false,
+        require: '^stTable',
+        scope: {
+          predicate: '=?stSearchSelect',
+          attrOptions: '=?options'
+        },
+
+        template: function(tElement, tAttrs) {
+          var emptyLabel = tAttrs.emptyLabel ? tAttrs.emptyLabel : '';
+          var labelVar = tAttrs.labelVar ? tAttrs.labelVar : 'item';
+          var label = tAttrs.label ? tAttrs.label : '{{' + labelVar + '}}';
+
+          var template =  '<option value="">' + emptyLabel + '</option>' +
+            '<option ng-repeat="' + labelVar + ' in options" value="{{' + labelVar + '}}">' + label + '</option>';
+
+          return template;
+        },
+        link: function (scope, element, attr, ctrl) {
+          var tableCtrl = ctrl;
+
+          // if not explicitly passed then determine the options by looking at the content of the table.
+          if (scope.attrOptions) {
+            scope.options = scope.attrOptions.slice(0); // copy values
+          } else {
+            scope.options = ctrl.getUniqueValues(scope.predicate);
+          }
+
+          element.on('change', function(evt) {
+            evt = evt.originalEvent || evt;
+            tableCtrl.searchSelect(evt.target.value, scope.predicate || '');
+            scope.$parent.$digest();
+          });
+        }
+      };
+    });
 })(angular);
 
 (function (ng) {

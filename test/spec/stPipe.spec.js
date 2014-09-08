@@ -28,7 +28,7 @@ describe('stPipe directive', function () {
         angular.element(ths[0]).triggerHandler('click');
 
         expect(scope.customPipe).toHaveBeenCalledWith({
-            sort: { predicate: 'name', reverse: false }, search: {  }, pagination: { start: 0 }
+            sort: { predicate: 'name', reverse: false }, search: {  }, searchSelect: { }, pagination: { start: 0 }
         });
     }));
 });

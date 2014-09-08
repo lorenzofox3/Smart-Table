@@ -4,7 +4,7 @@ var uglify = require('gulp-uglify');
 var karma = require('karma').server;
 var jshint = require('gulp-jshint');
 var stylish = require('jshint-stylish');
-var pluginList = ['stSearch', 'stSelectRow', 'stSort', 'stPagination', 'stPipe'];
+var pluginList = ['stSearch', 'stSearchSelect', 'stSelectRow', 'stSort', 'stPagination', 'stPipe'];
 var disFolder = './dist/';
 
 var src = (['smart-table.module', 'stTable', 'smart-table-tpls']).concat(pluginList).map(function (val) {
