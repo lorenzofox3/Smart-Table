@@ -20,7 +20,7 @@
                     scope.currentPage = 1;
                     scope.pages = [];
 
-
+                    //table state --> view
                     scope.$watch(function () {
                             return ctrl.tableState().pagination;
                         },
@@ -42,13 +42,15 @@
                             scope.pages = [];
                             scope.numPages = paginationState.numberOfPages;
 
-                            for (i = start; i < end; i++) {
+                            if (end - start > 1) {
+                              for (i = start; i < end; i++) {
                                 scope.pages.push(i);
+                              }
                             }
-
 
                         }, true);
 
+                    //view -> table state
                     scope.selectPage = function (page) {
                         if (page > 0 && page <= scope.numPages) {
                             ctrl.slice((page - 1) * itemsByPage, itemsByPage);
@@ -56,7 +58,7 @@
                     };
 
                     //select the first page
-                    ctrl.slice(0, itemsByPage);
+                    ctrl.slice(ctrl.tableState().pagination.start, itemsByPage);
                 }
             };
         });
