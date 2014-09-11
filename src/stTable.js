@@ -20,6 +20,7 @@
             var tableState = initTableState;
             var pipeAfterSafeCopy = true;
             var ctrl = this;
+            var lastSelected;
 
             function copyRefs(src) {
                 return [].concat(src);
@@ -134,13 +135,15 @@
              * @param {String} [mode] - "single" or "multiple" (multiple by default)
              */
             this.select = function select(row, mode) {
-                var rows = displayGetter($scope);
+                var rows = safeCopy;
                 var index = rows.indexOf(row);
                 if (index !== -1) {
                     if (mode === 'single') {
-                        ng.forEach(displayGetter($scope), function (value, key) {
-                            value.isSelected = key === index ? !value.isSelected : false;
-                        });
+                        row.isSelected = row.isSelected !== true;
+                        if (lastSelected) {
+                            lastSelected.isSelected = false;
+                        }
+                        lastSelected = row.isSelected === true ? row : undefined;
                     } else {
                         rows[index].isSelected = !rows[index].isSelected;
                     }
