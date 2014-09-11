@@ -1,6 +1,6 @@
 (function (ng) {
     'use strict';
-    ng.module('smart-table',[]);
+    ng.module('smart-table',['smart-table-tpls']);
 })(angular);
 
 (function (ng, undefined) {
@@ -14,13 +14,15 @@
             var orderBy = $filter('orderBy');
             var filter = $filter('filter');
             var safeCopy = copyRefs(displayGetter($scope));
-            var tableState = {
+            var initTableState = {
                 sort: {},
                 search: {},
+                searchSelect: {},
                 pagination: {
                     start: 0
                 }
             };
+            var tableState = initTableState;
             var pipeAfterSafeCopy = true;
             var ctrl = this;
             var lastSelected;
@@ -44,7 +46,7 @@
 
                 }, function (newValue, oldValue) {
                     if (newValue !== oldValue) {
-                        updateSafeCopy()
+                        updateSafeCopy();
                     }
                 });
                 $scope.$watch(function () {
@@ -87,10 +89,43 @@
             };
 
             /**
+             * search matching rows
+             * @param input the input string
+             * @param predicate [optional] the property name against you want to check the match, otherwise it will search on all properties
+             */
+            this.searchSelect = function searchSelect(input, predicate) {
+                var predicateObject = tableState.searchSelect.predicateObject || {};
+                var prop = predicate ? predicate : '$';
+                predicateObject[prop] = input;
+                // to avoid to filter out null value
+                if (!input) {
+                  delete predicateObject[prop];
+                }
+                tableState.searchSelect.predicateObject = predicateObject;
+                tableState.pagination.start = 0;
+                this.pipe();
+            };
+
+            this.resetTableState = function resetTableState() {
+              tableState = initTableState;
+              this.pipe();
+            };
+
+            /**
              * this will chain the operations of sorting and filtering based on the current table state (sort options, filtering, ect)
              */
             this.pipe = function pipe() {
+
+                // filter original
                 var filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject) : safeCopy;
+
+                // added searchSelect
+                if (tableState.searchSelect.predicateObject) {
+                  filtered = filter(filtered, tableState.searchSelect.predicateObject, function(actual, expected) {
+                    return expected ? actual == expected : true;
+                  });
+                }
+
                 filtered = orderBy(filtered, tableState.sort.predicate, tableState.sort.reverse);
                 if (tableState.pagination.number !== undefined) {
                     tableState.pagination.numberOfPages = filtered.length > 0 ? Math.ceil(filtered.length / tableState.pagination.number) : 1;
@@ -163,6 +198,29 @@
             this.preventPipeOnWatch = function preventPipe() {
                 pipeAfterSafeCopy = false;
             };
+
+            /**
+             * Convenient method to determine the unique values for a given predicate.
+             * This method is used in stSearchSelect to determine the options for the select element.
+             */
+            this.getUniqueValues = function(predicate) {
+              var seen;
+              var getter = $parse(predicate);
+              var ar = safeCopy
+                .map(function(el) {
+                  return getter(el);
+                })
+                .sort()
+                .filter(function(el) {
+                  if (!seen || seen !== el) {
+                    seen = el;
+                    return true;
+                  }
+                  return false;
+                });
+
+              return ar;
+            };
         }])
         .directive('stTable', function () {
             return {
@@ -174,6 +232,14 @@
         });
 })(angular);
 
+angular.module('smart-table-tpls', ['template/smart-table/pagination.html']);
+
+angular.module('template/smart-table/pagination.html', []).run(['$templateCache', function($templateCache) {
+  $templateCache.put('template/smart-table/pagination.html',
+      '<div class="pagination"><ul class="pagination">' +
+      '<li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li>' +
+      '</ul></div>');
+}]);
 (function (ng) {
     'use strict';
     ng.module('smart-table')
@@ -198,7 +264,7 @@
 
                     //table state -> view
                     scope.$watch(function () {
-                        return ctrl.tableState().search
+                        return ctrl.tableState().search;
                     }, function (newValue, oldValue) {
                         var predicateExpression = scope.predicate || '$';
                         if (newValue.predicateObject && newValue.predicateObject[predicateExpression] !== element[0].value) {
@@ -218,8 +284,50 @@
                         }, throttle);
                     });
                 }
-            }
-        }])
+            };
+        }]);
+})(angular);
+
+(function (ng) {
+  'use strict';
+  ng.module('smart-table')
+    .directive('stSearchSelect', function () {
+      return {
+        replace: false,
+        require: '^stTable',
+        scope: {
+          predicate: '=?stSearchSelect',
+          attrOptions: '=?options'
+        },
+
+        template: function(tElement, tAttrs) {
+          var emptyLabel = tAttrs.emptyLabel ? tAttrs.emptyLabel : '';
+          var labelVar = tAttrs.labelVar ? tAttrs.labelVar : 'item';
+          var label = tAttrs.label ? tAttrs.label : '{{' + labelVar + '}}';
+
+          var template =  '<option value="">' + emptyLabel + '</option>' +
+            '<option ng-repeat="' + labelVar + ' in options" value="{{' + labelVar + '}}">' + label + '</option>';
+
+          return template;
+        },
+        link: function (scope, element, attr, ctrl) {
+          var tableCtrl = ctrl;
+
+          // if not explicitly passed then determine the options by looking at the content of the table.
+          if (scope.attrOptions) {
+            scope.options = scope.attrOptions.slice(0); // copy values
+          } else {
+            scope.options = ctrl.getUniqueValues(scope.predicate);
+          }
+
+          element.on('change', function(evt) {
+            evt = evt.originalEvent || evt;
+            tableCtrl.searchSelect(evt.target.value, scope.predicate || '');
+            scope.$parent.$digest();
+          });
+        }
+      };
+    });
 })(angular);
 
 (function (ng) {
@@ -248,7 +356,7 @@
                         }
                     });
                 }
-            }
+            };
         });
 })(angular);
 
@@ -315,7 +423,7 @@
                     }, true);
                 }
             };
-        }])
+        }]);
 })(angular);
 
 (function (ng) {
@@ -326,7 +434,7 @@
                 restrict: 'EA',
                 require: '^stTable',
                 scope: {},
-                template: '<div class="pagination" ng-if="pages.length >= 2"><ul class="pagination"><li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li></ul></div>',
+                templateUrl: 'template/smart-table/pagination.html',
                 replace: true,
                 link: function (scope, element, attrs, ctrl) {
 
@@ -334,8 +442,8 @@
                         return !(typeof value === 'number' && isNaN(value));
                     }
 
-                    var itemsByPage = isNotNan(parseInt(attrs.stItemsByPage, 10)) == true ? parseInt(attrs.stItemsByPage, 10) : 10;
-                    var displayedPages = isNotNan(parseInt(attrs.stDisplayedPages, 10)) == true ? parseInt(attrs.stDisplayedPages, 10) : 5;
+                    var itemsByPage = isNotNan(parseInt(attrs.stItemsByPage, 10)) === true ? parseInt(attrs.stItemsByPage, 10) : 10;
+                    var displayedPages = isNotNan(parseInt(attrs.stDisplayedPages, 10)) === true ? parseInt(attrs.stDisplayedPages, 10) : 5;
 
                     scope.currentPage = 1;
                     scope.pages = [];
@@ -362,10 +470,11 @@
                             scope.pages = [];
                             scope.numPages = paginationState.numberOfPages;
 
-                            for (i = start; i < end; i++) {
+                            if (end - start > 1) {
+                              for (i = start; i < end; i++) {
                                 scope.pages.push(i);
+                              }
                             }
-
 
                         }, true);
 
@@ -377,7 +486,7 @@
                     };
 
                     //select the first page
-                    ctrl.slice(0, itemsByPage);
+                    ctrl.slice(ctrl.tableState().pagination.start, itemsByPage);
                 }
             };
         });

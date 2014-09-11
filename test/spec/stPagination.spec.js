@@ -54,6 +54,7 @@ describe('stPagination directive', function () {
             spyOn(controllerMock, 'slice');
             var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-items-by-page="5" st-pagination=""></td></tr></tfoot></table>';
             compile(template)(rootScope);
+            rootScope.$apply();
             element = angular.element(document.getElementById('pagination'));
             expect(controllerMock.slice).toHaveBeenCalledWith(0, 5);
         });
@@ -62,6 +63,7 @@ describe('stPagination directive', function () {
             spyOn(controllerMock, 'slice');
             var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
             compile(template)(rootScope);
+            rootScope.$apply();
             element = angular.element(document.getElementById('pagination'));
             expect(controllerMock.slice).toHaveBeenCalledWith(0, 10);
         });
@@ -80,7 +82,6 @@ describe('stPagination directive', function () {
             };
 
             rootScope.$apply();
-
 
             var pages = getPages();
 
@@ -238,7 +239,6 @@ describe('stPagination directive', function () {
             var pages = getPages();
 
             expect(pages.length).toBe(0);
-
         });
 
     });

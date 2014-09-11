@@ -6,7 +6,7 @@
                 restrict: 'EA',
                 require: '^stTable',
                 scope: {},
-                template: '<div class="pagination" ng-if="pages.length >= 2"><ul class="pagination"><li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li></ul></div>',
+                templateUrl: 'template/smart-table/pagination.html',
                 replace: true,
                 link: function (scope, element, attrs, ctrl) {
 
@@ -14,8 +14,8 @@
                         return !(typeof value === 'number' && isNaN(value));
                     }
 
-                    var itemsByPage = isNotNan(parseInt(attrs.stItemsByPage, 10)) == true ? parseInt(attrs.stItemsByPage, 10) : 10;
-                    var displayedPages = isNotNan(parseInt(attrs.stDisplayedPages, 10)) == true ? parseInt(attrs.stDisplayedPages, 10) : 5;
+                    var itemsByPage = isNotNan(parseInt(attrs.stItemsByPage, 10)) === true ? parseInt(attrs.stItemsByPage, 10) : 10;
+                    var displayedPages = isNotNan(parseInt(attrs.stDisplayedPages, 10)) === true ? parseInt(attrs.stDisplayedPages, 10) : 5;
 
                     scope.currentPage = 1;
                     scope.pages = [];
@@ -42,10 +42,11 @@
                             scope.pages = [];
                             scope.numPages = paginationState.numberOfPages;
 
-                            for (i = start; i < end; i++) {
+                            if (end - start > 1) {
+                              for (i = start; i < end; i++) {
                                 scope.pages.push(i);
+                              }
                             }
-
 
                         }, true);
 
@@ -57,7 +58,7 @@
                     };
 
                     //select the first page
-                    ctrl.slice(0, itemsByPage);
+                    ctrl.slice(ctrl.tableState().pagination.start, itemsByPage);
                 }
             };
         });
