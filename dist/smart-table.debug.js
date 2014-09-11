@@ -59,8 +59,8 @@
 
             /**
              * sort the rows
-             * @param predicate function or string which will be used as predicate for the sorting
-             * @param [optional] reverse if you want to reverse the order
+             * @param {Function | String} predicate - function or string which will be used as predicate for the sorting
+             * @param [reverse] - if you want to reverse the order
              */
             this.sortBy = function sortBy(predicate, reverse) {
                 tableState.sort.predicate = predicate;
@@ -71,13 +71,17 @@
 
             /**
              * search matching rows
-             * @param input the input string
-             * @param predicate [optional] the property name against you want to check the match, otherwise it will search on all properties
+             * @param {String} input - the input string
+             * @param {String} [predicate] - the property name against you want to check the match, otherwise it will search on all properties
              */
             this.search = function search(input, predicate) {
                 var predicateObject = tableState.search.predicateObject || {};
                 var prop = predicate ? predicate : '$';
                 predicateObject[prop] = input;
+                // to avoid to filter out null value
+                if (!input) {
+                    delete predicateObject[prop];
+                }
                 tableState.search.predicateObject = predicateObject;
                 tableState.pagination.start = 0;
                 this.pipe();
@@ -92,6 +96,10 @@
                 var predicateObject = tableState.searchSelect.predicateObject || {};
                 var prop = predicate ? predicate : '$';
                 predicateObject[prop] = input;
+                // to avoid to filter out null value
+                if (!input) {
+                  delete predicateObject[prop];
+                }
                 tableState.searchSelect.predicateObject = predicateObject;
                 tableState.pagination.start = 0;
                 this.pipe();
@@ -127,8 +135,8 @@
 
             /**
              * select a dataRow (it will add the attribute isSelected to the row object)
-             * @param row the row to select
-             * @param mode "single" or "multiple"
+             * @param {Object} row - the row to select
+             * @param {String} [mode] - "single" or "multiple" (multiple by default)
              */
             this.select = function select(row, mode) {
                 var rows = displayGetter($scope);
@@ -147,8 +155,8 @@
             /**
              * take a slice of the current sorted/filtered collection (pagination)
              *
-             * @param start index of the slice
-             * @param number the number of item in the slice
+             * @param {Number} start - start index of the slice
+             * @param {Number} number - the number of item in the slice
              */
             this.slice = function splice(start, number) {
                 tableState.pagination.start = start;
@@ -251,6 +259,17 @@ angular.module('template/smart-table/pagination.html', []).run(['$templateCache'
                         }
                     });
 
+                    //table state -> view
+                    scope.$watch(function () {
+                        return ctrl.tableState().search;
+                    }, function (newValue, oldValue) {
+                        var predicateExpression = scope.predicate || '$';
+                        if (newValue.predicateObject && newValue.predicateObject[predicateExpression] !== element[0].value) {
+                            element[0].value = newValue.predicateObject[predicateExpression] || '';
+                        }
+                    }, true);
+
+                    // view -> table state
                     element.bind('input', function (evt) {
                         evt = evt.originalEvent || evt;
                         if (promise !== null) {
@@ -350,27 +369,19 @@ angular.module('template/smart-table/pagination.html', []).run(['$templateCache'
                     var predicate = attr.stSort;
                     var getter = $parse(predicate);
                     var index = 0;
-                    var states = ['descent', 'ascent', 'natural'];
+                    var states = ['natural', 'ascent', 'descent'];
 
-                    function reset() {
-                        index = 0;
-                        element
-                            .removeClass('st-sort-ascent')
-                            .removeClass('st-sort-descent');
-                    }
-
+                    //view --> table state
                     function sort() {
                         index++;
-                        var stateIndex = index % 2;
                         if (index % 3 === 0) {
                             //manual reset
+                            index = 0;
                             ctrl.tableState().sort = {};
                             ctrl.tableState().pagination.start = 0;
+                            ctrl.pipe();
                         } else {
-                            ctrl.sortBy(predicate, stateIndex === 0);
-                            element
-                                .removeClass('st-sort-' + states[(stateIndex + 1) % 2])
-                                .addClass('st-sort-' + states[stateIndex]);
+                            ctrl.sortBy(predicate, index % 2 === 0);
                         }
                     }
 
@@ -389,16 +400,22 @@ angular.module('template/smart-table/pagination.html', []).run(['$templateCache'
                         sort();
                     }
 
+                    //table state --> view
                     scope.$watch(function () {
                         return ctrl.tableState().sort;
                     }, function (newValue, oldValue) {
-                        if (newValue !== oldValue) {
-                            if (newValue.predicate !== predicate) {
-                                reset();
-                            }
+                        if (newValue.predicate !== predicate) {
+                            index = 0;
+                            element
+                                .removeClass('st-sort-ascent')
+                                .removeClass('st-sort-descent');
+                        } else {
+                            index = newValue.reverse === true ? 2 : 1;
+                            element
+                                .removeClass('st-sort-' + states[(index + 1) % 2])
+                                .addClass('st-sort-' + states[index]);
                         }
                     }, true);
-
                 }
             };
         }]);
@@ -426,7 +443,7 @@ angular.module('template/smart-table/pagination.html', []).run(['$templateCache'
                     scope.currentPage = 1;
                     scope.pages = [];
 
-
+                    //table state --> view
                     scope.$watch(function () {
                             return ctrl.tableState().pagination;
                         },
@@ -448,13 +465,15 @@ angular.module('template/smart-table/pagination.html', []).run(['$templateCache'
                             scope.pages = [];
                             scope.numPages = paginationState.numberOfPages;
 
-                            for (i = start; i < end; i++) {
+                            if (end - start > 1) {
+                              for (i = start; i < end; i++) {
                                 scope.pages.push(i);
+                              }
                             }
-
 
                         }, true);
 
+                    //view -> table state
                     scope.selectPage = function (page) {
                         if (page > 0 && page <= scope.numPages) {
                             ctrl.slice((page - 1) * itemsByPage, itemsByPage);
@@ -462,7 +481,7 @@ angular.module('template/smart-table/pagination.html', []).run(['$templateCache'
                     };
 
                     //select the first page
-                    ctrl.slice(0, itemsByPage);
+                    ctrl.slice(ctrl.tableState().pagination.start, itemsByPage);
                 }
             };
         });
