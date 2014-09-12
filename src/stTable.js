@@ -20,8 +20,22 @@
             var ctrl = this;
             var lastSelected;
 
+            /**
+             * this will chain the operations of sorting and filtering based on the current table state (sort options, filtering, ect)
+             */
+            this.pipe = function pipe() {
+                var filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject) : safeCopy;
+                filtered = orderBy(filtered, tableState.sort.predicate, tableState.sort.reverse);
+                if (tableState.pagination.number !== undefined) {
+                    tableState.pagination.numberOfPages = filtered.length > 0 ? Math.ceil(filtered.length / tableState.pagination.number) : 1;
+                    filtered = filtered.slice(tableState.pagination.start, tableState.pagination.start + tableState.pagination.number);
+                }
+                displaySetter($scope, filtered);
+            };
+
+
             function copyRefs(src) {
-                return [].concat(src);
+                return src ? [].concat(src) : [];
             }
 
             function updateSafeCopy() {
@@ -33,6 +47,10 @@
 
             if ($attrs.stSafeSrc) {
                 safeGetter = $parse($attrs.stSafeSrc);
+
+                if (safeCopy.length == 0)
+                    updateSafeCopy();
+
                 $scope.$watch(function () {
                     var safeSrc = safeGetter($scope);
                     return safeSrc ? safeSrc.length : 0;
@@ -81,18 +99,6 @@
                 this.pipe();
             };
 
-            /**
-             * this will chain the operations of sorting and filtering based on the current table state (sort options, filtering, ect)
-             */
-            this.pipe = function pipe() {
-                var filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject) : safeCopy;
-                filtered = orderBy(filtered, tableState.sort.predicate, tableState.sort.reverse);
-                if (tableState.pagination.number !== undefined) {
-                    tableState.pagination.numberOfPages = filtered.length > 0 ? Math.ceil(filtered.length / tableState.pagination.number) : 1;
-                    filtered = filtered.slice(tableState.pagination.start, tableState.pagination.start + tableState.pagination.number);
-                }
-                displaySetter($scope, filtered);
-            };
 
             /**
              * select a dataRow (it will add the attribute isSelected to the row object)
