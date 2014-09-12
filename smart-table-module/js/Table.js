@@ -269,6 +269,17 @@
                     }
                 }
             };
+            /**
+             * setter method for subHeader scope variable
+             * @param subHeaderRows,passed as an attribute
+             * */
+            this.setSubHeaderDataRow = function(subHeaderRows) {
+                if (subHeaderRows && subHeaderRows.length) {
+                    scope.subHeaders = subHeaderRows.map(function (row) {
+                            return new Column(row);
+                    });
+                }
+            };
         }]);
 })(angular);
 

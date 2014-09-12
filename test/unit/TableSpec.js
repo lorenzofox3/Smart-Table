@@ -635,6 +635,21 @@ describe('Table module', function () {
                 expect(eventHandler.listener).toHaveBeenCalled();
             }));
         });
+
+        describe('sub header', function () {
+            it('should process the sub header data and assign it to subHeader scope variable', inject(function ($rootScope) {
+                scope.columns = [{'label':'Test header 1', 'map': 'foo'}, {'label':'Total header 2', 'map': 'bar'}];
+                subHeaderRow = [{'foo': {'label':'subHeader1','subHeaderCellClass':'subHeader1','formatFunction':'uppercase'},'bar':{'label':'subHeader1','subHeaderCellClass':'subHeader2','formatFunction':'uppercase'}},{'foo':{'label':'subHeader1','subHeaderCellClass':'subHeader1','formatFunction':'uppercase','subHeaderTemplateUrl':'template1.html'},'bar':{'label':'SUBHEADER','subHeaderCellClass':'subHeader2','formatFunction':'lowercase'}}];
+                ctrl.setSubHeaderDataRow(subHeaderRow);
+                expect(scope.subHeaders.length).toBe(2);
+            }));
+            
+            it('should not initialize sub header scope variable if no data passed', inject(function () {
+                var subHeaderRow = [];
+                ctrl.setSubHeaderDataRow(subHeaderRow);
+                expect(scope.subHeaders).not.toBeDefined();
+            }));
+        });
     });
 });
 
