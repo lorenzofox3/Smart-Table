@@ -38,6 +38,9 @@
                                 end = paginationState.numberOfPages + 1;
                                 start = Math.max(1, end - displayedPages);
                             }
+                            if (scope.numPages != paginationState.numberOfPages) {
+                                scope.selectPage(1);
+                            }
 
                             scope.pages = [];
                             scope.numPages = paginationState.numberOfPages;
