@@ -61,7 +61,8 @@
                 scope: {
                     columnCollection: '=columns',
                     dataCollection: '=rows',
-                    config: '='
+                    config: '=',
+                    subHeaders: '='
                 },
                 replace: 'true',
                 templateUrl: templateList.smartTable,
@@ -114,6 +115,9 @@
                     //if item are added or removed into the data model from outside the grid
                     scope.$watch('dataCollection', function () {
                         ctrl.sortBy();
+                    }, true);
+                    scope.$watch('subHeaders', function () {
+                        ctrl.setSubHeaderDataRow(scope.subHeaders);
                     }, true);
                 }
             };
@@ -315,6 +319,41 @@
                         scope.$apply(function () {
                             scope.submit();
                         });
+                    });
+                }
+            };
+        }])
+        //directive for subheadercell template
+        .directive('smartTableSubheaderCell', ['$filter', '$compile', '$templateCache', '$http', '$parse', function (filter, compile, templateCache, http, parse) {
+            return {
+                restrict: 'C',
+                require: '^smartTable',
+                link: function (scope, element) {
+                    var column = scope.column,
+                        format = filter('format'),
+                        subHeader = scope.subHeaderRow,
+                        getter = parse(column.map);
+                    
+                    scope.formatedValue = format(getter(subHeader).label, getter(subHeader).formatFunction, getter(subHeader).formatParameter);
+                    scope.subHeaderTemplate = getter(subHeader).subHeaderTemplateUrl;
+                    scope.subHeaderCellClass = getter(subHeader).subHeaderCellClass;
+                    
+                    function defaultContent() {
+                         element.html(scope.formatedValue);
+                    }
+                    
+                    defaultContent();
+                    
+                    scope.$watch('subHeaderTemplate', function (value) {
+                        if (value) {
+                            http.get(value, {cache: templateCache}).success(function (response) {
+                                var childScope = scope.$new();
+                                element.html(response);
+                                compile(element.contents())(childScope);
+                            }).error(defaultContent);
+                        } else {
+                            defaultContent();
+                        }
                     });
                 }
             };
@@ -615,6 +654,17 @@
                     }
                 }
             };
+            /**
+             * setter method for subHeader scope variable
+             * @param subHeaderRows,passed as an attribute
+             * */
+            this.setSubHeaderDataRow = function(subHeaderRows) {
+                if (subHeaderRows && subHeaderRows.length) {
+                    scope.subHeaders = subHeaderRows.map(function (row) {
+                            return new Column(row);
+                    });
+                }
+            };
         }]);
 })(angular);
 
@@ -675,6 +725,9 @@ angular.module("partials/smartTable.html", []).run(["$templateCache", function($
     "    <thead>\n" +
     "    <tr class=\"smart-table-header-row\">\n" +
     "        <th ng-repeat=\"column in columns\" ng-include=\"column.headerTemplateUrl\" scope=\"col\" class=\"smart-table-header-cell {{column.headerClass}}\" ng-class=\"{'sort-ascent':column.reverse==false, 'sort-descent':column.reverse==true}\"></th>\n" +
+    "    </tr>\n" +
+    "    <tr class=\"smart-table-subheader-row\" ng-repeat=\"subHeaderRow in subHeaders\">\n" +
+    "        <th ng-repeat=\"column in columns\" scope=\"column\" class=\"smart-table-subheader-cell {{subHeaderCellClass}}\"></th>\n" +
     "    </tr>\n" +
     "    </thead>\n" +
     "    <tbody>\n" +

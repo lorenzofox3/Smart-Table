@@ -8,6 +8,7 @@
 - Example in ./example-app now loads data from mock server
 - Set "sort-ascent"/"sort-descent" class on `<th>`'s directly (rather than on the `<span>` inside them)
 - Removed `isGlobalSearchActivated` flag
+- Added Fixed subHeader functionality
 
 ### Events
 
@@ -64,7 +65,20 @@ This project is a lightweight table/grid builder. It is meant to be easy configu
 * Edit cells: you can make cells editable and specify a type for the input so that validation rules, etc will be applied
 * Client side pagination : you can choose the number of rows you want to display and use the [angular-ui.bootstrap](http://angular-ui.github.io/bootstrap/) pagination directive to navigate.
 * All the directives of the table use the table controller API. It means that you can easily change the templates and directives but still using the API to perform any operation
-
+* Sub-headers feature
+    * Sub-headers can be configured through 'sub-headers' attribute in '<smart-table>' directive
+    * Provide array of objects in '<smart-table>' directive
+    * subHeaderCellClass, subHeaderTemplateUrl, formatFunction, formatParameter features are available on 'subHeaders'
+```js
+// Configure sub-headers data below example is for configuring multiple sub-headers
+scope.subHeaders = [{
+					'foo':{'label':'subHeader1-firstColumn','subHeaderCellClass':'subHeader1'},
+					'bar':{'label':'subHeader1--secondColumn','subHeaderCellClass':'subHeader2','formatFunction':'uppercase', 'subHeaderTemplateUrl' : 'subHeaderURL.html'},
+					}, {
+					'foo':{'label':'subHeader2-firstColumn','subHeaderCellClass':'subHeader1'},
+					'bar':{'label':'subHeader2--secondColumn','subHeaderCellClass':'subHeader2','formatFunction':'uppercase'},
+					}];
+```
 You'll find running examples and more documentation at [the demo website](http://lorenzofox3.github.io/smart-table-website/)
 
 ## Smart Table for developers
