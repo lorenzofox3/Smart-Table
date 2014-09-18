@@ -6,7 +6,7 @@
                 restrict: 'EA',
                 require: '^stTable',
                 scope: {},
-                template: '<div class="pagination" ng-if="pages.length >= 2"><ul class="pagination"><li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li></ul></div>',
+                template: '<div class="pagination" ng-if="pages.length >= 2"><ul class="pagination"><li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li></ul><p>Rows per page: </p><input class="form-control input-sm form-inline" type="text" value="10" ng-model="data.pageSize" ng-keyup="$event.keyCode == 13 && selectPage()"></div>',
                 replace: true,
                 link: function (scope, element, attrs, ctrl) {
 
@@ -14,11 +14,21 @@
                         return !(typeof value === 'number' && isNaN(value));
                     }
 
-                    var itemsByPage = isNotNan(parseInt(attrs.stItemsByPage, 10)) == true ? parseInt(attrs.stItemsByPage, 10) : 10;
+                    function getPageSize() {
+                        var pageSize = scope.data.pageSize;
+                        return isNotNan(parseInt(pageSize, 10)) == true ? parseInt(pageSize, 10) : 10;
+                    }
+
                     var displayedPages = isNotNan(parseInt(attrs.stDisplayedPages, 10)) == true ? parseInt(attrs.stDisplayedPages, 10) : 5;
 
                     scope.currentPage = 1;
                     scope.pages = [];
+                    scope.data = {}
+                    scope.data.pageSize = attrs.stItemsByPage || "10";
+
+                    scope.e = function () {
+                        console.log(scope);
+                    };
 
                     //table state --> view
                     scope.$watch(function () {
@@ -51,13 +61,16 @@
 
                     //view -> table state
                     scope.selectPage = function (page) {
+                        var pageSize = getPageSize();
+                        console.log(pageSize);
+                        page = page || scope.currentPage;
                         if (page > 0 && page <= scope.numPages) {
-                            ctrl.slice((page - 1) * itemsByPage, itemsByPage);
+                            ctrl.slice((page - 1) * pageSize, pageSize);
                         }
                     };
 
                     //select the first page
-                    ctrl.slice(0, itemsByPage);
+                    ctrl.slice(0, getPageSize());
                 }
             };
         });
