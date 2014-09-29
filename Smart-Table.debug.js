@@ -62,7 +62,7 @@
                     columnCollection: '=columns',
                     dataCollection: '=rows',
                     config: '=',
-                    subHeaders: '='
+                    subHeaderCollection: '=subHeaders'
                 },
                 replace: 'true',
                 templateUrl: templateList.smartTable,
@@ -116,8 +116,8 @@
                     scope.$watch('dataCollection', function () {
                         ctrl.sortBy();
                     }, true);
-                    scope.$watch('subHeaders', function () {
-                        ctrl.setSubHeaderDataRow(scope.subHeaders);
+                    scope.$watch('subHeaderCollection', function (newValue) {
+                        ctrl.setSubHeaderDataRow(newValue);
                     }, true);
                 }
             };
