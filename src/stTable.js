@@ -93,7 +93,7 @@
                 var prop = predicate ? predicate : '$';
                 predicateObject[prop] = input;
                 // to avoid to filter out null value
-                if (!input) {
+                if (input===null) {
                   delete predicateObject[prop];
                 }
                 tableState.searchSelect.predicateObject = predicateObject;
@@ -118,7 +118,7 @@
                 // added searchSelect
                 if (tableState.searchSelect.predicateObject) {
                   filtered = filter(filtered, tableState.searchSelect.predicateObject, function(actual, expected) {
-                    return expected ? actual == expected : true;
+                      return actual === expected;
                   });
                 }
 
@@ -209,7 +209,7 @@
                 })
                 .sort()
                 .filter(function(el) {
-                  if (!seen || seen !== el) {
+                  if (seen === undefined || seen !== el) {
                     seen = el;
                     return true;
                   }
