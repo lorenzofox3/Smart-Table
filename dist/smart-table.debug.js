@@ -38,21 +38,16 @@
 
             if ($attrs.stSafeSrc) {
                 safeGetter = $parse($attrs.stSafeSrc);
-                $scope.$watch(function () {
-                    var safeSrc = safeGetter($scope);
-                    return safeSrc ? safeSrc.length : 0;
 
-                }, function (newValue, oldValue) {
-                    if (newValue !== oldValue) {
-                        updateSafeCopy()
-                    }
-                });
-                $scope.$watch(function () {
-                    return safeGetter($scope);
-                }, function (newValue, oldValue) {
-                    if (newValue !== oldValue) {
-                        updateSafeCopy();
-                    }
+                $scope.$watchGroup([function() {
+                  var safeSrc = safeGetter($scope);
+                  return safeSrc ? safeSrc.length : 0;
+                }, function() {
+                  return safeGetter($scope);
+                }], function(newValues, oldValues) {
+                  if (oldValues[0] !== newValues[0] || oldValues[1] !== newValues[1]) {
+                    updateSafeCopy();
+                  }
                 });
             }
 
