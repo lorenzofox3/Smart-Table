@@ -13,7 +13,8 @@
                 sort: {},
                 search: {},
                 pagination: {
-                    start: 0
+                    start: 0,
+                    currentPage:0
                 }
             };
             var pipeAfterSafeCopy = true;
