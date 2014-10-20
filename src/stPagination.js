@@ -9,7 +9,7 @@
                     stItemsByPage: '=?',
                     stDisplayedPages: '=?'
                 },
-                template: '<div class="pagination" ng-if="pages.length >= 2"><ul class="pagination"><li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li></ul></div>',
+                template: '<div class="pagination" ng-if="pages.length > 1"><ul class="pagination"><li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li></ul></div>',
                 replace: true,
                 link: function (scope, element, attrs, ctrl) {
 
@@ -17,6 +17,8 @@
                     scope.stDisplayedPages = scope.stDisplayedPages ? +(scope.stDisplayedPages) : 5;
 
                     scope.currentPage = 1;
+                    ctrl.tableState().pagination.currentPage = 1;
+                    
                     scope.pages = [];
 
                     function redraw() {
@@ -57,6 +59,7 @@
                     //view -> table state
                     scope.selectPage = function (page) {
                         if (page > 0 && page <= scope.numPages) {
+                            ctrl.tableState().pagination.currentPage = page;
                             ctrl.slice((page - 1) * scope.stItemsByPage, scope.stItemsByPage);
                         }
                     };
