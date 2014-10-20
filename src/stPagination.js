@@ -9,7 +9,7 @@
                     stItemsByPage: '=?',
                     stDisplayedPages: '=?'
                 },
-                template: '<div class="pagination" ng-if="pages.length >= 2"><ul class="pagination"><li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li></ul></div>',
+                template: '<div class="pagination" ng-if="pages.length > 1"><ul class="pagination"><li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li></ul></div>',
                 replace: true,
                 link: function (scope, element, attrs, ctrl) {
 
