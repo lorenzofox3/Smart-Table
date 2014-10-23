@@ -3,7 +3,6 @@
     ng.module('smart-table')
         .directive('stSearch', ['$timeout', function ($timeout) {
             return {
-                replace: true,
                 require: '^stTable',
                 scope: {
                     predicate: '=?stSearch'
@@ -22,7 +21,7 @@
 
                     //table state -> view
                     scope.$watch(function () {
-                        return ctrl.tableState().search
+                        return ctrl.tableState().search;
                     }, function (newValue, oldValue) {
                         var predicateExpression = scope.predicate || '$';
                         if (newValue.predicateObject && newValue.predicateObject[predicateExpression] !== element[0].value) {
@@ -42,6 +41,6 @@
                         }, throttle);
                     });
                 }
-            }
-        }])
+            };
+        }]);
 })(angular);
