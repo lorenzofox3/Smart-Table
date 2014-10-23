@@ -1,3 +1,4 @@
+// Dave Fork
 (function (ng) {
     'use strict';
     ng.module('smart-table',[]);
@@ -181,7 +182,6 @@
     ng.module('smart-table')
         .directive('stSearch', ['$timeout', function ($timeout) {
             return {
-                replace: true,
                 require: '^stTable',
                 scope: {
                     predicate: '=?stSearch'
@@ -332,7 +332,6 @@
                     stDisplayedPages: '=?'
                 },
                 template: '<div class="pagination" ng-if="pages.length >= 2"><ul class="pagination"><li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li></ul></div>',
-                replace: true,
                 link: function (scope, element, attrs, ctrl) {
 
                     scope.stItemsByPage = scope.stItemsByPage ? +(scope.stItemsByPage) : 10;
