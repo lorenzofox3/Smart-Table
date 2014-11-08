@@ -1,8 +1,8 @@
 {
   "name": "smart-table",
-  "version": "1.2.3",
+  "version": "1.4.4",
   "description": "",
-  "main": "index.js",
+  "main": "dist/smart-table.debug.js",
   "scripts": {
     "test": "node ./node_modules/.bin/gulp karma-CI"
   },

@@ -2,13 +2,20 @@ describe('stPagination directive', function () {
 
     var controllerMock = {
         tableState: function () {
-            return tableState;
+            return tableState
         },
+
         slice: function (start, number) {
             tableState.pagination.start = start;
             tableState.pagination.number = number;
         }
     };
+
+    function ControllerMock() {
+        this.tableState = controllerMock.tableState;
+        this.slice = controllerMock.slice;
+    }
+
     var tableState = {
         sort: {},
         search: {},
@@ -31,9 +38,7 @@ describe('stPagination directive', function () {
     var element;
 
     beforeEach(module('smart-table', function ($controllerProvider) {
-        $controllerProvider.register('stTableController', function () {
-            return controllerMock;
-        });
+        $controllerProvider.register('stTableController', ControllerMock);
     }));
 
     beforeEach(inject(function ($compile, $rootScope) {
@@ -54,6 +59,7 @@ describe('stPagination directive', function () {
             spyOn(controllerMock, 'slice');
             var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-items-by-page="5" st-pagination=""></td></tr></tfoot></table>';
             compile(template)(rootScope);
+            rootScope.$apply();
             element = angular.element(document.getElementById('pagination'));
             expect(controllerMock.slice).toHaveBeenCalledWith(0, 5);
         });
@@ -62,17 +68,19 @@ describe('stPagination directive', function () {
             spyOn(controllerMock, 'slice');
             var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
             compile(template)(rootScope);
+            rootScope.$apply();
             element = angular.element(document.getElementById('pagination'));
             expect(controllerMock.slice).toHaveBeenCalledWith(0, 10);
         });
     });
-
 
     describe('draw pages', function () {
 
         it('it should draw the pages based on table state using 5 as default value for displayed pages number and center it on the active page', function () {
             var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
             element = compile(template)(rootScope);
+            rootScope.$apply();
+
             tableState.pagination = {
                 start: 35,
                 numberOfPages: 12,
@@ -80,7 +88,6 @@ describe('stPagination directive', function () {
             };
 
             rootScope.$apply();
-
 
             var pages = getPages();
 
@@ -104,6 +111,9 @@ describe('stPagination directive', function () {
         it('it should draw the pages based on table state using provided value for displayed pages', function () {
             var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-displayed-pages="7" st-pagination=""></td></tr></tfoot></table>';
             element = compile(template)(rootScope);
+
+            rootScope.$apply();
+
             tableState.pagination = {
                 start: 35,
                 numberOfPages: 12,
@@ -111,7 +121,6 @@ describe('stPagination directive', function () {
             };
 
             rootScope.$apply();
-
 
             var pages = getPages();
 
@@ -136,6 +145,9 @@ describe('stPagination directive', function () {
         it('it should not center when reaching higher edge', function () {
             var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
             element = compile(template)(rootScope);
+
+            rootScope.$apply();
+
             tableState.pagination = {
                 start: 105,
                 numberOfPages: 12,
@@ -164,10 +176,12 @@ describe('stPagination directive', function () {
 
         });
 
-
         it('it should not center when reaching lower edge', function () {
             var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
             element = compile(template)(rootScope);
+
+            rootScope.$apply();
+
             tableState.pagination = {
                 start: 5,
                 numberOfPages: 12,
@@ -199,6 +213,9 @@ describe('stPagination directive', function () {
         it('it should limit the number of page to available pages', function () {
             var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
             element = compile(template)(rootScope);
+
+            rootScope.$apply();
+
             tableState.pagination = {
                 start: 12,
                 numberOfPages: 3,
@@ -227,6 +244,9 @@ describe('stPagination directive', function () {
         it('it should remove pagination when there is less than two page', function () {
             var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
             element = compile(template)(rootScope);
+
+            rootScope.$apply();
+
             tableState.pagination = {
                 start: 5,
                 numberOfPages: 1,
@@ -238,7 +258,6 @@ describe('stPagination directive', function () {
             var pages = getPages();
 
             expect(pages.length).toBe(0);
-
         });
 
     });
@@ -251,6 +270,9 @@ describe('stPagination directive', function () {
 
             var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
             element = compile(template)(rootScope);
+
+            rootScope.$apply();
+
             tableState.pagination = {
                 start: 35,
                 numberOfPages: 12,
