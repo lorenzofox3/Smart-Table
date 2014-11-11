@@ -138,7 +138,12 @@ ng.module('smart-table')
 					lastSelected.isSelected = false;
 
             var rows = safeCopy;
-            var selected = filterFn(rows, predicate, true);
+            var selected = filterFn(rows, predicate,
+                              function(actual, expected) {
+                                if (angular.isNumber(actual) && angular.isString(expected))
+                                  return actual == expected;
+                                return angular.equals(actual, expected);
+                              });
 
             angular.forEach(selected, function(row) {
 				row.isSelected = true;
