@@ -10,6 +10,8 @@ ng.module('smart-table')
                 var promise = null;
                 var throttle = attr.stDelay || 400;
 
+                ctrl.registerFilter('search', false);
+
                 scope.$watch('predicate', function (newValue, oldValue) {
                     if (newValue !== oldValue) {
                         ctrl.tableState().search = {};

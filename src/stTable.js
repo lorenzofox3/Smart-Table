@@ -84,7 +84,16 @@ ng.module('smart-table')
          */
         this.pipe = function pipe() {
             var pagination = tableState.pagination;
-            var filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject) : safeCopy;
+            //var filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject) : safeCopy;
+
+            var filtered = safeCopy;
+            angular.forEach(filters, function(filterComparator, filterName) {
+                var predicateObject = tableState[filterName].predicateObject;
+                if (predicateObject) {
+                    filtered = filter(filtered, predicateObject, filterComparator);
+                }
+            });
+
             if (tableState.sort.predicate) {
                 filtered = orderBy(filtered, tableState.sort.predicate, tableState.sort.reverse);
             }
@@ -94,6 +103,18 @@ ng.module('smart-table')
                 filtered = filtered.slice(pagination.start, pagination.start + pagination.number);
             }
             displaySetter($scope, filtered);
+        };
+
+        var filters = {};
+        this.registerFilter = function(name, comparator) {
+            if (name in filters === false) {
+                filters[name] = comparator;
+                console.log('filter ' + name + ' geregistreerd');
+            }
+
+            if (name in tableState === false) {
+                tableState[name] = {};
+            }
         };
 
         /**
