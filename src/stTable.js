@@ -6,6 +6,7 @@ ng.module('smart-table')
         var safeGetter;
         var orderBy = $filter('orderBy');
         var filter = $filter('filter');
+        var filterFn = $filter('filter'); //for utility purposes
         var safeCopy = copyRefs(displayGetter($scope));
         var tableState = {
             sort: {},
@@ -108,7 +109,12 @@ ng.module('smart-table')
                 if (mode === 'single') {
                     row.isSelected = row.isSelected !== true;
                     if (lastSelected) {
-                        lastSelected.isSelected = false;
+						if (angular.isArray(lastSelected))
+							angular.forEach(lastSelected, function(row){
+								row.isSelected = false;
+							});
+						else
+                        	lastSelected.isSelected = false;
                     }
                     lastSelected = row.isSelected === true ? row : undefined;
                 } else {
@@ -116,6 +122,49 @@ ng.module('smart-table')
                 }
             }
         };
+
+        /**
+         * select a set of dataRows by a given filter (it will add the attribute isSelected to the row object)
+         * @param {Object} predicate - the object should contain a key and value to filter by.
+         */
+        this.selectByFilter = function(predicate) {
+			// clear last selected
+			if (lastSelected)
+				if (angular.isArray(lastSelected))
+					angular.forEach(lastSelected, function(row){
+						row.isSelected = false;
+					});
+				else
+					lastSelected.isSelected = false;
+
+            var rows = safeCopy;
+            var selected = filterFn(rows, predicate,
+                              function(actual, expected) {
+                                if (angular.isNumber(actual) && angular.isString(expected))
+                                  return actual == expected;
+                                return angular.equals(actual, expected);
+                              });
+
+            angular.forEach(selected, function(row) {
+				row.isSelected = true;
+			});
+
+			lastSelected = selected;
+        };
+
+		/**
+         * set a selection value to the whole set of rows.
+         * @param {Boolean} value - the value that will be set.
+         */
+		this.setSelectionToAll = function(value) {
+			var rows = safeCopy;
+
+			angular.forEach(safeCopy, function(row){
+				row.isSelected = value;
+			});
+
+			lastSelected = value ? safeCopy : undefined;
+		}
 
         /**
          * take a slice of the current sorted/filtered collection (pagination)
