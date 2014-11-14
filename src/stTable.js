@@ -87,10 +87,11 @@ ng.module('smart-table')
             //var filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject) : safeCopy;
 
             var filtered = safeCopy;
-            angular.forEach(filters, function(filterComparator, filterName) {
-                var predicateObject = tableState[filterName].predicateObject;
+            angular.forEach(tableState.filters, function(filterObj) {
+                var predicateObject = filterObj.predicateObject;
                 if (predicateObject) {
-                    filtered = filter(filtered, predicateObject, filterComparator);
+                    filtered = filter(filtered, predicateObject, filterObj.comparator);
+                    tableState.pagination.start = 0;
                 }
             });
 
@@ -105,16 +106,19 @@ ng.module('smart-table')
             displaySetter($scope, filtered);
         };
 
-        var filters = {};
         this.registerFilter = function(name, comparator) {
-            if (name in filters === false) {
-                filters[name] = comparator;
-                console.log('filter ' + name + ' geregistreerd');
+            if (tableState.filters===undefined) {
+                tableState.filters = {};
             }
-
-            if (name in tableState === false) {
-                tableState[name] = {};
+            var filter = tableState.filters[name];
+            if (filter===undefined) {
+                filter = {
+                    comparator: comparator,
+                    predicateObject: {}
+                }
+                tableState.filters[name] = filter;
             }
+            return filter;
         };
 
         /**

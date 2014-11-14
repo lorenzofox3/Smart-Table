@@ -9,8 +9,7 @@ ng.module('smart-table')
                 var tableCtrl = ctrl;
                 var promise = null;
                 var throttle = attr.stDelay || 400;
-
-                ctrl.registerFilter('search', false);
+                var filter = ctrl.registerFilter('search', false);
 
                 scope.$watch('predicate', function (newValue, oldValue) {
                     if (newValue !== oldValue) {
@@ -36,7 +35,15 @@ ng.module('smart-table')
                         $timeout.cancel(promise);
                     }
                     promise = $timeout(function () {
-                        tableCtrl.search(evt.target.value, scope.predicate || '');
+
+                        var prop = scope.predicate || '$';
+                        var input = evt.target.value;
+                        filter.predicateObject[prop] = input;
+                        // to avoid to filter out null value
+                        if (!input) {
+                            delete filter.predicateObject[prop];
+                        }
+                        tableCtrl.pipe();
                         promise = null;
                     }, throttle);
                 });
