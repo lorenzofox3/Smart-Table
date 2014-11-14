@@ -9,7 +9,7 @@ ng.module('smart-table')
         var safeCopy = copyRefs(displayGetter($scope));
         var tableState = {
             sort: {},
-            search: {},
+            filters: {},
             pagination: {
                 start: 0
             }
@@ -62,50 +62,13 @@ ng.module('smart-table')
         };
 
         /**
-         * search matching rows
-         * @param {String} input - the input string
-         * @param {String} [predicate] - the property name against you want to check the match, otherwise it will search on all properties
+         * Register a filter
+         * @param {String} name - name of filter
+         * @param {function(actual, expected)|true|undefined} comparator Comparator which is used in determining if the
+         *     expected value (from the filter expression) and actual value (from the object in the array) should be
+         *     considered a match. See also https://docs.angularjs.org/api/ng/filter/filter
+         * @returns {Object} - filter object with predicateObject and comparator.
          */
-        this.search = function search(input, predicate) {
-            var predicateObject = tableState.search.predicateObject || {};
-            var prop = predicate ? predicate : '$';
-            predicateObject[prop] = input;
-            // to avoid to filter out null value
-            if (!input) {
-                delete predicateObject[prop];
-            }
-            tableState.search.predicateObject = predicateObject;
-            tableState.pagination.start = 0;
-            this.pipe();
-        };
-
-        /**
-         * this will chain the operations of sorting and filtering based on the current table state (sort options, filtering, ect)
-         */
-        this.pipe = function pipe() {
-            var pagination = tableState.pagination;
-            //var filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject) : safeCopy;
-
-            var filtered = safeCopy;
-            angular.forEach(tableState.filters, function(filterObj) {
-                var predicateObject = filterObj.predicateObject;
-                if (predicateObject) {
-                    filtered = filter(filtered, predicateObject, filterObj.comparator);
-                    tableState.pagination.start = 0;
-                }
-            });
-
-            if (tableState.sort.predicate) {
-                filtered = orderBy(filtered, tableState.sort.predicate, tableState.sort.reverse);
-            }
-            if (pagination.number !== undefined) {
-                pagination.numberOfPages = filtered.length > 0 ? Math.ceil(filtered.length / pagination.number) : 1;
-                pagination.start = pagination.start >= filtered.length ? (pagination.numberOfPages - 1) * pagination.number : pagination.start;
-                filtered = filtered.slice(pagination.start, pagination.start + pagination.number);
-            }
-            displaySetter($scope, filtered);
-        };
-
         this.registerFilter = function(name, comparator) {
             if (tableState.filters===undefined) {
                 tableState.filters = {};
@@ -119,6 +82,48 @@ ng.module('smart-table')
                 tableState.filters[name] = filter;
             }
             return filter;
+        };
+
+        /**
+         * search matching rows
+         * @param {String} input - the input string
+         * @param {String} predicate - the property name against you want to check the match, otherwise it will search on all properties
+         * @param {Object} filter - the filter that is going to be applied
+         */
+        this.applyFilter = function(input, predicate, filter) {
+            var prop = predicate || '$';
+            filter.predicateObject[prop] = input;
+            // to avoid to filter out null value
+            if (!input) {
+                delete filter.predicateObject[prop];
+            }
+            tableState.pagination.start = 0;
+            this.pipe();
+        };
+
+        /**
+         * this will chain the operations of sorting and filtering based on the current table state (sort options, filtering, ect)
+         */
+        this.pipe = function pipe() {
+            var pagination = tableState.pagination;
+
+            var filtered = safeCopy;
+            angular.forEach(tableState.filters, function(filterObj) {
+                var predicateObject = filterObj.predicateObject;
+                if (predicateObject) {
+                    filtered = filter(filtered, predicateObject, filterObj.comparator);
+                }
+            });
+
+            if (tableState.sort.predicate) {
+                filtered = orderBy(filtered, tableState.sort.predicate, tableState.sort.reverse);
+            }
+            if (pagination.number !== undefined) {
+                pagination.numberOfPages = filtered.length > 0 ? Math.ceil(filtered.length / pagination.number) : 1;
+                pagination.start = pagination.start >= filtered.length ? (pagination.numberOfPages - 1) * pagination.number : pagination.start;
+                filtered = filtered.slice(pagination.start, pagination.start + pagination.number);
+            }
+            displaySetter($scope, filtered);
         };
 
         /**
@@ -156,7 +161,7 @@ ng.module('smart-table')
 
         /**
          * return the current state of the table
-         * @returns {{sort: {}, search: {}, pagination: {start: number}}}
+         * @returns {{sort: {}, filters: {}, pagination: {start: number}}}
          */
         this.tableState = function getTableState() {
             return tableState;
