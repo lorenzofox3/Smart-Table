@@ -43,5 +43,3 @@ ng.module('smart-table')
             }
         };
     }]);
-
-
