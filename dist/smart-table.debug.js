@@ -183,9 +183,13 @@ ng.module('smart-table')
 
         /**
          * return the current state of the table
-         * @returns {{sort: {}, filters: {}, pagination: {start: number}}}
+         * @returns {{sort: {}, search: {}, filters: {}, pagination: {start: number}}}
          */
         this.tableState = function getTableState() {
+
+            // for backwards compatibility, make sure tableState.search exists.
+            tableState.search = tableState.filters.search ? tableState.filters.search : {};
+
             return tableState;
         };
 
@@ -450,12 +454,7 @@ ng.module('smart-table')
                     if (ng.isFunction(scope.stPipe)) {
                         ctrl.preventPipeOnWatch();
                         ctrl.pipe = function () {
-                            var tableState = ctrl.tableState();
-
-                            // for backwards compatibility, make sure tableState.search exists.
-                            tableState.search = tableState.filters.search ? tableState.filters.search : {};
-
-                            scope.stPipe(tableState, ctrl);
+                            scope.stPipe(ctrl.tableState(), ctrl);
                         }
                     }
                 }
