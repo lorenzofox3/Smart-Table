@@ -89,7 +89,7 @@ ng.module('smart-table')
                 filter = {
                     comparator: comparator,
                     predicateObject: {}
-                }
+                };
                 tableState.filters[name] = filter;
             }
             return filter;
@@ -239,7 +239,7 @@ ng.module('smart-table')
         return {
             require: '^stTable',
             scope: {
-              predicate: '=?stSearch'
+                predicate: '=?stSearch'
             },
             link: function (scope, element, attr, ctrl) {
                 var tableCtrl = ctrl;

@@ -3,7 +3,7 @@ ng.module('smart-table')
         return {
             require: '^stTable',
             scope: {
-              predicate: '=?stSearch'
+                predicate: '=?stSearch'
             },
             link: function (scope, element, attr, ctrl) {
                 var tableCtrl = ctrl;
