@@ -116,7 +116,7 @@ ng.module('smart-table')
             var prop = predicate || '$';
             filter.predicateObject[prop] = input;
             // to avoid to filter out null value
-            if (!input) {
+            if (input===undefined || input===null || input==='') {
                 delete filter.predicateObject[prop];
             }
             tableState.pagination.start = 0;
