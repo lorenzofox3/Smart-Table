@@ -20,7 +20,7 @@ ng.module('smart-table')
         var safeCopy = copyRefs(displayGetter($scope));
         var tableState = {
             sort: {},
-            search: {},
+            filters: {},
             pagination: {
                 start: 0
             }
@@ -73,19 +73,52 @@ ng.module('smart-table')
         };
 
         /**
+         * Register a filter
+         * @param {String} name - name of filter
+         * @param {function(actual, expected)|true|undefined} comparator Comparator which is used in determining if the
+         *     expected value (from the filter expression) and actual value (from the object in the array) should be
+         *     considered a match. See also https://docs.angularjs.org/api/ng/filter/filter
+         * @returns {Object} - filter object with predicateObject and comparator.
+         */
+        this.registerFilter = function(name, comparator) {
+            if (tableState.filters===undefined) {
+                tableState.filters = {};
+            }
+            var filter = tableState.filters[name];
+            if (filter===undefined) {
+                filter = {
+                    comparator: comparator,
+                    predicateObject: {}
+                };
+                tableState.filters[name] = filter;
+            }
+            return filter;
+        };
+
+        /**
          * search matching rows
+         * @deprecated this method is only meant for backwards compatibility.
          * @param {String} input - the input string
          * @param {String} [predicate] - the property name against you want to check the match, otherwise it will search on all properties
          */
         this.search = function search(input, predicate) {
-            var predicateObject = tableState.search.predicateObject || {};
-            var prop = predicate ? predicate : '$';
-            predicateObject[prop] = input;
+            var searchFilter = this.registerFilter('search'); // make sure 'search' filter exists, get copy if already registered.
+            this.applyFilter(input, predicate, searchFilter);
+        };
+
+        /**
+         * apply filter to row data
+         * @param {String} input - the input string
+         * @param {String} predicate - the property name against you want to check the match, otherwise it will search on all properties
+         * @param {Object} filter - the filter that is going to be applied
+         */
+        this.applyFilter = function(input, predicate, filter) {
+            var prop = predicate || '$';
+            filter.predicateObject[prop] = input;
             // to avoid to filter out null value
-            if (!input) {
-                delete predicateObject[prop];
+            if (input===undefined || input===null || input==='') {
+                delete filter.predicateObject[prop];
             }
-            tableState.search.predicateObject = predicateObject;
             tableState.pagination.start = 0;
             this.pipe();
         };
@@ -95,7 +128,15 @@ ng.module('smart-table')
          */
         this.pipe = function pipe() {
             var pagination = tableState.pagination;
-            var filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject) : safeCopy;
+
+            var filtered = safeCopy;
+            angular.forEach(tableState.filters, function(filterObj) {
+                var predicateObject = filterObj.predicateObject;
+                if (predicateObject) {
+                    filtered = filter(filtered, predicateObject, filterObj.comparator);
+                }
+            });
+
             if (tableState.sort.predicate) {
                 filtered = orderBy(filtered, tableState.sort.predicate, tableState.sort.reverse);
             }
@@ -142,9 +183,13 @@ ng.module('smart-table')
 
         /**
          * return the current state of the table
-         * @returns {{sort: {}, search: {}, pagination: {start: number}}}
+         * @returns {{sort: {}, search: {}, filters: {}, pagination: {start: number}}}
          */
         this.tableState = function getTableState() {
+
+            // for backwards compatibility, make sure tableState.search exists.
+            tableState.search = tableState.filters.search ? tableState.filters.search : {};
+
             return tableState;
         };
 
@@ -200,21 +245,23 @@ ng.module('smart-table')
                 var tableCtrl = ctrl;
                 var promise = null;
                 var throttle = attr.stDelay || 400;
+                var filter = ctrl.registerFilter('search');
 
                 scope.$watch('predicate', function (newValue, oldValue) {
                     if (newValue !== oldValue) {
-                        ctrl.tableState().search = {};
-                        tableCtrl.search(element[0].value || '', newValue);
+                        delete filter.predicateObject[oldValue];
+                        tableCtrl.applyFilter(element[0].value, newValue, filter);
                     }
                 });
 
                 //table state -> view
                 scope.$watch(function () {
-                    return ctrl.tableState().search;
-                }, function (newValue, oldValue) {
+                    return filter.predicateObject;
+                }, function (newValue) {
+                    var predicateObject = newValue;
                     var predicateExpression = scope.predicate || '$';
-                    if (newValue.predicateObject && newValue.predicateObject[predicateExpression] !== element[0].value) {
-                        element[0].value = newValue.predicateObject[predicateExpression] || '';
+                    if (predicateObject && predicateObject[predicateExpression] !== element[0].value) {
+                        element[0].value = predicateObject[predicateExpression] || '';
                     }
                 }, true);
 
@@ -225,7 +272,7 @@ ng.module('smart-table')
                         $timeout.cancel(promise);
                     }
                     promise = $timeout(function () {
-                        tableCtrl.search(evt.target.value, scope.predicate || '');
+                        tableCtrl.applyFilter(evt.target.value, scope.predicate, filter);
                         promise = null;
                     }, throttle);
                 });

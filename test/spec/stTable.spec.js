@@ -4,6 +4,7 @@ describe('st table Controller', function () {
     var scope;
     var ctrl;
     var childScope;
+    var searchFilter;
 
     beforeEach(module('smart-table'));
 
@@ -21,7 +22,7 @@ describe('st table Controller', function () {
         ctrl = $controller('stTableController', {$scope: scope, $parse: $parse, $filter: $filter, $attrs: {
             stTable: 'data'
         }});
-
+        searchFilter = ctrl.registerFilter('search');
     }));
 
     describe('sort', function () {
@@ -63,7 +64,7 @@ describe('st table Controller', function () {
 
     describe('search', function () {
         it('should search based on property name ', function () {
-            ctrl.search('re', 'name');
+            ctrl.applyFilter('re', 'name', searchFilter);
             expect(scope.data).toEqual([
                 {name: 'Renard', firstname: 'Laurent', age: 66},
                 {name: 'Renard', firstname: 'Olivier', age: 33},
@@ -82,16 +83,15 @@ describe('st table Controller', function () {
             ctrl = $controller('stTableController', {$scope: scope, $parse: $parse, $filter: $filter, $attrs: {
                 stTable: 'data'
             }});
+            searchFilter = ctrl.registerFilter('search');
 
-
-            ctrl.search('re', 'name');
+            ctrl.applyFilter('re', 'name', searchFilter);
             expect(scope.data).toEqual([
                 {name: 'Renard', firstname: 'Olivier', age: 33},
                 {name: 'Faivre', firstname: 'Blandine', age: 44}
             ]);
 
-            ctrl.search('', 'name');
-
+            ctrl.applyFilter('', 'name', searchFilter);
             expect(scope.data).toEqual([
                 {name: null, firstname: 'Laurent', age: 66},
                 {name: 'Renard', firstname: 'Olivier', age: 33},
@@ -101,7 +101,7 @@ describe('st table Controller', function () {
         }));
 
         it('should search globally', function () {
-            ctrl.search('re');
+            ctrl.applyFilter('re', '', searchFilter);
             expect(scope.data).toEqual([
                 {name: 'Renard', firstname: 'Laurent', age: 66},
                 {name: 'Francoise', firstname: 'Frere', age: 99},
@@ -111,14 +111,14 @@ describe('st table Controller', function () {
         });
 
         it('should add different columns', function () {
-            ctrl.search('re', 'name');
+            ctrl.applyFilter('re', 'name', searchFilter);
             expect(scope.data).toEqual([
                 {name: 'Renard', firstname: 'Laurent', age: 66},
                 {name: 'Renard', firstname: 'Olivier', age: 33},
                 {name: 'Faivre', firstname: 'Blandine', age: 44}
             ]);
 
-            ctrl.search('re', 'firstname');
+            ctrl.applyFilter('re', 'firstname', searchFilter);
 
             expect(scope.data).toEqual([
                 {name: 'Renard', firstname: 'Laurent', age: 66}
@@ -170,7 +170,7 @@ describe('st table Controller', function () {
                 {name: 'Renard', firstname: 'Olivier', age: 33}
             ]);
 
-            ctrl.search('re', 'name');
+            ctrl.applyFilter('re', 'name', searchFilter);
             expect(scope.data.length).toBe(2);
             expect(scope.data).toEqual([
                 {name: 'Renard', firstname: 'Laurent', age: 66},
@@ -188,7 +188,7 @@ describe('st table Controller', function () {
                 {name: 'Renard', firstname: 'Olivier', age: 33}
             ]);
 
-            ctrl.search('re', 'name');
+            ctrl.applyFilter('re', 'name', searchFilter);
             expect(scope.data).toEqual([
                 {name: 'Faivre', firstname: 'Blandine', age: 44},
                 {name: 'Renard', firstname: 'Laurent', age: 66},
@@ -198,7 +198,7 @@ describe('st table Controller', function () {
         });
 
         it('should remember filtering when sorting', function () {
-            ctrl.search('re', 'name');
+            ctrl.applyFilter('re', 'name', searchFilter);
             expect(scope.data).toEqual([
                 {name: 'Renard', firstname: 'Laurent', age: 66},
                 {name: 'Renard', firstname: 'Olivier', age: 33},

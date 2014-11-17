@@ -9,21 +9,23 @@ ng.module('smart-table')
                 var tableCtrl = ctrl;
                 var promise = null;
                 var throttle = attr.stDelay || 400;
+                var filter = ctrl.registerFilter('search');
 
                 scope.$watch('predicate', function (newValue, oldValue) {
                     if (newValue !== oldValue) {
-                        ctrl.tableState().search = {};
-                        tableCtrl.search(element[0].value || '', newValue);
+                        delete filter.predicateObject[oldValue];
+                        tableCtrl.applyFilter(element[0].value, newValue, filter);
                     }
                 });
 
                 //table state -> view
                 scope.$watch(function () {
-                    return ctrl.tableState().search;
-                }, function (newValue, oldValue) {
+                    return filter.predicateObject;
+                }, function (newValue) {
+                    var predicateObject = newValue;
                     var predicateExpression = scope.predicate || '$';
-                    if (newValue.predicateObject && newValue.predicateObject[predicateExpression] !== element[0].value) {
-                        element[0].value = newValue.predicateObject[predicateExpression] || '';
+                    if (predicateObject && predicateObject[predicateExpression] !== element[0].value) {
+                        element[0].value = predicateObject[predicateExpression] || '';
                     }
                 }, true);
 
@@ -34,7 +36,7 @@ ng.module('smart-table')
                         $timeout.cancel(promise);
                     }
                     promise = $timeout(function () {
-                        tableCtrl.search(evt.target.value, scope.predicate || '');
+                        tableCtrl.applyFilter(evt.target.value, scope.predicate, filter);
                         promise = null;
                     }, throttle);
                 });

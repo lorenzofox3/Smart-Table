@@ -36,11 +36,11 @@ describe('stPipe directive', function () {
         angular.element(ths[0]).triggerHandler('click');
 
         expect(firstArg).toEqual({
-            sort: {predicate: 'name', reverse: false}, search: {}, pagination: {start: 0}
+            sort: {predicate: 'name', reverse: false}, search: {}, filters: {}, pagination: {start: 0}
         });
 
         expect(secondArg.tableState()).toEqual({
-            sort: {predicate: 'name', reverse: false}, search: {}, pagination: {start: 0}
+            sort: {predicate: 'name', reverse: false}, search: {}, filters: {}, pagination: {start: 0}
         });
     }));
 });
