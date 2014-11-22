@@ -1,0 +1,32 @@
+<table st-safe-src="rowCollection" st-table="displayed" class="table table-striped">
+	<thead>
+	<tr>
+		<th st-skip-natural="true" st-sort="firstName">first name</th>
+		<th st-sort="lastName">last name</th>
+		<th st-sort="age">age</th>
+		<th st-sort="email">email</th>
+		<th st-sort="balance">balance</th>
+	</tr>
+	<tr>
+		<th colspan="5">
+			<input st-search="'firstName'"/>
+		</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr st-select-row="row" ng-repeat="row in displayed">
+		<td>{{row.firstName}}</td>
+		<td>{{row.lastName | uppercase}}</td>
+		<td>{{row.age}}</td>
+		<td>{{row.email}}</td>
+		<td>{{row.balance | currency}}</td>
+	</tr>
+	</tbody>
+	<tfoot>
+	<tr>
+		<td colspan="5" class="text-center">
+			<div st-items-by-page="itemsByPage" st-pagination=""></div>
+		</td>
+	</tr>
+	</tfoot>
+</table>

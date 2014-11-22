@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+
+<head>
+	<link rel="stylesheet" href="style.css"/>
+	<link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css"/>
+	<script src="../bower_components/angular/angular.js"></script>
+	<script src="./app.js"></script>
+	<script src=../dist/smart-table.debug.js></script>
+
+</head>
+
+<body ng-controller="mainCtrl">
+<table st-table="displayed" class="table table-bordered table-striped">
+	<thead>
+	<tr>
+		<th st-sort="firstName">first name</th>
+		<th st-sort="lastName">last name</th>
+		<th st-sort="birthDate">birth date</th>
+		<th st-sort="email">email</th>
+		<th st-sort="balance">balance</th>
+	</tr>
+	<tr>
+		<th>
+			<input placeholder="search firstname" st-search="'firstName'"/>
+		</th>
+		<th>
+			<input placeholder="search lastname" st-search="'lastName'"/>
+		</th>
+		<th>
+		</th>
+		<th></th>
+		<th>
+			<st-plugins-number-range-control predicate="balance" lower="query.lower"
+																			 higher="query.higher"></st-plugins-number-range-control>
+		</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr ng-repeat="row in displayed">
+		<td>{{row.firstName}}</td>
+		<td>{{row.lastName | uppercase}}</td>
+		<td>{{row.birthDate | date}}</td>
+		<td>{{row.email}}</td>
+		<td>{{row.balance | currency}}</td>
+	</tr>
+	</tbody>
+	<tfoot>
+	</tfoot>
+</table>
+
+</body>
+
+</html>
