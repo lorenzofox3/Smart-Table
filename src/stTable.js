@@ -7,6 +7,7 @@ ng.module('smart-table')
         var orderBy = $filter('orderBy');
         var filter = $filter('filter');
         var safeCopy = copyRefs(displayGetter($scope));
+        var comparators = {};
         var tableState = {
             sort: {},
             search: {},
@@ -26,6 +27,34 @@ ng.module('smart-table')
             safeCopy = copyRefs(safeGetter($scope));
             if (pipeAfterSafeCopy === true) {
                 ctrl.pipe();
+            }
+        }
+
+        function createFilterFunction(predicateObject, comp) {
+
+            var searchPredicate = {};
+            var filters = [];
+
+            //custom comparators
+            ng.forEach(predicateObject, function (value, key) {
+                if (comp[key]) {
+                    filters.push(function (array) {
+                        return filter(array, {key: value}, comp[key]);
+                    });
+                } else {
+                    searchPredicate[key] = value;
+                }
+            });
+
+            //normal search
+            filters.push(function (array) {
+                return filter(array, searchPredicate);
+            });
+
+            return function combinedFilter(array) {
+                return filters.reduce(function (previous, currentFilter) {
+                    return currentFilter(previous);
+                }, array);
             }
         }
 
@@ -65,14 +94,19 @@ ng.module('smart-table')
          * search matching rows
          * @param {String} input - the input string
          * @param {String} [predicate] - the property name against you want to check the match, otherwise it will search on all properties
+         * @param {Function} [compFunc] - a comparator function to be associated to the particular predicate
          */
-        this.search = function search(input, predicate) {
+        this.search = function search(input, predicate, compFunc) {
             var predicateObject = tableState.search.predicateObject || {};
             var prop = predicate ? predicate : '$';
             predicateObject[prop] = input;
+            if (compFunc) {
+                comparators[prop] = compFunc;
+            }
             // to avoid to filter out null value
             if (!input) {
                 delete predicateObject[prop];
+                delete comparators[prop];
             }
             tableState.search.predicateObject = predicateObject;
             tableState.pagination.start = 0;
@@ -84,7 +118,9 @@ ng.module('smart-table')
          */
         this.pipe = function pipe() {
             var pagination = tableState.pagination;
-            var filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject) : safeCopy;
+            var filterFunc = createFilterFunction(tableState.search.predicateObject, comparators);
+            var filtered = tableState.search.predicateObject ? filterFunc(safeCopy) : safeCopy;
+
             if (tableState.sort.predicate) {
                 filtered = orderBy(filtered, tableState.sort.predicate, tableState.sort.reverse);
             }
