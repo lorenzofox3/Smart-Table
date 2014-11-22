@@ -18,9 +18,11 @@ describe('st table Controller', function () {
         scope = $rootScope;
         childScope = scope.$new();
         scope.data = dataSet;
-        ctrl = $controller('stTableController', {$scope: scope, $parse: $parse, $filter: $filter, $attrs: {
-            stTable: 'data'
-        }});
+        ctrl = $controller('stTableController', {
+            $scope: scope, $parse: $parse, $filter: $filter, $attrs: {
+                stTable: 'data'
+            }
+        });
 
     }));
 
@@ -79,9 +81,11 @@ describe('st table Controller', function () {
             ];
 
             //use another dataset for this particular spec
-            ctrl = $controller('stTableController', {$scope: scope, $parse: $parse, $filter: $filter, $attrs: {
-                stTable: 'data'
-            }});
+            ctrl = $controller('stTableController', {
+                $scope: scope, $parse: $parse, $filter: $filter, $attrs: {
+                    stTable: 'data'
+                }
+            });
 
 
             ctrl.search('re', 'name');
@@ -122,6 +126,31 @@ describe('st table Controller', function () {
 
             expect(scope.data).toEqual([
                 {name: 'Renard', firstname: 'Laurent', age: 66}
+            ]);
+        });
+
+        it('should filter based on comparator function', function () {
+            ctrl.search(40, 'age', function (actual, expected) {
+                return actual > expected;
+            });
+
+            expect(scope.data).toEqual([
+                {name: 'Renard', firstname: 'Laurent', age: 66},
+                {name: 'Francoise', firstname: 'Frere', age: 99},
+                {name: 'Faivre', firstname: 'Blandine', age: 44}
+            ]);
+        });
+
+        it('should support search and comparator function', function () {
+            ctrl.search(40, 'age', function (actual, expected) {
+                return actual > expected;
+            });
+
+            ctrl.search('re','firstname');
+
+            expect(scope.data).toEqual([
+                {name: 'Renard', firstname: 'Laurent', age: 66},
+                {name: 'Francoise', firstname: 'Frere', age: 99}
             ]);
         });
     });

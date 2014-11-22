@@ -50,7 +50,9 @@ ng.module('smart-table')
             ng.forEach(predicateObject, function (value, key) {
                 if (comp[key]) {
                     filters.push(function (array) {
-                        return filter(array, {key: value}, comp[key]);
+                        var predicate = {};
+                        predicate[key] = value;
+                        return filter(array, predicate, comp[key]);
                     });
                 } else {
                     searchPredicate[key] = value;
