@@ -8,9 +8,9 @@ ng.module('smart-table')
             },
             link: function (scope, element, attr, ctrl) {
                 var mode = attr.stSelectMode || 'single';
-                element.bind('click', function () {
+                element.bind('click', function ($event) {
                     scope.$apply(function () {
-                        ctrl.select(scope.row, mode);
+                        ctrl.select(scope.row, mode, $event.shiftKey);
                     });
                 });
 

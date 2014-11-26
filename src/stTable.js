@@ -100,8 +100,9 @@ ng.module('smart-table')
          * select a dataRow (it will add the attribute isSelected to the row object)
          * @param {Object} row - the row to select
          * @param {String} [mode] - "single" or "multiple" (multiple by default)
+         * @param {Boolean} [shiftKey] - true if shift key is pressed
          */
-        this.select = function select(row, mode) {
+        this.select = function select(row, mode, shiftKey) {
             var rows = safeCopy;
             var index = rows.indexOf(row);
             if (index !== -1) {
@@ -110,10 +111,21 @@ ng.module('smart-table')
                     if (lastSelected) {
                         lastSelected.isSelected = false;
                     }
-                    lastSelected = row.isSelected === true ? row : undefined;
+                } else if (shiftKey && !angular.isUndefined(lastSelected)) {
+                    var oldIdx = rows.indexOf(lastSelected);
+                    var start = (oldIdx < index) ? oldIdx : index;
+                    var end = (oldIdx > index) ? oldIdx : index;
+                    for (var i = 0; i < rows.length; i++) {
+                        if (i >= start && i <= end)
+                            rows[i].isSelected = true;
+                        else
+                            rows[i].isSelected = false;
+                    };
                 } else {
                     rows[index].isSelected = !rows[index].isSelected;
                 }
+                if (!shiftKey || angular.isUndefined(lastSelected))
+                    lastSelected = row.isSelected === true ? row : undefined;
             }
         };
 
