@@ -85,9 +85,18 @@
                     }
                     
                     element.bind('click', function () {
-                        scope.$apply(function () {
-                            ctrl.toggleSelection(scope.dataRow);
-                        })
+                        var index = scope.dataCollection.indexOf(scope.dataRow);
+                        if(scope.selectionMode == 'single') {
+                            var isRowAlreadySelected = element.hasClass('selected')
+                            if (!isRowAlreadySelected) {
+                                element
+                                    .parent()
+                                    .find('.selected')
+                                    .removeClass('selected')
+                            }
+                        }
+                        element.toggleClass('selected');
+                        ctrl.toggleSelection(scope.dataRow);
                     });
                 }
             };
