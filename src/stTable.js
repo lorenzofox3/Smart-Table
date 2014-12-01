@@ -103,7 +103,7 @@ ng.module('smart-table')
          * @param {Boolean} [shiftKey] - true if shift key is pressed
          */
         this.select = function select(row, mode, shiftKey) {
-            var rows = safeCopy;
+            var rows = displayGetter($scope);
             var index = rows.indexOf(row);
             if (index !== -1) {
                 if (mode === 'single') {
