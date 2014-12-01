@@ -98,6 +98,18 @@ describe('stSelectRow Directive', function () {
             expect(scope.rowCollection[3].isSelected).toBe(true);
             expect(scope.rowCollection[1].isSelected).toBe(true);
         });
+
+        it('should select multiple row with shift + click', function () {
+            var trs = element.find('tr');
+            var shiftClick = jQuery.Event("click", { shiftKey: true });
+            expect(trs.length).toBe(5);
+            angular.element(trs[3]).triggerHandler(shiftClick);
+            expect(scope.rowCollection[3].isSelected).toBe(true);
+            angular.element(trs[1]).triggerHandler(shiftClick);
+            expect(scope.rowCollection[3].isSelected).toBe(true);
+            expect(scope.rowCollection[2].isSelected).toBe(true);
+            expect(scope.rowCollection[1].isSelected).toBe(true);
+        });
     });
 
 
