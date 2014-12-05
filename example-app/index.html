@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html ng-app="plunker">
+
+<head>
+	<meta charset="utf-8" />
+	<title>Smart Table - range selection Plunker</title>
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+	<script data-semver="1.3.5" src="https://code.angularjs.org/1.3.5/angular.js" data-require="angular.js@1.3.x"></script>
+	<script src="../dist/smart-table.debug.js"></script>
+	<script src="app.js"></script>
+	<style>
+		.st-selected {
+			background: none repeat scroll 0% 0% #216EFF !important;
+			color: #FFF !important;
+		}
+	</style>
+</head>
+
+<body ng-controller="MainCtrl">
+<table st-table="rowCollection" class="table table-striped">
+	<thead>
+	<tr>
+		<th st-sort="firstName">first name</th>
+		<th st-sort="lastName">last name</th>
+		<th st-sort="birthDate">birth date</th>
+		<th st-sort="balance">balance</th>
+		<th>email</th>
+	</tr>
+	<tr>
+		<th>
+			<input st-search="'firstName'" placeholder="search for firstname" class="input-sm form-control" type="search"/>
+		</th>
+		<th colspan="4">
+			<input st-search placeholder="global search" class="input-sm form-control" type="search"/>
+		</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr ng-repeat="row in rowCollection" st-select-row="row" st-select-mode="multiple">
+		<td>{{row.firstName | uppercase}}</td>
+		<td>{{row.lastName}}</td>
+		<td>{{row.birthDate | date}}</td>
+		<td>{{row.balance | currency}}</td>
+		<td><a ng-href="mailto:{{row.email}}">email</a></td>
+	</tr>
+	</tbody>
+	<tfoot>
+	<tr>
+		<td colspan="5" class="text-center">
+			<div st-pagination="" st-items-by-page="itemsByPage" st-displayed-pages="7"></div>
+		</td>
+	</tr>
+	</tfoot>
+</table>
+</body>
+
+</html>
