@@ -24,6 +24,8 @@ ng.module('smart-table')
 
         function updateSafeCopy() {
             safeCopy = copyRefs(safeGetter($scope));
+            // Ensure sort is updated
+            tableState.sort.updated += 1
             if (pipeAfterSafeCopy === true) {
                 ctrl.pipe();
             }
@@ -55,7 +57,14 @@ ng.module('smart-table')
          * @param [reverse] - if you want to reverse the order
          */
         this.sortBy = function sortBy(predicate, reverse) {
-            tableState.sort.predicate = predicate;
+            // Reevaluate if sort predicate function went into scope and we shall use the function
+            if (ng.isFunction($parse(tableState.sort.predicate)($scope))) {
+              tableState.sort.predicate = predicate;
+              tableState.sort.predicateFunc = $parse(tableState.sort.predicate)($scope);
+            } else {
+              tableState.sort.predicate = predicate;
+              tableState.sort.predicateFunc = predicate;
+            }
             tableState.sort.reverse = reverse === true;
             tableState.pagination.start = 0;
             return this.pipe();
@@ -86,7 +95,7 @@ ng.module('smart-table')
             var pagination = tableState.pagination;
             var filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject) : safeCopy;
             if (tableState.sort.predicate) {
-                filtered = orderBy(filtered, tableState.sort.predicate, tableState.sort.reverse);
+                filtered = orderBy(filtered, tableState.sort.predicateFunc, tableState.sort.reverse);
             }
             if (pagination.number !== undefined) {
                 pagination.numberOfPages = filtered.length > 0 ? Math.ceil(filtered.length / pagination.number) : 1;
