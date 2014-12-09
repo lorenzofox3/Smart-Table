@@ -1,62 +1,56 @@
 ng.module('smart-table')
-    .directive('stSort', ['$parse', function ($parse) {
+    .directive('stSearch', ['$timeout', function ($timeout) {
         return {
-            restrict: 'A',
             require: '^stTable',
+            scope: {
+                predicate: '=?stSearch'
+            },
             link: function (scope, element, attr, ctrl) {
+                var tableCtrl = ctrl;
+                var promise = null;
+                var throttle = attr.stDelay || 400;
+                var forcible = attrs.stEnter || true;
 
-                var predicate = attr.stSort;
-                var getter = $parse(predicate);
-                var index = 0;
-                var classAscent = attr.stClassAscent || 'st-sort-ascent';
-                var classDescent = attr.stClassDescent || 'st-sort-descent';
-                var stateClasses = [classAscent, classDescent];
-
-                //view --> table state
-                function sort() {
-                    index++;
-                    if (index % 3 === 0 && attr.stSkipNatural === undefined) {
-                        //manual reset
-                        index = 0;
-                        ctrl.tableState().sort = {};
-                        ctrl.tableState().pagination.start = 0;
-                        ctrl.pipe();
-                    } else {
-                        ctrl.sortBy(predicate, index % 2 === 0);
-                    }
-                }
-
-                if (ng.isFunction(getter(scope))) {
-                    predicate = getter(scope);
-                }
-
-                element.bind('click', function sortClick() {
-                    if (predicate) {
-                        scope.$apply(sort);
+                scope.$watch('predicate', function (newValue, oldValue) {
+                    if (newValue !== oldValue) {
+                        ctrl.tableState().search = {};
+                        tableCtrl.search(element[0].value || '', newValue);
                     }
                 });
 
-                if (attr.stSortDefault !== undefined) {
-                    index = attr.stSortDefault === 'reverse' ? 1 : 0;
-                    sort();
-                }
-
-                //table state --> view
+                //table state -> view
                 scope.$watch(function () {
-                    return ctrl.tableState().sort;
-                }, function (newValue) {
-                    if (newValue.predicate !== predicate) {
-                        index = 0;
-                        element
-                            .removeClass(classAscent)
-                            .removeClass(classDescent);
-                    } else {
-                        index = newValue.reverse === true ? 2 : 1;
-                        element
-                            .removeClass(stateClasses[index % 2])
-                            .addClass(stateClasses[index - 1]);
+                    return ctrl.tableState().search;
+                }, function (newValue, oldValue) {
+                    var predicateExpression = scope.predicate || '$';
+                    if (newValue.predicateObject && newValue.predicateObject[predicateExpression] !== element[0].value) {
+                        element[0].value = newValue.predicateObject[predicateExpression] || '';
                     }
                 }, true);
+
+                // view -> table state
+                element.bind('input', function (evt) {
+                    evt = evt.originalEvent || evt;
+                    if (promise !== null) {
+                        $timeout.cancel(promise);
+                    }
+                    promise = $timeout(function () {
+                        tableCtrl.search(evt.target.value, scope.predicate || '');
+                        promise = null;
+                    }, throttle);
+                });
+
+                if ( forcible) {
+                    element.bind('keydown', function (evt) {
+                        if ( evt.keyCode === 13 ) {
+                            if ( promise !== null ) {
+                                $timeout.cancel(promise);
+                            }
+
+                            tableCtrl.search(evt.target.value, scope.predicate || '');
+                        }
+                    });
+                }
             }
         };
     }]);
