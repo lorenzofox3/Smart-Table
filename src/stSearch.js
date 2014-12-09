@@ -9,6 +9,7 @@ ng.module('smart-table')
                 var tableCtrl = ctrl;
                 var promise = null;
                 var throttle = attr.stDelay || 400;
+                var forcible = attr.stEnter || true;
 
                 scope.$watch('predicate', function (newValue, oldValue) {
                     if (newValue !== oldValue) {
@@ -38,6 +39,21 @@ ng.module('smart-table')
                         promise = null;
                     }, throttle);
                 });
+                
+                if ( forcible ) {
+                    element.bind('keydown', function (evt) {
+                        evt = evt.originalEvent || evt;
+                        var ENTER_KEY = 13;
+                    
+                        if (evt.keyCode == ENTER_KEY) {
+                            if (promise !== null) {
+                                $timeout.cancel(promise);
+                            }
+                    
+                            tableCtrl.search(evt.target.value, scope.predicate || '');
+                        }
+                    });
+                }
             }
         };
     }]);
