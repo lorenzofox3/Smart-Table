@@ -9,7 +9,7 @@ ng.module('smart-table')
                 var tableCtrl = ctrl;
                 var promise = null;
                 var throttle = attr.stDelay || 400;
-                var forcible = attrs.stEnter || true;
+                var forcible = attr.stEnter || true;
 
                 scope.$watch('predicate', function (newValue, oldValue) {
                     if (newValue !== oldValue) {
