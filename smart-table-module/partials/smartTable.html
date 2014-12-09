@@ -1,7 +1,7 @@
 <table class="smart-table">
     <thead>
     <tr class="smart-table-header-row">
-        <th ng-repeat="column in columns" ng-include="column.headerTemplateUrl" scope="col" class="smart-table-header-cell {{column.headerClass}}" ng-class="{'sort-ascent':column.reverse==false, 'sort-descent':column.reverse==true}"></th>
+        <th ng-repeat="column in columns" ng-include="column.headerTemplateUrl" scope="col" class="smart-table-header-cell {{column.headerClass}}" ng-class="{'sort-ascent':column.reverse==true, 'sort-descent':column.reverse==false}"></th>
     </tr>
     <tr class="smart-table-subheader-row" ng-repeat="subHeaderRow in subHeaders">
         <th ng-repeat="column in columns" scope="column" class="smart-table-subheader-cell {{subHeaderCellClass}}"></th>
