@@ -733,7 +733,7 @@ angular.module("partials/smartTable.html", []).run(["$templateCache", function($
     "<table class=\"smart-table\">\n" +
     "    <thead>\n" +
     "    <tr class=\"smart-table-header-row\">\n" +
-    "        <th ng-repeat=\"column in columns\" ng-include=\"column.headerTemplateUrl\" scope=\"col\" class=\"smart-table-header-cell {{column.headerClass}}\" ng-class=\"{'sort-ascent':column.reverse==false, 'sort-descent':column.reverse==true}\"></th>\n" +
+    "        <th ng-repeat=\"column in columns\" ng-include=\"column.headerTemplateUrl\" scope=\"col\" class=\"smart-table-header-cell {{column.headerClass}}\" ng-class=\"{'sort-ascent':column.reverse==true, 'sort-descent':column.reverse==false}\"></th>\n" +
     "    </tr>\n" +
     "    <tr class=\"smart-table-subheader-row\" ng-repeat=\"subHeaderRow in subHeaders\">\n" +
     "        <th ng-repeat=\"column in columns\" scope=\"column\" class=\"smart-table-subheader-cell {{subHeaderCellClass}}\"></th>\n" +
