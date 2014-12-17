@@ -29,7 +29,7 @@ the easiest way is to run `bower install angular-smart-table`, then you just hav
 
 ## Test
 
-run `npm install` after you have installed the dependencies (`npm install` and `bower install`)
+run `npm test` after you have installed the dependencies (`npm install` and `bower install`)
 
 ## custom builds
 
