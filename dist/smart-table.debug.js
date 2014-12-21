@@ -120,10 +120,10 @@ ng.module('smart-table')
             if (index !== -1) {
                 if (mode === 'single') {
                     row.isSelected = row.isSelected !== true;
-                    if (lastRowSelectedFactory.row) {
-                        lastRowSelectedFactory.row.isSelected = false;
+                    if (lastRowSelectedFactory[propertyName]) {
+                        lastRowSelectedFactory[propertyName].isSelected = false;
                     }
-                    lastRowSelectedFactory.row = row.isSelected === true ? row : undefined;
+                    lastRowSelectedFactory[propertyName] = row.isSelected === true ? row : undefined;
                 } else {
                     rows[index].isSelected = !rows[index].isSelected;
                 }
@@ -265,7 +265,8 @@ ng.module('smart-table')
 // Keep the last selected in memory even if the stTableController is destroyed
 ng.module('smart-table')
     .factory('lastRowSelectedFactory', function lastSelectedFactory() {
-        return {'row': undefined };
+        // Usage: table name -> row selected
+        return {};
     });
 
 ng.module('smart-table')
@@ -424,4 +425,3 @@ ng.module('smart-table')
     });
 
 })(angular);
-
