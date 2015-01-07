@@ -34,7 +34,6 @@ ng.module('smart-table')
 
           });
         });
-
         scope.$watch('row.isSelected', function (newValue, oldValue) {
           if (newValue === true) {
             element.addClass('st-selected');

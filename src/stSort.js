@@ -6,7 +6,6 @@ ng.module('smart-table')
             link: function (scope, element, attr, ctrl) {
 
                 var predicate = attr.stSort;
-                var getter = $parse(predicate);
                 var index = 0;
                 var classAscent = attr.stClassAscent || 'st-sort-ascent';
                 var classDescent = attr.stClassDescent || 'st-sort-descent';
@@ -26,9 +25,6 @@ ng.module('smart-table')
                     }
                 }
 
-                if (ng.isFunction(getter(scope))) {
-                    predicate = getter(scope);
-                }
 
                 element.bind('click', function sortClick() {
                     if (predicate) {

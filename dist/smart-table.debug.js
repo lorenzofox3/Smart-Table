@@ -1,7 +1,3 @@
-/** 
-* @version 1.4.5
-* @license MIT
-*/
 (function (ng, undefined){
     'use strict';
 
@@ -70,7 +66,7 @@ ng.module('smart-table')
      * @param [reverse] - if you want to reverse the order
      */
     this.sortBy = function sortBy(predicate, reverse) {
-      tableState.sort.predicate = predicate;
+      tableState.sort.predicate = $parse(predicate)($scope);
       tableState.sort.reverse = reverse === true;
       tableState.pagination.start = 0;
       return this.pipe();
@@ -286,7 +282,6 @@ ng.module('smart-table')
 
           });
         });
-
         scope.$watch('row.isSelected', function (newValue, oldValue) {
           if (newValue === true) {
             element.addClass('st-selected');
@@ -306,7 +301,6 @@ ng.module('smart-table')
             link: function (scope, element, attr, ctrl) {
 
                 var predicate = attr.stSort;
-                var getter = $parse(predicate);
                 var index = 0;
                 var classAscent = attr.stClassAscent || 'st-sort-ascent';
                 var classDescent = attr.stClassDescent || 'st-sort-descent';
@@ -326,9 +320,6 @@ ng.module('smart-table')
                     }
                 }
 
-                if (ng.isFunction(getter(scope))) {
-                    predicate = getter(scope);
-                }
 
                 element.bind('click', function sortClick() {
                     if (predicate) {

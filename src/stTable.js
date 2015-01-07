@@ -55,7 +55,7 @@ ng.module('smart-table')
      * @param [reverse] - if you want to reverse the order
      */
     this.sortBy = function sortBy(predicate, reverse) {
-      tableState.sort.predicate = predicate;
+      tableState.sort.predicate = $parse(predicate)($scope);
       tableState.sort.reverse = reverse === true;
       tableState.pagination.start = 0;
       return this.pipe();
