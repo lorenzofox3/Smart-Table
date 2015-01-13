@@ -290,9 +290,11 @@
                         subHeader = scope.subHeaderRow,
                         getter = parse(column.map);
                     
-                    scope.formatedValue = format(getter(subHeader).label, getter(subHeader).formatFunction, getter(subHeader).formatParameter);
-                    scope.subHeaderTemplate = getter(subHeader).subHeaderTemplateUrl;
-                    scope.subHeaderCellClass = getter(subHeader).subHeaderCellClass;
+                    if (getter(subHeader)) {
+                        scope.formatedValue = format(getter(subHeader).label, getter(subHeader).formatFunction, getter(subHeader).formatParameter);
+                        scope.subHeaderTemplate = getter(subHeader).subHeaderTemplateUrl;
+                        scope.subHeaderCellClass = getter(subHeader).subHeaderCellClass;
+                    }
                     
                     function defaultContent() {
                          element.html(scope.formatedValue);
