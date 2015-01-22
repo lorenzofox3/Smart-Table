@@ -12,9 +12,8 @@ ng.module('smart-table', []).run(['$templateCache', function ($templateCache) {
         '</ul></div>');
 }]);
 
-
 ng.module('smart-table')
-    .controller('stTableController', ['$scope', '$parse', '$filter', '$attrs', function StTableController($scope, $parse, $filter, $attrs) {
+    .controller('stTableController', ['$scope', '$parse', '$filter', '$attrs', 'lastRowSelectedFactory', function StTableController($scope, $parse, $filter, $attrs, lastRowSelectedFactory) {
         var propertyName = $attrs.stTable;
         var displayGetter = $parse(propertyName);
         var displaySetter = displayGetter.assign;
@@ -31,7 +30,6 @@ ng.module('smart-table')
         };
         var pipeAfterSafeCopy = true;
         var ctrl = this;
-        var lastSelected;
 
         function copyRefs(src) {
             return src ? [].concat(src) : [];
@@ -122,10 +120,10 @@ ng.module('smart-table')
             if (index !== -1) {
                 if (mode === 'single') {
                     row.isSelected = row.isSelected !== true;
-                    if (lastSelected) {
-                        lastSelected.isSelected = false;
+                    if (lastRowSelectedFactory[propertyName]) {
+                        lastRowSelectedFactory[propertyName].isSelected = false;
                     }
-                    lastSelected = row.isSelected === true ? row : undefined;
+                    lastRowSelectedFactory[propertyName] = row.isSelected === true ? row : undefined;
                 } else {
                     rows[index].isSelected = !rows[index].isSelected;
                 }
@@ -263,6 +261,13 @@ ng.module('smart-table')
       }
     };
   });
+
+// Keep the last selected in memory even if the stTableController is destroyed
+ng.module('smart-table')
+    .factory('lastRowSelectedFactory', function lastSelectedFactory() {
+        // Usage: table name -> row selected
+        return {};
+    });
 
 ng.module('smart-table')
   .directive('stSort', ['$parse', function ($parse) {
