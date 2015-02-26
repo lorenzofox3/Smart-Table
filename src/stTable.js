@@ -17,6 +17,7 @@ ng.module('smart-table')
     var pipeAfterSafeCopy = true;
     var ctrl = this;
     var lastSelected;
+    var postProcessor;
 
     function copyRefs(src) {
       return src ? [].concat(src) : [];
@@ -49,7 +50,16 @@ ng.module('smart-table')
       });
     }
 
-    /**
+      /**
+       *
+       * @param {Function} functionName - function, which will make any processing data in pipe() function afterward filtering, sorting etc
+       */
+    this.addPostProcessor = function addPostProcessor(functionName){
+        postProcessor = functionName;
+    }
+
+
+      /**
      * sort the rows
      * @param {Function | String} predicate - function or string which will be used as predicate for the sorting
      * @param [reverse] - if you want to reverse the order
@@ -102,7 +112,11 @@ ng.module('smart-table')
         pagination.start = pagination.start >= filtered.length ? (pagination.numberOfPages - 1) * pagination.number : pagination.start;
         filtered = filtered.slice(pagination.start, pagination.start + parseInt(pagination.number));
       }
-      displaySetter($scope, filtered);
+      var processed = ng.copy(filtered);
+      if (postProcessor !== undefined && ng.isFunction(postProcessor) && ng.isFunction(postProcessor($scope)) ){
+        processed = postProcessor($scope)(processed);
+      }
+      displaySetter($scope, processed);
     };
 
     /**
@@ -185,4 +199,14 @@ ng.module('smart-table')
         }
       }
     };
-  });
+  })
+  .directive('stPostProcess', function ($parse) {
+  return {
+    restrict: 'A',
+    link: function (scope, element, attrs, ctrl) {
+      var func  = $parse(attrs.stPostProcess);
+      ctrl.addPostProcessor(func);
+    }
+  }
+});
+;
