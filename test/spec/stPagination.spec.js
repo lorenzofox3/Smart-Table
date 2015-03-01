@@ -34,6 +34,14 @@ describe('stPagination directive', function () {
     return Array.prototype.indexOf.call(element.classList, classname) !== -1
   }
 
+  function getNextButton() {
+    return angular.element(element.find('button#next'));
+  }
+
+  function getPrevButton() {
+    return angular.element(element.find('button#previous'));
+  }
+
   var rootScope;
   var element;
 
@@ -309,6 +317,107 @@ describe('stPagination directive', function () {
       expect(pages.length).toBe(0);
     });
 
+    it('it should draw next page button when current page is not the last', function () {
+      var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
+      element = compile(template)(rootScope);
+
+      rootScope.$apply();
+
+      tableState.pagination = {
+        start: 5,
+        numberOfPages: 12,
+        number: 10
+      };
+
+      rootScope.$apply();
+
+      var next = getNextButton();
+
+      expect(next.length).toBe(1);
+      expect(next.text()).toEqual('>');
+    });
+
+    it('it should not draw next page button when current page is the last', function () {
+      var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
+      element = compile(template)(rootScope);
+
+      rootScope.$apply();
+
+      tableState.pagination = {
+        start: 115,
+        numberOfPages: 12,
+        number: 10
+      };
+
+      rootScope.$apply();
+
+      var next = getNextButton();
+
+      expect(next.length).toBe(0);
+    });
+
+    it('it should draw previous page button when current page is not the first', function () {
+      var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
+      element = compile(template)(rootScope);
+
+      rootScope.$apply();
+
+      tableState.pagination = {
+        start: 115,
+        numberOfPages: 12,
+        number: 10
+      };
+
+      rootScope.$apply();
+
+      var prev = getPrevButton();
+
+      expect(prev.length).toBe(1);
+      expect(prev.text()).toEqual('<');
+    });
+
+    it('it should not draw previous page button when current page is the first', function () {
+      var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
+      element = compile(template)(rootScope);
+
+      rootScope.$apply();
+
+      tableState.pagination = {
+        start: 5,
+        numberOfPages: 12,
+        number: 10
+      };
+
+      rootScope.$apply();
+
+      var prev = getPrevButton();
+
+      expect(prev.length).toBe(0);
+    });
+
+    it('it should draw previous page and next page buttons when current page between the first and last', function () {
+      var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
+      element = compile(template)(rootScope);
+
+      rootScope.$apply();
+
+      tableState.pagination = {
+        start: 35,
+        numberOfPages: 12,
+        number: 10
+      };
+
+      rootScope.$apply();
+
+      var prev = getPrevButton();
+
+      var next = getNextButton();
+      expect(prev.length).toBe(1);
+      expect(next.length).toBe(1);
+      expect(prev.text()).toEqual('<');
+      expect(next.text()).toEqual('>');
+    });
+
   });
 
   describe('select page', function () {
@@ -378,6 +487,62 @@ describe('stPagination directive', function () {
 
       expect(pages.length).toBe(4);
       angular.element(pages[2].children()[0]).triggerHandler('click');
+
+      rootScope.$apply();
+
+      expect(controllerMock.slice).toHaveBeenCalledWith(20, 10);
+      expect(rootScope.onPageChange).toHaveBeenCalledWith(3);
+      expect(rootScope.onPageChange.calls.length).toBe(1);
+
+    });
+
+    it('should call onPageChange method when next button is clicked', function () {
+      rootScope.onPageChange = jasmine.createSpy('onPageChange');
+      spyOn(controllerMock, 'slice').andCallThrough();
+
+      tableState.pagination = {
+        start: 1,
+        numberOfPages: 4,
+        number: 10
+      };
+
+      var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination="" st-displayed-pages="5" st-page-change="onPageChange(newPage)"></td></tr></tfoot></table>';
+      element = compile(template)(rootScope);
+
+      rootScope.$apply();
+
+      var next = getNextButton();
+
+      expect(next.length).toBe(1);
+      next.triggerHandler('click');
+
+      rootScope.$apply();
+
+      expect(controllerMock.slice).toHaveBeenCalledWith(10, 10);
+      expect(rootScope.onPageChange).toHaveBeenCalledWith(2);
+      expect(rootScope.onPageChange.calls.length).toBe(1);
+    });
+
+    it('should call onPageChange method when previous button is clicked', function () {
+      rootScope.onPageChange = jasmine.createSpy('onPageChange');
+      spyOn(controllerMock, 'slice').andCallThrough();
+
+      tableState.pagination = {
+        start: 35,
+        numberOfPages: 4,
+        number: 10
+      };
+
+      var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination="" st-displayed-pages="5" st-page-change="onPageChange(newPage)"></td></tr></tfoot></table>';
+      element = compile(template)(rootScope);
+
+      rootScope.$apply();
+      rootScope.onPageChange.reset();
+
+      var prev = getPrevButton();
+
+      expect(prev.length).toBe(1);
+      prev.triggerHandler('click');
 
       rootScope.$apply();
 
