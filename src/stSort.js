@@ -8,9 +8,10 @@ ng.module('smart-table')
         var predicate = attr.stSort;
         var getter = $parse(predicate);
         var index = 0;
+        var classUnsorted = attr.stClassUnsorted || 'st-unsorted';
         var classAscent = attr.stClassAscent || 'st-sort-ascent';
         var classDescent = attr.stClassDescent || 'st-sort-descent';
-        var stateClasses = [classAscent, classDescent];
+        var stateClasses = [classUnsorted, classAscent, classDescent];
         var sortDefault;
 
         if (attr.stSortDefault) {
@@ -52,6 +53,9 @@ ng.module('smart-table')
             element
               .removeClass(classAscent)
               .removeClass(classDescent);
+            if (classUnsorted) {
+              element.addClass(classUnsorted);
+            }
           } else {
             index = newValue.reverse === true ? 2 : 1;
             element
