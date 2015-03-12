@@ -271,6 +271,256 @@ describe('st table Controller', function () {
           {name: 'Faivre', firstname: 'Blandine', age: 44}
         ])
       }));
+
+      it('should group the data by property on tableState', function () {
+        ctrl.groupBy('name');
+        expect(scope.data).toEqual([
+          {
+            key: 'Renard',
+            items: [
+              {name: 'Renard', firstname: 'Laurent', age: 66},
+              {name: 'Renard', firstname: 'Olivier', age: 33}
+            ]
+          },
+          {
+            key: 'Francoise',
+            items: [
+              {name: 'Francoise', firstname: 'Frere', age: 99}
+            ]
+          },
+          {
+            key: 'Leponge',
+            items: [
+              {name: 'Leponge', firstname: 'Bob', age: 22}
+            ]
+          },
+          {
+            key: 'Faivre',
+            items: [
+              {name: 'Faivre', firstname: 'Blandine', age: 44}
+            ]
+          }
+        ]);
+      });
+
+      it('should remember sort state while grouping', function(){
+        ctrl.sortBy('firstname');
+        expect(scope.data).toEqual([
+          {name: 'Faivre', firstname: 'Blandine', age: 44},
+          {name: 'Leponge', firstname: 'Bob', age: 22},
+          {name: 'Francoise', firstname: 'Frere', age: 99},
+          {name: 'Renard', firstname: 'Laurent', age: 66},
+          {name: 'Renard', firstname: 'Olivier', age: 33}
+        ]);
+        ctrl.groupBy('name');
+        expect(scope.data).toEqual([
+          {
+            key: 'Faivre',
+            items: [
+              {name: 'Faivre', firstname: 'Blandine', age: 44}
+            ]
+          },
+          {
+            key: 'Leponge',
+            items: [
+              {name: 'Leponge', firstname: 'Bob', age: 22}
+            ]
+          },
+          {
+            key: 'Francoise',
+            items: [
+              {name: 'Francoise', firstname: 'Frere', age: 99}
+            ]
+          },
+          {
+            key: 'Renard',
+            items: [
+              {name: 'Renard', firstname: 'Laurent', age: 66},
+              {name: 'Renard', firstname: 'Olivier', age: 33}
+            ]
+          }
+        ]);
+      });
+
+      it('should remember group state while sorting', function(){
+        ctrl.groupBy('name');
+        expect(scope.data).toEqual([
+          {
+            key: 'Renard',
+            items: [
+              {name: 'Renard', firstname: 'Laurent', age: 66},
+              {name: 'Renard', firstname: 'Olivier', age: 33}
+            ]
+          },
+          {
+            key: 'Francoise',
+            items: [
+              {name: 'Francoise', firstname: 'Frere', age: 99}
+            ]
+          },
+          {
+            key: 'Leponge',
+            items: [
+              {name: 'Leponge', firstname: 'Bob', age: 22}
+            ]
+          },
+          {
+            key: 'Faivre',
+            items: [
+              {name: 'Faivre', firstname: 'Blandine', age: 44}
+            ]
+          }
+        ]);
+        ctrl.sortBy('firstname');
+        expect(scope.data).toEqual([
+          {
+            key: 'Faivre',
+            items: [
+              {name: 'Faivre', firstname: 'Blandine', age: 44}
+            ]
+          },
+          {
+            key: 'Leponge',
+            items: [
+              {name: 'Leponge', firstname: 'Bob', age: 22}
+            ]
+          },
+          {
+            key: 'Francoise',
+            items: [
+              {name: 'Francoise', firstname: 'Frere', age: 99}
+            ]
+          },
+          {
+            key: 'Renard',
+            items: [
+              {name: 'Renard', firstname: 'Laurent', age: 66},
+              {name: 'Renard', firstname: 'Olivier', age: 33}
+            ]
+          }
+        ]);
+      });
+
+      it ('should remember filter while grouping', function(){
+        ctrl.search('re', 'name');
+        expect(scope.data).toEqual([
+          {name: 'Renard', firstname: 'Laurent', age: 66},
+          {name: 'Renard', firstname: 'Olivier', age: 33},
+          {name: 'Faivre', firstname: 'Blandine', age: 44}
+        ]);
+        ctrl.groupBy('name');
+        expect(scope.data).toEqual([
+          {
+            key: 'Renard',
+            items: [
+              {name: 'Renard', firstname: 'Laurent', age: 66},
+              {name: 'Renard', firstname: 'Olivier', age: 33}
+            ]
+          },
+          {
+            key: 'Faivre',
+            items: [
+              {name: 'Faivre', firstname: 'Blandine', age: 44}
+            ]
+          }
+        ]);
+      });
+
+      it ('should remember both sort order and filter while grouping', function(){
+        ctrl.sortBy('firstname');
+        expect(scope.data).toEqual([
+          {name: 'Faivre', firstname: 'Blandine', age: 44},
+          {name: 'Leponge', firstname: 'Bob', age: 22},
+          {name: 'Francoise', firstname: 'Frere', age: 99},
+          {name: 'Renard', firstname: 'Laurent', age: 66},
+          {name: 'Renard', firstname: 'Olivier', age: 33}
+        ]);
+        ctrl.search('re', 'name');
+        expect(scope.data).toEqual([
+          {name: 'Faivre', firstname: 'Blandine', age: 44},
+          {name: 'Renard', firstname: 'Laurent', age: 66},
+          {name: 'Renard', firstname: 'Olivier', age: 33}
+        ]);
+        ctrl.groupBy('name');
+        expect(scope.data).toEqual([
+          {
+            key: 'Faivre',
+            items: [
+              {name: 'Faivre', firstname: 'Blandine', age: 44}
+            ]
+          },
+          {
+            key: 'Renard',
+            items: [
+              {name: 'Renard', firstname: 'Laurent', age: 66},
+              {name: 'Renard', firstname: 'Olivier', age: 33}
+            ]
+          }
+        ]);
+      });
+
+      it ('should remember group state while sorting and filtering', function(){
+        ctrl.groupBy('name');
+        expect(scope.data).toEqual([
+          {
+            key: 'Renard',
+            items: [
+              {name: 'Renard', firstname: 'Laurent', age: 66},
+              {name: 'Renard', firstname: 'Olivier', age: 33}
+            ]
+          },
+          {
+            key: 'Francoise',
+            items: [
+              {name: 'Francoise', firstname: 'Frere', age: 99}
+            ]
+          },
+          {
+            key: 'Leponge',
+            items: [
+              {name: 'Leponge', firstname: 'Bob', age: 22}
+            ]
+          },
+          {
+            key: 'Faivre',
+            items: [
+              {name: 'Faivre', firstname: 'Blandine', age: 44}
+            ]
+          }
+        ]);
+        ctrl.search('re', 'name');
+        expect(scope.data).toEqual([
+          {
+            key: 'Renard',
+            items: [
+              {name: 'Renard', firstname: 'Laurent', age: 66},
+              {name: 'Renard', firstname: 'Olivier', age: 33}
+            ]
+          },
+          {
+            key: 'Faivre',
+            items: [
+              {name: 'Faivre', firstname: 'Blandine', age: 44}
+            ]
+          }
+        ]);
+        ctrl.sortBy('firstname');
+        expect(scope.data).toEqual([
+          {
+            key: 'Faivre',
+            items: [
+              {name: 'Faivre', firstname: 'Blandine', age: 44}
+            ]
+          },
+          {
+            key: 'Renard',
+            items: [
+              {name: 'Renard', firstname: 'Laurent', age: 66},
+              {name: 'Renard', firstname: 'Olivier', age: 33}
+            ]
+          }
+        ]);
+      });
     });
 
     describe('select', function () {
@@ -348,7 +598,8 @@ describe('st table Controller', function () {
         expect(selected).toEqual([scope.data[4]]);
       });
     });
-  });
+  })
+  ;
 
   describe('with safeSrc', function () {
     beforeEach(inject(function ($rootScope, $controller, $filter, $parse) {
@@ -372,4 +623,5 @@ describe('st table Controller', function () {
     });
   });
 
-});
+})
+;
