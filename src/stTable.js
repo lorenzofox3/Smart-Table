@@ -12,6 +12,9 @@ ng.module('smart-table')
       search: {},
       pagination: {
         start: 0
+      },
+      group: {
+
       }
     };
     var filtered;
@@ -48,6 +51,32 @@ ng.module('smart-table')
           updateSafeCopy();
         }
       });
+    }
+
+    function groupByProperty (collection, property) {
+      var output = [];
+      var groupReference = {};
+
+      for (var i = 0; i < collection.length; i++){
+        var item = collection[i];
+        var keyValue = item[property];
+
+        var group = groupReference[keyValue];
+
+        if (group === undefined){
+          group = {
+            key: keyValue,
+            items: []
+          };
+
+          groupReference[keyValue] = group;
+          output.push(group);
+        }
+
+        group.items.push(item);
+      }
+
+      return output;
     }
 
     /**
@@ -89,11 +118,17 @@ ng.module('smart-table')
       return this.pipe();
     };
 
+    this.groupBy = function groupBy(predicate){
+      tableState.group.predicate = predicate ? predicate : undefined;
+      return this.pipe();
+    };
+
     /**
      * this will chain the operations of sorting and filtering based on the current table state (sort options, filtering, ect)
      */
     this.pipe = function pipe () {
       var pagination = tableState.pagination;
+      var group = tableState.group;
       var output;
       filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject) : safeCopy;
       if (tableState.sort.predicate) {
@@ -103,6 +138,9 @@ ng.module('smart-table')
         pagination.numberOfPages = filtered.length > 0 ? Math.ceil(filtered.length / pagination.number) : 1;
         pagination.start = pagination.start >= filtered.length ? (pagination.numberOfPages - 1) * pagination.number : pagination.start;
         output = filtered.slice(pagination.start, pagination.start + parseInt(pagination.number));
+      }
+      if (group.predicate !== undefined){
+        output = groupByProperty(output || filtered, group.predicate);
       }
       displaySetter($scope, output || filtered);
     };

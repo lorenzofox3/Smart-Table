@@ -12,7 +12,7 @@ ng.module('smart-table')
             ctrl.preventPipeOnWatch();
             ctrl.pipe = function () {
               return scope.stPipe(ctrl.tableState(), ctrl);
-            }
+            };
           }
         },
 
