@@ -8,7 +8,13 @@
 ng.module('smart-table', []).run(['$templateCache', function ($templateCache) {
     $templateCache.put('template/smart-table/pagination.html',
         '<div class="pagination" ng-if="pages.length >= 2"><ul class="pagination">' +
+        '<li ng-if="stFirstPage" ng-class="{disabled: 1==currentPage}"><a ng-click="selectPage(1)">{{ stFirstPage }}</a></li>' +
+        '<li ng-if="stPrevPage" ng-class="{disabled: 1==currentPage}"><a ng-click="selectPage(currentPage-1)">{{ stPrevPage }}</a></li>' +
+        '<li ng-if="pages[0] > 1"><a ng-click="selectPage(pages[0] - 1)">...</a></li>' +
         '<li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li>' +
+        '<li ng-if="pages[pages.length] < numPages"><a ng-click="selectPage(pages[pages.length])">...</a></li>' +
+        '<li ng-if="stNextPage" ng-class="{disabled: numPages==currentPage}"><a ng-click="selectPage(currentPage+1)">{{ stNextPage }}</a></li>' +
+        '<li ng-if="stLastPage" ng-class="{disabled: numPages==currentPage}"><a ng-click="selectPage(numPages)">{{ stLastPage }}</a></li>' +
         '</ul></div>');
 }]);
 
@@ -343,7 +349,11 @@ ng.module('smart-table')
       require: '^stTable',
       scope: {
         stItemsByPage: '=?',
-        stDisplayedPages: '=?'
+        stDisplayedPages: '=?',
+        stFirstPage: '=?',
+        stLastPage: '=?',
+        stPrevPage: '=?',
+        stNextPage: '=?',
       },
       templateUrl: function (element, attrs) {
         if (attrs.stTemplate) {
@@ -355,6 +365,10 @@ ng.module('smart-table')
 
         scope.stItemsByPage = scope.stItemsByPage ? +(scope.stItemsByPage) : 10;
         scope.stDisplayedPages = scope.stDisplayedPages ? +(scope.stDisplayedPages) : 5;
+        scope.stFirstPage = scope.stFirstPage ? +(scope.stFirstPage) : null;
+        scope.stLastPage = scope.stLastPage ? +(scope.stLastPage) : null;
+        scope.stPrevPage = scope.stPrevPage ? +(scope.stPrevPage) : null;
+        scope.stNextPage = scope.stNextPage ? +(scope.stNextPage) : null;
 
         scope.currentPage = 1;
         scope.pages = [];
@@ -380,6 +394,12 @@ ng.module('smart-table')
           for (i = start; i < end; i++) {
             scope.pages.push(i);
           }
+
+          console.log('pages: ' + scope.pages);
+          console.log('pageslength: ' + scope.pages.length);
+          console.log('currentPage: ' + scope.currentPage);
+          console.log('numPages: ' + scope.numPages);
+
         }
 
         //table state --> view
