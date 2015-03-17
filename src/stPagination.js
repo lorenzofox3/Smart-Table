@@ -5,7 +5,12 @@ ng.module('smart-table')
       require: '^stTable',
       scope: {
         stItemsByPage: '=?',
-        stDisplayedPages: '=?'
+        stDisplayedPages: '=?',
+        stFirstPage: '=?',
+        stLastPage: '=?',
+        stPrevPage: '=?',
+        stNextPage: '=?',
+        stCollapsedPages: '=?'
       },
       templateUrl: function (element, attrs) {
         if (attrs.stTemplate) {
@@ -17,6 +22,10 @@ ng.module('smart-table')
 
         scope.stItemsByPage = scope.stItemsByPage ? +(scope.stItemsByPage) : 10;
         scope.stDisplayedPages = scope.stDisplayedPages ? +(scope.stDisplayedPages) : 5;
+        scope.stFirstPage = scope.stFirstPage ? +(scope.stFirstPage) : null;
+        scope.stLastPage = scope.stLastPage ? +(scope.stLastPage) : null;
+        scope.stPrevPage = scope.stPrevPage ? +(scope.stPrevPage) : null;
+        scope.stNextPage = scope.stNextPage ? +(scope.stNextPage) : null;
 
         scope.currentPage = 1;
         scope.pages = [];
