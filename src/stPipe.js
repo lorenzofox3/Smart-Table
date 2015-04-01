@@ -23,7 +23,7 @@ ng.module('smart-table')
                   return pipe(ctrl.tableState(), ctrl);
                 };
 
-                if (skipPipe === true){
+                if (skipPipe !== true){
                   ctrl.pipe();
                 }
               } else if (initialPipe){
