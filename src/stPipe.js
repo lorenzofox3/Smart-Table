@@ -11,7 +11,7 @@ ng.module('smart-table')
           function initializeCustomPipe(){
             var initialPipe = null;
 
-            return function(pipe){
+            return function(pipe, skipPipe){
               if (ng.isFunction(pipe)) {
                 ctrl.preventPipeOnWatch();
 
@@ -21,6 +21,10 @@ ng.module('smart-table')
 
                 ctrl.pipe = function () {
                   return pipe(ctrl.tableState(), ctrl);
+                };
+
+                if (skipPipe === true){
+                  ctrl.pipe();
                 }
               } else if (initialPipe){
                 ctrl.pipe = initialPipe;
@@ -30,7 +34,7 @@ ng.module('smart-table')
 
           var pipeInitializer = initializeCustomPipe();
 
-          pipeInitializer(scope.stPipe);
+          pipeInitializer(scope.stPipe, true);
 
           scope.$watch('stPipe', pipeInitializer);
         },
