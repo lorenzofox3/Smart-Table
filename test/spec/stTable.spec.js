@@ -169,6 +169,31 @@ describe('st table Controller', function () {
           {name: 'Faivre', firstname: 'Blandine', age: 44}
         ]);
       });
+
+      it('should filter based on comparator function', function () {
+        ctrl.search(40, 'age', function (actual, expected) {
+          return actual > expected;
+        });
+
+        expect(scope.data).toEqual([
+          {name: 'Renard', firstname: 'Laurent', age: 66},
+          {name: 'Francoise', firstname: 'Frere', age: 99},
+          {name: 'Faivre', firstname: 'Blandine', age: 44}
+        ]);
+      });
+
+      it('should support search and comparator function', function () {
+        ctrl.search(40, 'age', function (actual, expected) {
+          return actual > expected;
+        });
+
+        ctrl.search('re','firstname');
+
+        expect(scope.data).toEqual([
+          {name: 'Renard', firstname: 'Laurent', age: 66},
+          {name: 'Francoise', firstname: 'Frere', age: 99}
+        ]);
+      });
     });
 
     describe('slice', function () {
