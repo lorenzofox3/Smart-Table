@@ -2,16 +2,20 @@ ng.module('smart-table')
   .directive('stSearch', ['stConfig', '$timeout', function (stConfig, $timeout) {
     return {
       require: '^stTable',
+      scope: {
+          stComparator: '&'
+      },
       link: function (scope, element, attr, ctrl) {
         var tableCtrl = ctrl;
         var promise = null;
         var throttle = attr.stDelay || stConfig.search.delay;
+        var comparator = scope.stComparator || false;
 
         attr.$observe('stSearch', function (newValue, oldValue) {
           var input = element[0].value;
           if (newValue !== oldValue && input) {
             ctrl.tableState().search = {};
-            tableCtrl.search(input, newValue);
+            tableCtrl.search(input, newValue, comparator());
           }
         });
 
@@ -33,7 +37,7 @@ ng.module('smart-table')
           }
 
           promise = $timeout(function () {
-            tableCtrl.search(evt.target.value, attr.stSearch || '');
+            tableCtrl.search(evt.target.value, attr.stSearch || '', comparator());
             promise = null;
           }, throttle);
         });
