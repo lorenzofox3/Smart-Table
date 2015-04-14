@@ -74,7 +74,7 @@ ng.module('smart-table')
      * @param {String} input - the input string
      * @param {String} [predicate] - the property name against you want to check the match, otherwise it will search on all properties
      */
-    this.search = function search (input, predicate) {
+    this.search = function search (input, predicate, comparator) {
       var predicateObject = tableState.search.predicateObject || {};
       var prop = predicate ? predicate : '$';
 
@@ -86,16 +86,16 @@ ng.module('smart-table')
       }
       tableState.search.predicateObject = predicateObject;
       tableState.pagination.start = 0;
-      return this.pipe();
+      return this.pipe(comparator);
     };
 
     /**
      * this will chain the operations of sorting and filtering based on the current table state (sort options, filtering, ect)
      */
-    this.pipe = function pipe () {
+    this.pipe = function pipe (comparator) {
       var pagination = tableState.pagination;
       var output;
-      filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject) : safeCopy;
+      filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject, comparator) : safeCopy;
       if (tableState.sort.predicate) {
         filtered = orderBy(filtered, tableState.sort.predicate, tableState.sort.reverse);
       }
