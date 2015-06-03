@@ -26,7 +26,8 @@ ng.module('smart-table')
         }, true);
 
         // view -> table state
-        element.bind('input', function (evt) {
+        var eventName = element[0].tagName.toLowerCase() === "select" ? "change" : "input";
+        element.bind(eventName, function (evt) {
           evt = evt.originalEvent || evt;
           if (promise !== null) {
             $timeout.cancel(promise);
