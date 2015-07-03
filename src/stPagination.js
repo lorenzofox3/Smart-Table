@@ -6,7 +6,8 @@ ng.module('smart-table')
       scope: {
         stItemsByPage: '=?',
         stDisplayedPages: '=?',
-        stPageChange: '&'
+        stPageChange: '&',
+        stCurrentPage: '=?'
       },
       templateUrl: function (element, attrs) {
         if (attrs.stTemplate) {
@@ -29,6 +30,7 @@ ng.module('smart-table')
           var i;
           var prevPage = scope.currentPage;
           scope.currentPage = Math.floor(paginationState.start / paginationState.number) + 1;
+		  scope.stCurrentPage = scope.currentPage;
 
           start = Math.max(start, scope.currentPage - Math.abs(Math.floor(scope.stDisplayedPages / 2)));
           end = start + scope.stDisplayedPages;
@@ -63,6 +65,15 @@ ng.module('smart-table')
         });
 
         scope.$watch('stDisplayedPages', redraw);
+		
+		scope.$watch('stCurrentPage', function (newValue, oldValue) {
+          if ((newValue !== oldValue) && (newValue > 0 && newValue <= scope.numPages)) {
+            scope.selectPage(newValue);
+          }
+          else {
+            scope.stCurrentPage = oldValue;
+          }
+        });
 
         //view -> table state
         scope.selectPage = function (page) {
