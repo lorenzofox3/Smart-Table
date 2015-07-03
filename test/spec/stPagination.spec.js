@@ -425,6 +425,89 @@ describe('stPagination directive', function () {
       expect(controllerMock.slice).toHaveBeenCalledWith(50, 10);
 
     });
+	
+  });
+
+  describe('st-current-page', function () {
+
+    it('should update st-current-page when page changes', function () {
+
+      spyOn(controllerMock, 'slice').andCallThrough();
+	  
+      var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination="" st-current-page="currentPage"></td></tr></tfoot></table>';
+      element = compile(template)(rootScope);
+
+      rootScope.$apply();
+
+      tableState.pagination = {
+        start: 1,
+        numberOfPages: 2,
+        number: 5
+      };
+
+      rootScope.$apply();
+
+      var pages = getPages();
+
+      angular.element(pages[1].children()[0]).triggerHandler('click');
+
+      rootScope.$apply();
+
+      expect(rootScope.currentPage).toBe(2);
+	  expect(controllerMock.slice).toHaveBeenCalledWith(10, 10);
+
+    });
+
+    it('should select a page when the bounded var to st-current-page changes', function () {
+
+      spyOn(controllerMock, 'slice').andCallThrough();
+	  
+      var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination="" st-current-page="currentPage"></td></tr></tfoot></table>';
+      element = compile(template)(rootScope);
+
+      rootScope.$apply();
+
+      tableState.pagination = {
+        start: 1,
+        numberOfPages: 2,
+        number: 5
+      };
+
+      rootScope.$apply();
+
+      rootScope.currentPage = 2;
+
+      rootScope.$apply();
+
+	  expect(controllerMock.slice).toHaveBeenCalledWith(10, 10);
+
+    });
+
+    it('should rollback the bounded var to its old value when the provided one is not correct', function () {
+
+      spyOn(controllerMock, 'slice').andCallThrough();
+	  
+      var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination="" st-current-page="currentPage"></td></tr></tfoot></table>';
+      element = compile(template)(rootScope);
+
+      rootScope.$apply();
+
+      tableState.pagination = {
+        start: 1,
+        numberOfPages: 2,
+        number: 5
+      };
+
+      rootScope.$apply();
+
+      rootScope.currentPage = 100;
+
+      rootScope.$apply();
+
+	  expect(rootScope.currentPage).toBe(1);
+	  expect(controllerMock.slice).toHaveBeenCalledWith(0, 10);
+
+    });
 
   });
 
