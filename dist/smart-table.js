@@ -131,9 +131,14 @@ ng.module('smart-table')
     this.search = function search (input, predicate) {
       var predicateObject = tableState.search.predicateObject || {};
       var prop = predicate ? predicate : '$';
+      var checkParse = $parse(prop);
 
-      input = ng.isString(input) ? input.trim() : input;
-      $parse(prop).assign(predicateObject, input);
+      input = ng.isString(input) ? input.trim() : input;      
+      if(checkParse.assign){
+        checkParse.assign(predicateObject, input);      
+      }else{ 
+        predicateObject[prop] = input;    
+      }
       // to avoid to filter out null value
       if (!input) {
         deepDelete(predicateObject, prop);
@@ -269,9 +274,12 @@ ng.module('smart-table')
         scope.$watch(function () {
           return ctrl.tableState().search;
         }, function (newValue, oldValue) {
-          var predicateExpression = attr.stSearch || '$';
-          if (newValue.predicateObject && $parse(predicateExpression)(newValue.predicateObject) !== element[0].value) {
-            element[0].value = $parse(predicateExpression)(newValue.predicateObject) || '';
+          var predicateExpression = attr.stSearch || '$';          
+          if (newValue.predicateObject){
+              var checkParse = $parse(predicateExpression);
+              if(checkParse(newValue.predicateObject) !== element[0].value && !checkParse.literal && check.parseConstant){
+                element[0].value = $parse(predicateExpression)(newValue.predicateObject) || '';      
+              }
           }
         }, true);
 
