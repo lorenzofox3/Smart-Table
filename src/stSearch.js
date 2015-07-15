@@ -23,7 +23,7 @@ ng.module('smart-table')
           var predicateExpression = attr.stSearch || '$';
           if (newValue.predicateObject){
               var checkParse = $parse(predicateExpression);
-              if(checkParse(newValue.predicateObject) !== element[0].value && !checkParse.literal && check.parseConstant){
+              if(checkParse(newValue.predicateObject) !== element[0].value && !checkParse.literal && !checkParse.Constant){
                 element[0].value = $parse(predicateExpression)(newValue.predicateObject) || '';      
               }
           }
