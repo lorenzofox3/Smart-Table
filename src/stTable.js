@@ -31,7 +31,7 @@ ng.module('smart-table')
     }
 
     function deepDelete(object, path) {
-      if (path.indexOf('.') != -1 && path[0]!=="'" && path[0]!=='"' && path[0]!==path[path.length-1]) {
+      if (path.indexOf('.') != -1) {
           var partials = path.split('.');
           var key = partials.pop();
           var parentPath = partials.join('.'); 
