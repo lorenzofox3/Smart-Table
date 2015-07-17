@@ -31,7 +31,7 @@ ng.module('smart-table')
     }
 
     function deepDelete(object, path) {
-      if (path.indexOf('.') != -1) {
+      if (path.indexOf('.') != -1 && path[0]!=="'" && path[0]!=='"' && path[0]!==path[path.length-1]) {
           var partials = path.split('.');
           var key = partials.pop();
           var parentPath = partials.join('.'); 
@@ -92,9 +92,14 @@ ng.module('smart-table')
     this.search = function search (input, predicate) {
       var predicateObject = tableState.search.predicateObject || {};
       var prop = predicate ? predicate : '$';
+      var checkParse = $parse(prop);
 
-      input = ng.isString(input) ? input.trim() : input;
-      $parse(prop).assign(predicateObject, input);
+      input = ng.isString(input) ? input.trim() : input;      
+      if(checkParse.assign){
+        checkParse.assign(predicateObject, input);      
+      }else{ 
+        predicateObject[prop] = input;    
+      }
       // to avoid to filter out null value
       if (!input) {
         deepDelete(predicateObject, prop);
