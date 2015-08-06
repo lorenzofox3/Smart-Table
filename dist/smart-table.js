@@ -1,7 +1,3 @@
-/** 
-* @version 2.1.2
-* @license MIT
-*/
 (function (ng, undefined){
     'use strict';
 
@@ -178,6 +174,12 @@ ng.module('smart-table')
             lastSelected.isSelected = false;
           }
           lastSelected = row.isSelected === true ? row : undefined;
+        } else if (mode === 'singleNoToggle') {
+          if (lastSelected) {
+            lastSelected.isSelected = false;
+          }
+          row.isSelected = true;
+          lastSelected = row;
         } else {
           rows[index].isSelected = !rows[index].isSelected;
         }
