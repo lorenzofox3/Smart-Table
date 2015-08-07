@@ -21,7 +21,15 @@ ng.module('smart-table')
     var lastSelected;
 
     function copyRefs (src) {
-      return src ? [].concat(src) : [];
+      var refs = src ? [].concat(src) : [];
+
+      for ( var i=0; i<refs.length; i++ )
+      {
+        if ( refs[i].isSelected )
+          lastSelected = refs[i];
+      }
+
+      return refs;
     }
 
     function updateSafeCopy () {
