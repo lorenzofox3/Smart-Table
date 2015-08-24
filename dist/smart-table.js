@@ -8,7 +8,9 @@
 ng.module('smart-table', []).run(['$templateCache', function ($templateCache) {
     $templateCache.put('template/smart-table/pagination.html',
         '<nav ng-if="numPages && pages.length >= 2"><ul class="pagination">' +
+        '<li ng-if="numPages > 5"><a ng-click="selectPage(1)"><span aria-hidden="true">&laquo;</span></a></li>' +
         '<li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li>' +
+        '<li ng-if="numPages > 5"><a ng-click="selectPage(numPages)"><span aria-hidden="true">&raquo;</span></a></li>' +
         '</ul></nav>');
 }]);
 
