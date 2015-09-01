@@ -329,7 +329,9 @@ ng.module('smart-table')
       link: function (scope, element, attr, ctrl) {
 
         var predicate = attr.stSort;
+        var predicateId = attr.stColumnHeader;
         var getter = $parse(predicate);
+
         var index = 0;
         var classAscent = attr.stClassAscent || stConfig.sort.ascentClass;
         var classDescent = attr.stClassDescent || stConfig.sort.descentClass;
@@ -353,6 +355,7 @@ ng.module('smart-table')
             ctrl.pipe();
           } else {
             ctrl.sortBy(predicate, index % 2 === 0);
+            ctrl.tableState().sort.predicateId = attr.stColumnHeader; //NEW: store sort Attribute
           }
         }
 
@@ -371,7 +374,7 @@ ng.module('smart-table')
         scope.$watch(function () {
           return ctrl.tableState().sort;
         }, function (newValue) {
-          if (newValue.predicate !== predicate) {
+          if (predicateId !== newValue.predicateId) { //NEW: compare ID in Attribute
             index = 0;
             element
               .removeClass(classAscent)
