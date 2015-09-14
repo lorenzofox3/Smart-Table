@@ -67,6 +67,10 @@ ng.module('smart-table')
       });
     }
 
+      $scope.$on('st-select-row', function(event, row, mode){
+        ctrl.select(row, mode||'single');
+      });
+
     /**
      * sort the rows
      * @param {Function | String} predicate - function or string which will be used as predicate for the sorting

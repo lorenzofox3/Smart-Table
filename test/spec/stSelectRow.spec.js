@@ -109,7 +109,7 @@ describe('stSelectRow Directive', function () {
 
         it('should update the customized class name when isSelected property change', function () {
             var oldClass = stConfig.select.selectedClass;
-            stConfig.select.selectedClass = 'custom-selected'
+            stConfig.select.selectedClass = 'custom-selected';
 
             var tr = element.find('tr');
             expect(hasClass(tr[2], 'custom-selected')).toBe(false);
@@ -160,5 +160,43 @@ describe('stSelectRow Directive', function () {
         });
     });
 
+    describe('emit select event', function () {
+        beforeEach(inject(function ($compile, $rootScope) {
 
+            rootScope = $rootScope;
+            scope = $rootScope.$new();
+            scope.rowCollection = [
+                {name: 'Renard', firstname: 'Laurent', age: 66},
+                {name: 'Francoise', firstname: 'Frere', age: 99},
+                {name: 'Renard', firstname: 'Olivier', age: 33},
+                {name: 'Leponge', firstname: 'Bob', age: 22},
+                {name: 'Faivre', firstname: 'Blandine', age: 44}
+            ];
+
+            var template = '<table st-table="rowCollection">' +
+                '<tbody>' +
+                '<tr st-select-mode="multiple" st-select-row="row" ng-repeat="row in rowCollection"></tr>' +
+                '</tbody>' +
+                '</table>';
+
+            element = $compile(template)(scope);
+
+            scope.$apply();
+
+            rootScope.$on('st-row-selected', function(event, index, row){
+                rootScope.selectedIndex = index;
+                rootScope.selectedRow = row;
+            })
+        }));
+
+        it('should emit the event and change rootScope property', inject(function ($timeout) {
+            var trs = element.find('tr');
+            expect(trs.length).toBe(5);
+            angular.element(trs[3]).triggerHandler('click');
+            $timeout(function(){
+                expect(rootScope.selectedIndex).toBe(3);
+                expect(rootScope.selectedRow).toBe(scope.rowCollection[3]);
+            });
+        }));
+    });
 });
