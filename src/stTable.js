@@ -48,6 +48,17 @@ ng.module('smart-table')
 
     if ($attrs.stSafeSrc) {
       safeGetter = $parse($attrs.stSafeSrc);
+      $scope.$watch(function() {
+        var safeSrc = safeGetter($scope);
+        if (safeSrc && safeSrc.length !== undefined && safeSrc.length > 0) {
+          return safeSrc[0];
+        }
+        return undefined;
+      }, function(newValue, oldValue) {
+        if (newValue !== oldValue) {
+          updateSafeCopy();
+        }
+      });
       $scope.$watch(function () {
         var safeSrc = safeGetter($scope);
         return safeSrc ? safeSrc.length : 0;
