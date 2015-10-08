@@ -140,7 +140,7 @@ ng.module('smart-table')
       if (index !== -1) {
         if (mode === 'single') {
           row.isSelected = row.isSelected !== true;
-          if (lastSelected) {
+          if (lastSelected && lastSelected !== row) {
             lastSelected.isSelected = false;
           }
           lastSelected = row.isSelected === true ? row : undefined;
