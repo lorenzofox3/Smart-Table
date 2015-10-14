@@ -135,7 +135,7 @@ ng.module('smart-table')
      * @param {String} [mode] - "single" or "multiple" (multiple by default)
      */
     this.select = function select (row, mode) {
-      var rows = copyRefs(displayGetter($scope));
+      var rows = copyRefs(filtered||safeCopy);
       var index = rows.indexOf(row);
       if (index !== -1) {
         if (mode === 'single') {
