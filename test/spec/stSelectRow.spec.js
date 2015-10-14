@@ -39,7 +39,7 @@ describe('stSelectRow Directive', function () {
 
         element = $compile(template)(scope);
 
-        scope.$apply();
+        scope.$digest();
 
 
         var trs = element.find('tr');
@@ -74,7 +74,7 @@ describe('stSelectRow Directive', function () {
 
             element = $compile(template)(scope);
 
-            scope.$apply();
+            scope.$digest();
         }));
 
         it('should select one row', function () {
@@ -99,11 +99,11 @@ describe('stSelectRow Directive', function () {
             var tr = element.find('tr');
             expect(hasClass(tr[2], 'st-selected')).toBe(false);
             scope.rowCollection[2].isSelected = true;
-            scope.$apply();
+            scope.$digest();
             expect(hasClass(tr[2], 'st-selected')).toBe(true);
 
             scope.rowCollection[2].isSelected = false;
-            scope.$apply();
+            scope.$digest();
             expect(hasClass(tr[2], 'st-selected')).toBe(false);
         });
 
@@ -114,11 +114,11 @@ describe('stSelectRow Directive', function () {
             var tr = element.find('tr');
             expect(hasClass(tr[2], 'custom-selected')).toBe(false);
             scope.rowCollection[2].isSelected = true;
-            scope.$apply();
+            scope.$digest();
             expect(hasClass(tr[2], 'custom-selected')).toBe(true);
 
             scope.rowCollection[2].isSelected = false;
-            scope.$apply();
+            scope.$digest();
             expect(hasClass(tr[2], 'custom-selected')).toBe(false);
 
             stConfig.select.selectedClass = oldClass;
@@ -146,7 +146,7 @@ describe('stSelectRow Directive', function () {
 
             element = $compile(template)(scope);
 
-            scope.$apply();
+            scope.$digest();
         }));
 
         it('should select multiple row', function () {
@@ -181,7 +181,7 @@ describe('stSelectRow Directive', function () {
 
             element = $compile(template)(scope);
 
-            scope.$apply();
+            scope.$digest();
 
             rootScope.$on('st-row-selected', function(event, index, row){
                 rootScope.selectedIndex = index;

@@ -86,7 +86,7 @@ describe('stPagination directive', function () {
       spyOn(controllerMock, 'slice');
       var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-items-by-page="5" st-pagination=""></td></tr></tfoot></table>';
       compile(template)(rootScope);
-      rootScope.$apply();
+      rootScope.$digest();
       element = angular.element(document.getElementById('pagination'));
       expect(controllerMock.slice).toHaveBeenCalledWith(0, 5);
     });
@@ -95,7 +95,7 @@ describe('stPagination directive', function () {
       spyOn(controllerMock, 'slice');
       var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
       compile(template)(rootScope);
-      rootScope.$apply();
+      rootScope.$digest();
       element = angular.element(document.getElementById('pagination'));
       expect(controllerMock.slice).toHaveBeenCalledWith(0, 10);
     });
@@ -107,7 +107,7 @@ describe('stPagination directive', function () {
       spyOn(controllerMock, 'slice');
       var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
       compile(template)(rootScope);
-      rootScope.$apply();
+      rootScope.$digest();
       element = angular.element(document.getElementById('pagination'));
       expect(controllerMock.slice).toHaveBeenCalledWith(0, 21);
 
@@ -129,7 +129,7 @@ describe('stPagination directive', function () {
 
       var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
       element = compile(template)(rootScope);
-      rootScope.$apply();
+      rootScope.$digest();
 
       expect(angular.element(element.find('div#custom_stConfig_id')).length).toBe(1);
 
@@ -141,7 +141,7 @@ describe('stPagination directive', function () {
 
       var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination="" st-template="custom_template.html"></td></tr></tfoot></table>';
       element = compile(template)(rootScope);
-      rootScope.$apply();
+      rootScope.$digest();
 
       expect(angular.element(element.find('div#custom_id')).length).toBe(1);
     });
@@ -152,7 +152,7 @@ describe('stPagination directive', function () {
     it('it should draw the pages based on table state using 5 as default value for displayed pages number and center it on the active page', function () {
       var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
       element = compile(template)(rootScope);
-      rootScope.$apply();
+      rootScope.$digest();
 
       tableState.pagination = {
         start: 35,
@@ -160,7 +160,7 @@ describe('stPagination directive', function () {
         number: 10
       };
 
-      rootScope.$apply();
+      rootScope.$digest();
 
       var pages = getPages();
 
@@ -185,7 +185,7 @@ describe('stPagination directive', function () {
       var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-displayed-pages="7" st-pagination=""></td></tr></tfoot></table>';
       element = compile(template)(rootScope);
 
-      rootScope.$apply();
+      rootScope.$digest();
 
       tableState.pagination = {
         start: 35,
@@ -193,7 +193,7 @@ describe('stPagination directive', function () {
         number: 10
       };
 
-      rootScope.$apply();
+      rootScope.$digest();
 
       var pages = getPages();
 
@@ -222,7 +222,7 @@ describe('stPagination directive', function () {
       var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
       element = compile(template)(rootScope);
 
-      rootScope.$apply();
+      rootScope.$digest();
 
       tableState.pagination = {
         start: 35,
@@ -230,7 +230,7 @@ describe('stPagination directive', function () {
         number: 10
       };
 
-      rootScope.$apply();
+      rootScope.$digest();
 
       var pages = getPages();
 
@@ -261,12 +261,12 @@ describe('stPagination directive', function () {
       var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-items-by-page="itemsByPage" st-displayed-pages="displayedPages" st-pagination=""></td></tr></tfoot></table>';
       element = compile(template)(rootScope);
 
-      rootScope.$apply();
+      rootScope.$digest();
 
       tableState.pagination.start = 12;
       tableState.pagination.numberOfPages = 12;
 
-      rootScope.$apply();
+      rootScope.$digest();
 
       var pages = getPages();
 
@@ -291,7 +291,7 @@ describe('stPagination directive', function () {
       var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
       element = compile(template)(rootScope);
 
-      rootScope.$apply();
+      rootScope.$digest();
 
       tableState.pagination = {
         start: 105,
@@ -299,7 +299,7 @@ describe('stPagination directive', function () {
         number: 10
       };
 
-      rootScope.$apply();
+      rootScope.$digest();
 
 
       var pages = getPages();
@@ -325,7 +325,7 @@ describe('stPagination directive', function () {
       var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
       element = compile(template)(rootScope);
 
-      rootScope.$apply();
+      rootScope.$digest();
 
       tableState.pagination = {
         start: 5,
@@ -333,7 +333,7 @@ describe('stPagination directive', function () {
         number: 10
       };
 
-      rootScope.$apply();
+      rootScope.$digest();
 
 
       var pages = getPages();
@@ -359,7 +359,7 @@ describe('stPagination directive', function () {
       var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
       element = compile(template)(rootScope);
 
-      rootScope.$apply();
+      rootScope.$digest();
 
       tableState.pagination = {
         start: 12,
@@ -367,7 +367,7 @@ describe('stPagination directive', function () {
         number: 10
       };
 
-      rootScope.$apply();
+      rootScope.$digest();
 
 
       var pages = getPages();
@@ -390,7 +390,7 @@ describe('stPagination directive', function () {
       var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
       element = compile(template)(rootScope);
 
-      rootScope.$apply();
+      rootScope.$digest();
 
       tableState.pagination = {
         start: 5,
@@ -398,7 +398,7 @@ describe('stPagination directive', function () {
         number: 10
       };
 
-      rootScope.$apply();
+      rootScope.$digest();
 
       var pages = getPages();
 
@@ -421,7 +421,7 @@ describe('stPagination directive', function () {
         var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination="" st-template="custom_template.html" st-items-by-page="2"></td></tr></tfoot></table>';
         element = compile(template)(rootScope);
 
-        rootScope.$apply();
+        rootScope.$digest();
 
         tableState.pagination = {
           start: 3,
@@ -430,7 +430,7 @@ describe('stPagination directive', function () {
           totalItemCount: 5
         };
 
-        rootScope.$apply();
+        rootScope.$digest();
 
         expect(element.find('SPAN')[0].innerHTML).toBe('Showing 3-4 of 5');
       });
@@ -446,7 +446,7 @@ describe('stPagination directive', function () {
       var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
       element = compile(template)(rootScope);
 
-      rootScope.$apply();
+      rootScope.$digest();
 
       tableState.pagination = {
         start: 35,
@@ -454,7 +454,7 @@ describe('stPagination directive', function () {
         number: 10
       };
 
-      rootScope.$apply();
+      rootScope.$digest();
 
       var pages = getPages();
 
@@ -475,7 +475,7 @@ describe('stPagination directive', function () {
 
       angular.element(pages[4].children()[0]).triggerHandler('click');
 
-      rootScope.$apply();
+      rootScope.$digest();
 
       expect(controllerMock.slice).toHaveBeenCalledWith(50, 10);
 
@@ -498,14 +498,14 @@ describe('stPagination directive', function () {
       var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination="" st-displayed-pages="5" st-page-change="onPageChange(newPage)"></td></tr></tfoot></table>';
       element = compile(template)(rootScope);
 
-      rootScope.$apply();
+      rootScope.$digest();
 
       var pages = getPages();
 
       expect(pages.length).toBe(4);
       angular.element(pages[2].children()[0]).triggerHandler('click');
 
-      rootScope.$apply();
+      rootScope.$digest();
 
       expect(controllerMock.slice).toHaveBeenCalledWith(20, 10);
       expect(rootScope.onPageChange).toHaveBeenCalledWith(3);
@@ -527,14 +527,14 @@ describe('stPagination directive', function () {
       var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination="" st-displayed-pages="pages" st-page-change="onPageChange(newPage)"></td></tr></tfoot></table>';
       element = compile(template)(rootScope);
 
-      rootScope.$apply();
+      rootScope.$digest();
 
       var pages = getPages();
 
       expect(pages.length).toBe(4);
       angular.element(pages[2].children()[0]).triggerHandler('click');
 
-      rootScope.$apply();
+      rootScope.$digest();
 
       expect(controllerMock.slice).toHaveBeenCalledWith(20, 10);
       expect(rootScope.onPageChange).toHaveBeenCalledWith(3);
@@ -542,7 +542,7 @@ describe('stPagination directive', function () {
 
       tableState.pagination.numberOfPages = 5;
 
-      rootScope.$apply();
+      rootScope.$digest();
       pages = getPages();
 
       expect(pages.length).toBe(5);

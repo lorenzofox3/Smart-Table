@@ -53,13 +53,12 @@ describe('stSearch Directive', function () {
                 '</table>';
 
             element = $compile(template)(scope);
-            scope.$apply();
+            scope.$digest();
         }));
 
         it('should keep only items which matches', inject(function ($timeout) {
             var ths = element.find('th');
             var trs;
-
             var input = angular.element(ths[0].children[0]);
             input[0].value = 're';
             input.triggerHandler('input');
@@ -140,7 +139,7 @@ describe('stSearch Directive', function () {
                 '</table>';
 
             element = $compile(template)(scope);
-            scope.$apply();
+            scope.$digest();
             var ths = element.find('th');
 
             var input = angular.element(ths[1].children[0]);
@@ -191,7 +190,7 @@ describe('stSearch Directive', function () {
                 '</table>';
 
             element = $compile(template)(scope);
-            scope.$apply();
+            scope.$digest();
         }));
 
         it('should support binding on search predicate', inject(function ($compile, $timeout) {
@@ -214,7 +213,7 @@ describe('stSearch Directive', function () {
             ]);
 
             scope.searchPredicate = 'firstname';
-            scope.$apply();
+            scope.$digest();
             trs = element.find('tr.test-filtered');
             expect(trs.length).toBe(2);
             expect(trToModel(trs)).toEqual([
@@ -258,7 +257,7 @@ describe('stSearch Directive', function () {
                 '</table>';
 
             element = $compile(template)(scope);
-            scope.$apply();
+            scope.$digest();
         }));
 
         it('should keep only items which matches', inject(function ($timeout) {
