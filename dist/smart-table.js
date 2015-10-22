@@ -363,6 +363,7 @@ ng.module('smart-table')
           }
           if (throttle < 0) {
             func();
+            throttle = stConfig.sort.delay || attr.stDelay;
           } else {
             promise = $timeout(func, throttle);
           }
