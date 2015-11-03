@@ -3,7 +3,10 @@ ng.module('smart-table')
 
     var pressed = {
       ctrl: false,
-      shift: false
+      shift: false,
+      all: function () {
+        return this.ctrl && this.shift;
+      }
     };
 
     $document.bind("keydown keyup", function (event) {
