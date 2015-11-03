@@ -22,7 +22,7 @@ ng.module('smart-table')
       },
       link: function (scope, element, attr, ctrl) {
         var mode = attr.stSelectMode || stConfig.select.mode;
-        element.bind('click', function () {
+        element.bind('click contextmenu', function () {
           scope.$apply(function () {
             ctrl.select(scope.row, mode, pressed);
           });
