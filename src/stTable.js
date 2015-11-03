@@ -130,7 +130,7 @@ ng.module('smart-table')
      * @param {Object} row - the row to select
      * @param {String} [mode] - "single" or "multiple" (multiple by default)
      */
-    this.select = function select (row, mode) {
+    this.select = function select (row, mode, pressed) {
       var rows = copyRefs(displayGetter($scope));
       var index = rows.indexOf(row);
       if (index !== -1) {
