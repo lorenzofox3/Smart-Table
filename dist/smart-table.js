@@ -170,19 +170,31 @@ ng.module('smart-table')
      * @param {Object} row - the row to select
      * @param {String} [mode] - "single" or "multiple" (multiple by default)
      */
-    this.select = function select (row, mode) {
+    this.select = function select (row, mode, pressed) {
+      if (pressed.all()) return;
+
       var rows = copyRefs(displayGetter($scope));
       var index = rows.indexOf(row);
+      var lastSelectedIndex = rows.indexOf(lastSelected);
+
       if (index !== -1) {
-        if (mode === 'single') {
-          row.isSelected = row.isSelected !== true;
-          if (lastSelected) {
-            lastSelected.isSelected = false;
-          }
-          lastSelected = row.isSelected === true ? row : undefined;
+        if (pressed.ctrl) {
+          row.isSelected = !row.isSelected;
+        } else if (pressed.shift) {
+          var min = Math.min(index, lastSelectedIndex);
+          var max = Math.max(index, lastSelectedIndex);
+
+          for (var i = min; i <= max; i++) {
+            rows[i].isSelected = true;
+          };
         } else {
-          rows[index].isSelected = !rows[index].isSelected;
+          rows.forEach(function (r) { r.isSelected = false });
+          row.isSelected = true;
         }
+        lastSelected = row;
+      } else {
+        rows.forEach(function (r) { r.isSelected = false });
+        lastSelected = undefined;
       }
     };
 
@@ -296,7 +308,21 @@ ng.module('smart-table')
   }]);
 
 ng.module('smart-table')
-  .directive('stSelectRow', ['stConfig', function (stConfig) {
+  .directive('stSelectRow', ['stConfig', '$document', function (stConfig, $document) {
+
+    var pressed = {
+      ctrl: false,
+      shift: false,
+      all: function () {
+        return this.ctrl && this.shift;
+      }
+    };
+
+    $document.bind("keydown keyup", function (event) {
+      pressed.ctrl = event.ctrlKey;
+      pressed.shift = event.shiftKey;
+    });
+
     return {
       restrict: 'A',
       require: '^stTable',
@@ -305,9 +331,9 @@ ng.module('smart-table')
       },
       link: function (scope, element, attr, ctrl) {
         var mode = attr.stSelectMode || stConfig.select.mode;
-        element.bind('click', function () {
+        element.bind('click contextmenu', function () {
           scope.$apply(function () {
-            ctrl.select(scope.row, mode);
+            ctrl.select(scope.row, mode, pressed);
           });
         });
 
