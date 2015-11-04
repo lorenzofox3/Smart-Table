@@ -15,44 +15,6 @@ describe('stSelectRow Directive', function () {
       stConfig = _stConfig_;
     }));
 
-    // We need to do this here because we must compile the directive *after* configuring stConfig
-    it('should select more than one row when globally configured', inject(function ($rootScope, $compile) {
-        var oldMode = stConfig.select.mode;
-        stConfig.select.mode = 'multiple';
-
-
-        rootScope = $rootScope;
-        scope = $rootScope.$new();
-        rootScope.rowCollection = [
-            {name: 'Renard', firstname: 'Laurent', age: 66},
-            {name: 'Francoise', firstname: 'Frere', age: 99},
-            {name: 'Renard', firstname: 'Olivier', age: 33},
-            {name: 'Leponge', firstname: 'Bob', age: 22},
-            {name: 'Faivre', firstname: 'Blandine', age: 44}
-        ];
-
-        var template = '<table st-table="rowCollection">' +
-            '<tbody>' +
-            '<tr st-select-row="row" ng-repeat="row in rowCollection"></tr>' +
-            '</tbody>' +
-            '</table>';
-
-        element = $compile(template)(scope);
-
-        scope.$apply();
-
-
-        var trs = element.find('tr');
-        expect(trs.length).toBe(5);
-        angular.element(trs[3]).triggerHandler('click');
-        expect(scope.rowCollection[3].isSelected).toBe(true);
-        angular.element(trs[1]).triggerHandler('click');
-        expect(scope.rowCollection[1].isSelected).toBe(true);
-        expect(scope.rowCollection[3].isSelected).toBe(true);
-
-        stConfig.select.mode = oldMode;
-    }));
-
     describe('single mode', function () {
         beforeEach(inject(function ($compile, $rootScope) {
 
@@ -149,15 +111,6 @@ describe('stSelectRow Directive', function () {
             scope.$apply();
         }));
 
-        it('should select multiple row', function () {
-            var trs = element.find('tr');
-            expect(trs.length).toBe(5);
-            angular.element(trs[3]).triggerHandler('click');
-            expect(scope.rowCollection[3].isSelected).toBe(true);
-            angular.element(trs[1]).triggerHandler('click');
-            expect(scope.rowCollection[3].isSelected).toBe(true);
-            expect(scope.rowCollection[1].isSelected).toBe(true);
-        });
     });
 
 

@@ -130,19 +130,45 @@ ng.module('smart-table')
      * @param {Object} row - the row to select
      * @param {String} [mode] - "single" or "multiple" (multiple by default)
      */
-    this.select = function select (row, mode) {
+    this.select = function select (row, mode, pressed) {
+      if (pressed.all()) return;
+
       var rows = copyRefs(displayGetter($scope));
       var index = rows.indexOf(row);
+      var lastSelectedIndex = rows.indexOf(lastSelected);
+
       if (index !== -1) {
-        if (mode === 'single') {
-          row.isSelected = row.isSelected !== true;
-          if (lastSelected) {
-            lastSelected.isSelected = false;
-          }
-          lastSelected = row.isSelected === true ? row : undefined;
+        if (pressed.ctrl) {
+          rows.forEach(function (r) {
+            r.isShifted = false;
+          });
+
+          row.isSelected = !row.isSelected;
+        } else if (pressed.shift) {
+          var min = Math.min(index, lastSelectedIndex);
+          var max = Math.max(index, lastSelectedIndex);
+
+          rows.forEach(function (r) {
+            r.isSelected = !r.isShifted && r.isSelected;
+            r.isShifted = false;
+           });
+
+          for (var i = min; i <= max; i++) {
+            rows[i].isSelected = true;
+            rows[i].isShifted = true;
+          };
+          return;
         } else {
-          rows[index].isSelected = !rows[index].isSelected;
+          rows.forEach(function (r) {
+            r.isSelected = false;
+            r.isShifted = false;
+          });
+          row.isSelected = true;
         }
+        lastSelected = row;
+      } else {
+        rows.forEach(function (r) { r.isSelected = false });
+        lastSelected = undefined;
       }
     };
 
