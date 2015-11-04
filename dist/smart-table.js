@@ -179,16 +179,30 @@ ng.module('smart-table')
 
       if (index !== -1) {
         if (pressed.ctrl) {
+          rows.forEach(function (r) {
+            r.isShifted = false;
+          });
+
           row.isSelected = !row.isSelected;
         } else if (pressed.shift) {
           var min = Math.min(index, lastSelectedIndex);
           var max = Math.max(index, lastSelectedIndex);
 
+          rows.forEach(function (r) {
+            r.isSelected = !r.isShifted && r.isSelected;
+            r.isShifted = false;
+           });
+
           for (var i = min; i <= max; i++) {
             rows[i].isSelected = true;
+            rows[i].isShifted = true;
           };
+          return;
         } else {
-          rows.forEach(function (r) { r.isSelected = false });
+          rows.forEach(function (r) {
+            r.isSelected = false;
+            r.isShifted = false;
+          });
           row.isSelected = true;
         }
         lastSelected = row;
