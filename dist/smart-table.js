@@ -1,5 +1,5 @@
 /** 
-* @version 2.1.4
+* @version 2.1.5
 * @license MIT
 */
 (function (ng, undefined){
@@ -90,8 +90,15 @@ ng.module('smart-table')
       safeGetter = $parse($attrs.stSafeSrc);
       $scope.$watch(function () {
         var safeSrc = safeGetter($scope);
+        return safeSrc && safeSrc.length ? safeSrc[0] : undefined;
+      }, function (newValue, oldValue) {
+        if (newValue !== oldValue) {
+          updateSafeCopy();
+        }
+      });
+      $scope.$watch(function () {
+        var safeSrc = safeGetter($scope);
         return safeSrc ? safeSrc.length : 0;
-
       }, function (newValue, oldValue) {
         if (newValue !== safeCopy.length) {
           updateSafeCopy();
@@ -362,7 +369,7 @@ ng.module('smart-table')
             $timeout.cancel(promise);
           }
           if (throttle < 0) {
-            func();
+            scope.$apply(func);
           } else {
             promise = $timeout(func, throttle);
           }
