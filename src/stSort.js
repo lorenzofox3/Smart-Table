@@ -24,7 +24,7 @@ ng.module('smart-table')
         function sort () {
           index++;
           var func;
-          predicate = ng.isFunction(getter(scope)) ? getter(scope) : attr.stSort;
+          predicate = ng.isFunction(getter(scope)) || ng.isArray(getter(scope)) ? getter(scope) : attr.stSort;
           if (index % 3 === 0 && !!skipNatural !== true) {
             //manual reset
             index = 0;
@@ -37,7 +37,11 @@ ng.module('smart-table')
           if (promise !== null) {
             $timeout.cancel(promise);
           }
-          promise = $timeout(func, throttle);
+          if (throttle < 0) {
+            scope.$apply(func);
+          } else {
+            promise = $timeout(func, throttle);
+          }
         }
 
         element.bind('click', function sortClick () {
