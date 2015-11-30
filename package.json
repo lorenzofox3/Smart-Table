@@ -1,10 +1,11 @@
 {
   "name": "qj-smart-table",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node ./node_modules/.bin/gulp karma-CI"
+    "test": "node ./node_modules/.bin/gulp karma-CI",
+    "build": "gulp build"
   },
   "repository": {
     "type": "git",

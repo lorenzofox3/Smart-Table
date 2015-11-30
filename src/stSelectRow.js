@@ -11,8 +11,8 @@ ng.module('smart-table')
         element.bind('click', function () {
           scope.$apply(function () {
             ctrl.select(scope.row, mode);
+            scope.$emit('st-row-selected', scope.$index, scope.row)
           });
-          scope.$emit('st-row-selected', scope.$index, scope.row)
         });
 
         scope.$watch('row.isSelected', function (newValue) {
