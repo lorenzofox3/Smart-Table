@@ -38,7 +38,7 @@ ng.module('smart-table')
             $timeout.cancel(promise);
           }
           if (throttle < 0) {
-            scope.$apply(func);
+            (scope.$$phase || scope.$root.$$phase) ? func() : scope.$apply(func);
           } else {
             promise = $timeout(func, throttle);
           }
