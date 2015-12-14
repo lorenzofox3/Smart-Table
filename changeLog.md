@@ -165,3 +165,7 @@ function(tableState, tableController){
 * #533
 * #515
 
+## version 2.1.6
+
+* #559
+
