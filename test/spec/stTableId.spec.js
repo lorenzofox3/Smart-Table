@@ -5,28 +5,43 @@ describe('stTableId Directive', function () {
   var rootScope;
   var stTableService;
 
-  beforeEach(inject(function ($compile, $rootScope, _stTableService_) {
-    compile = $compile;
-    rootScope = $rootScope;
-    stTableService = _stTableService_;
+  it('should register the controller with stTableService', function() {
+    var mockStTableService = {
+      register: function() { }
+    };
 
-    rootScope.rowCollection = [
-      {name: 'Renard', firstname: 'Laurent', age: 66},
-      {name: 'Francoise', firstname: 'Frere', age: 99},
-      {name: 'Renard', firstname: 'Olivier', age: 33},
-      {name: 'Leponge', firstname: 'Bob', age: 22},
-      {name: 'Faivre', firstname: 'Blandine', age: 44}
-    ];
-  }));
+    module(function($provide) {
+      $provide.value('stTableService', mockStTableService);
+    });
 
-  it('should make the table controller available via stTableService', function() {
+    spyOn(mockStTableService, 'register');
+
+    inject(function($compile, $rootScope) {
       var template = '<table st-table="rowCollection" st-table-id="1"></table>';
-      compile(template)(rootScope);
-      rootScope.$apply();
+      $compile(template)($rootScope);
+      $rootScope.$apply();
 
-      var ctrl = stTableService.get('1');
+      // first check if it was called with an object at all, to help narrow down debugging
+      expect(mockStTableService.register).toHaveBeenCalledWith('1', jasmine.any(Object));
 
-      expect(typeof ctrl.slice === 'function').toBe(true);
-      expect(typeof ctrl.tableState === 'function').toBe(true);
+      // then check if it was called with an StTableController-like object
+      expect(mockStTableService.register).toHaveBeenCalledWith('1',
+        jasmine.objectContaining({
+          slice: jasmine.any(Function),
+          tableState: jasmine.any(Function)
+        }));
+    });
   });
+
+  // an integration test for the main use case
+  it('should make the table controller available via stTableService', inject(function($compile, $rootScope, stTableService) {
+    var template = '<table st-table="rowCollection" st-table-id="1"></table>';
+    $compile(template)($rootScope);
+    $rootScope.$apply();
+
+    var ctrl = stTableService.get('1');
+
+    expect(typeof ctrl.slice === 'function').toBe(true);
+    expect(typeof ctrl.tableState === 'function').toBe(true);
+  }));
 });
