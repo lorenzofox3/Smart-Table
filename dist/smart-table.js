@@ -524,4 +524,36 @@ ng.module('smart-table')
     };
   }]);
 
+ng.module('smart-table')
+  .directive('stTableId', ['stTableService', function (stTableService) {
+    return {
+      require: '^stTable',
+      scope: {
+        id: '@stTableId'
+      },
+      link: function (scope, element, attrs, ctrl) {
+        stTableService.register(scope.id, ctrl);
+      }
+    };
+  }]);
+
+ng.module('smart-table')
+  .factory('stTableService', function () {
+    var idCtrlMap = { };
+
+    return {
+      register: function(id, ctrl) {
+        idCtrlMap[id] = ctrl;
+      },
+
+      deregister: function(id) {
+        idCtrlMap[id] = undefined;
+      },
+
+      get: function(id) {
+        return idCtrlMap[id];
+      }
+    };
+  });
+
 })(angular);
