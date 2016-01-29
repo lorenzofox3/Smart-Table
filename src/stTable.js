@@ -74,6 +74,22 @@ ng.module('smart-table')
       });
     }
 
+    function hashCode(string) { // modified from http://stackoverflow.com/questions/7616461/generate-a-hash-from-string-in-javascript-jquery
+      var hash = 0, i, chr, len;
+
+      if (!string || string.length === 0) {
+        return hash;
+      }
+
+      for (i = 0, len = string.length; i < len; i++) {
+        chr   = string.charCodeAt(i);
+        hash  = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32bit integer
+      }
+
+      return hash;
+    }
+
     /**
      * sort the rows
      * @param {Function | String} predicate - function or string which will be used as predicate for the sorting
@@ -85,8 +101,13 @@ ng.module('smart-table')
 
       if (ng.isFunction(predicate)) {
         tableState.sort.functionName = predicate.name;
+
+        if ( !predicate.name ) { // the $watch on .sort in stSort.js will not fire if only the .sort.predicate function changes
+          tableState.sort.functionHash = hashCode(predicate.toString()); // a non-function property must change
+        }
       } else {
         delete tableState.sort.functionName;
+        delete tableState.sort.functionHash;
       }
 
       tableState.pagination.start = 0;
