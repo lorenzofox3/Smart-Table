@@ -171,5 +171,5 @@ function(tableState, tableController){
 
 ## version 2.1.7
 
-* fix [https://github.com/lorenzofox3/Smart-Table/issues/468](#468) thanks to Douglas-Treadwell
+* fix [#468](https://github.com/lorenzofox3/Smart-Table/issues/468) thanks to Douglas-Treadwell
 
