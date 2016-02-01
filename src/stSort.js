@@ -13,7 +13,7 @@ ng.module('smart-table')
         var stateClasses = [classAscent, classDescent];
         var sortDefault;
         var skipNatural = attr.stSkipNatural !== undefined ? attr.stSkipNatural : stConfig.sort.skipNatural;
-        var descendingFirst = attr.stDescendingFirst === 'true';
+        var descendingFirst = attr.stDescendingFirst !== undefined ? attr.stDescendingFirst : stConfig.sort.descendingFirst;
         var promise = null;
         var throttle = attr.stDelay || stConfig.sort.delay;
 
