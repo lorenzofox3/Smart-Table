@@ -390,7 +390,6 @@ describe('stSort Directive', function () {
       ]);
     }));
 
-
     it('should skip natural order', inject(function ($compile, $timeout) {
       var template = '<table dummy="" st-table="rowCollection">' +
         '<thead>' +
@@ -432,6 +431,51 @@ describe('stSort Directive', function () {
       ]);
     }));
 
+    it('should resort when the sort function changes, even if both functions have the same name', inject(function($compile, $timeout) {
+      var template = '<table dummy="" st-table="rowCollection">' +
+        '<thead>' +
+        '<tr><th st-sort="getters.name">name</th>' +
+        '<th st-sort="firstname">firstname</th>' +
+        '<th st-sort="getters.age">age</th>' +
+        '</tr>' +
+        '</thead>' +
+        '<tbody>' +
+        '<tr class="test-row" ng-repeat="row in rowCollection">' +
+        '<td>{{row.name}}</td>' +
+        '<td>{{row.firstname}}</td>' +
+        '<td>{{row.age}}</td>' +
+        '</tr>' +
+        '</tbody>' +
+        '</table>';
+
+      scope.getters = {
+        age: function getter (row) {
+          return row.age.length;
+        },
+        name: function getter (row) {
+          return row.name.length;
+        }
+      };
+
+      element = $compile(template)(scope);
+      scope.$apply();
+
+      var ths = element.find('th');
+      var actual;
+
+
+      angular.element(ths[0]).triggerHandler('click');
+      $timeout.flush();
+      expect(hasClass(ths[0], 'st-sort-ascent')).toBe(true);
+      expect(hasClass(ths[2], 'st-sort-ascent')).toBe(false);
+
+      angular.element(ths[2]).triggerHandler('click');
+      $timeout.flush();
+      expect(hasClass(ths[0], 'st-sort-ascent')).toBe(false);
+      expect(hasClass(ths[2], 'st-sort-ascent')).toBe(true);
+
+
+    }));
   });
 
 

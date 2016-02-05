@@ -99,14 +99,9 @@ ng.module('smart-table')
       tableState.sort.predicate = predicate;
       tableState.sort.reverse = reverse === true;
 
-      if (ng.isFunction(predicate)) {
-        tableState.sort.functionName = predicate.name;
-
-        if ( !predicate.name ) { // the $watch on .sort in stSort.js will not fire if only the .sort.predicate function changes
-          tableState.sort.functionHash = hashCode(predicate.toString()); // a non-function property must change
-        }
+      if (ng.isFunction(predicate)) { // the $watch on .sort in stSort.js will not fire if only the .sort.predicate function changes
+        tableState.sort.functionHash = hashCode(predicate.toString()); // a non-function property must change
       } else {
-        delete tableState.sort.functionName;
         delete tableState.sort.functionHash;
       }
 
