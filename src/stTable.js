@@ -105,7 +105,7 @@ ng.module('smart-table')
       input = ng.isString(input) ? input.trim() : input;
       $parse(prop).assign(predicateObject, input);
       // to avoid to filter out null value
-      if (!input) {
+      if (input === undefined || input === '') {
         deepDelete(predicateObject, prop);
       }
       tableState.search.predicateObject = predicateObject;
