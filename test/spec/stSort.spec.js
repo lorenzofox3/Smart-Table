@@ -432,6 +432,45 @@ describe('stSort Directive', function () {
       ]);
     }));
 
+    it('should sort by clicked header in descending order first (by default) when requested', inject(function ($timeout, $compile, stConfig) {
+      var template = '<table dummy="" st-table="rowCollection">' +
+        '<thead>' +
+        '<tr><th st-sort="name">name</th>' +
+        '<th st-sort="firstname">firstname</th>' +
+        '<th st-sort="getters.age">age</th>' +
+        '<th st-sort="getters.name">age</th>' +
+        '</tr>' +
+        '</thead>' +
+        '<tbody>' +
+        '<tr class="test-row" ng-repeat="row in rowCollection">' +
+        '<td>{{row.name}}</td>' +
+        '<td>{{row.firstname}}</td>' +
+        '<td>{{row.age}}</td>' +
+        '</tr>' +
+        '</tbody>' +
+        '</table>';
+
+      stConfig.sort.descendingFirst = 'true'; // or any defined value
+
+      element = $compile(template)(scope);
+      scope.$apply();
+
+      var ths = element.find('th');
+      var actual;
+      angular.element(ths[1]).triggerHandler('click');
+      $timeout.flush();
+      actual = trToModel(element.find('tr.test-row'));
+      expect(hasClass(ths[1], 'st-sort-ascent')).toBe(false);
+      expect(hasClass(ths[1], 'st-sort-descent')).toBe(true);
+      expect(actual).toEqual([
+        {name: 'Renard', firstname: 'Olivier', age: 33},
+        {name: 'Renard', firstname: 'Laurent', age: 66},
+        {name: 'Francoise', firstname: 'Frere', age: 99},
+        {name: 'Leponge', firstname: 'Bob', age: 22},
+        {name: 'Faivre', firstname: 'Blandine', age: 44}
+      ]);
+    }));
+
     it('should sort by clicked header in descending order first when requested', inject(function ($timeout, $compile) {
       var template = '<table dummy="" st-table="rowCollection">' +
         '<thead>' +
