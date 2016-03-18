@@ -80,32 +80,47 @@ describe('st table Controller', function () {
         ]);
       });
 
-      it('should hold the function name when using a function as predicate', function () {
-        ctrl.sortBy(function firstNameLength(row) {
+      it('should store the function hash when using a function as predicate', function () {
+        var firstNameLengthHash, firstNameHash;
+
+        function firstNameLength(row) {
           return row.firstname.length;
-        });
+        }
 
-        expect(scope.data).toEqual([
-          {name: 'Leponge', firstname: 'Bob', age: 22},
-          {name: 'Francoise', firstname: 'Frere', age: 99},
-          {name: 'Renard', firstname: 'Laurent', age: 66},
-          {name: 'Renard', firstname: 'Olivier', age: 33},
-          {name: 'Faivre', firstname: 'Blandine', age: 44}
-        ]);
+        function firstName(row) {
+          return row.firstname;
+        }
 
-        expect(ctrl.tableState().sort.functionName).toBe('firstNameLength');
+        ctrl.sortBy(firstName); // we test the correctness of sortBy results elsewhere, so not here
+        firstNameHash = ctrl.tableState().sort.functionHash;
 
+        expect(firstNameHash).toBeDefined(); // we don't care what the hash is, as long as there is one
+
+        ctrl.sortBy(firstNameLength);
+        firstNameLengthHash = ctrl.tableState().sort.functionHash; // ... same test, different function
+
+        expect(firstNameLengthHash).toBeDefined();
+
+        expect(firstNameHash).not.toEqual(firstNameLengthHash); // but hashes for different functions should be different
+
+        ctrl.sortBy(firstName);
+        expect(ctrl.tableState().sort.functionHash).toBe(firstNameHash); // and hashes for the same function should be the same
+
+        ctrl.sortBy(firstNameLength);
+        expect(ctrl.tableState().sort.functionHash).toBe(firstNameLengthHash); // ... same test, different function
       });
 
-      it('should reset the function name when sorting with something than function', function () {
-        ctrl.sortBy(function firstNameLength(row) {
+      it('should reset the function name when sorting with something other than a function', function () {
+        function firstNameLength(row) {
           return row.firstname.length;
-        });
-        expect(ctrl.tableState().sort.functionName).toBe('firstNameLength');
-        ctrl.sortBy('name');
-        expect(ctrl.tableState().sort.functionName).toBe(undefined);
-        expect(ctrl.tableState().sort.predicate).toBe('name');
+        }
 
+        ctrl.sortBy(firstNameLength);
+        expect(ctrl.tableState().sort.functionHash).toBeDefined();
+
+        ctrl.sortBy('name');
+        expect(ctrl.tableState().sort.functionHash).toBe(undefined);
+        expect(ctrl.tableState().sort.predicate).toBe('name');
       });
 
 
