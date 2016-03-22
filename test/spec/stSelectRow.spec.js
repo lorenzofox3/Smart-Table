@@ -65,12 +65,15 @@ describe('stSelectRow Directive', function () {
                 {name: 'Leponge', firstname: 'Bob', age: 22},
                 {name: 'Faivre', firstname: 'Blandine', age: 44}
             ];
+            rootScope.isVisible = true;
 
-            var template = '<table st-table="rowCollection">' +
+            var template = '<div>' +
+                '<table ng-if="isVisible" st-table="rowCollection">' +
                 '<tbody>' +
                 '<tr st-select-row="row" ng-repeat="row in rowCollection"></tr>' +
                 '</tbody>' +
-                '</table>';
+                '</table>' +
+                '</div>';
 
             element = $compile(template)(scope);
 
@@ -91,7 +94,7 @@ describe('stSelectRow Directive', function () {
             expect(scope.rowCollection[3].isSelected).toBe(true);
             angular.element(trs[1]).triggerHandler('click');
             expect(scope.rowCollection[1].isSelected).toBe(true);
-            expect(scope.rowCollection[3].isSelected).toBe(false);
+            expect(scope.rowCollection[3].isSelected).toBeFalsy();
         });
 
         it('should update the class name when isSelected property change', function () {
@@ -122,6 +125,36 @@ describe('stSelectRow Directive', function () {
             expect(hasClass(tr[2], 'custom-selected')).toBe(false);
 
             stConfig.select.selectedClass = oldClass;
+        });
+
+        it('should deselect the row if the table has been removed than added back into the DOM', function() {
+            var trs = element.find('tr');
+            expect(trs.length).toBe(5);
+            expect(scope.rowCollection[3].isSelected).toBeFalsy();
+            expect(hasClass(trs[3], 'st-selected')).toBe(false);
+
+            angular.element(trs[3]).triggerHandler('click');
+            expect(scope.rowCollection[3].isSelected).toBe(true);
+            expect(hasClass(trs[3], 'st-selected')).toBe(true);
+
+            rootScope.isVisible = false;
+            rootScope.$apply();
+            trs = element.find('tr');
+            expect(trs.length).toBe(0);
+
+            rootScope.isVisible = true;
+            rootScope.$apply();
+            trs = element.find('tr');
+            expect(trs.length).toBe(5);
+
+            expect(scope.rowCollection[2].isSelected).toBeFalsy();
+            expect(hasClass(trs[2], 'st-selected')).toBe(false);
+            angular.element(trs[2]).triggerHandler('click');
+            expect(scope.rowCollection[2].isSelected).toBe(true);
+            expect(hasClass(trs[2], 'st-selected')).toBe(true);
+
+            expect(scope.rowCollection[3].isSelected).toBeFalsy();
+            expect(hasClass(trs[3], 'st-selected')).toBe(false);
         });
     });
 

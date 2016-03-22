@@ -179,15 +179,15 @@ ng.module('smart-table')
      * @param {String} [mode] - "single" or "multiple" (multiple by default)
      */
     this.select = function select (row, mode) {
-      var rows = copyRefs(displayGetter($scope));
+     var rows = ng.isDefined(safeGetter) ? copyRefs(safeGetter($scope)) : copyRefs(displayGetter($scope));
       var index = rows.indexOf(row);
       if (index !== -1) {
         if (mode === 'single') {
-          row.isSelected = row.isSelected !== true;
-          if (lastSelected) {
-            lastSelected.isSelected = false;
+          var isSelected = rows[index].isSelected;
+          rows = rows.map(function (r) { delete r.isSelected; return r; });
+          if (!isSelected) {
+            rows[index].isSelected = true;
           }
-          lastSelected = row.isSelected === true ? row : undefined;
         } else {
           rows[index].isSelected = !rows[index].isSelected;
         }
