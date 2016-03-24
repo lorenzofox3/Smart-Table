@@ -183,11 +183,30 @@ ng.module('smart-table')
       var index = rows.indexOf(row);
       if (index !== -1) {
         if (mode === 'single') {
-          row.isSelected = row.isSelected !== true;
-          if (lastSelected) {
-            lastSelected.isSelected = false;
-          }
-          lastSelected = row.isSelected === true ? row : undefined;
+                        
+            rows.forEach(function(r, i){
+                
+                // if same row
+                if(i === index){
+                    
+                    if(r.isSelected === true){
+                        r.isSelected = false;
+                    }
+                    else{
+                        r.isSelected = true;
+                    }
+                
+                }
+                
+                // else - deselect
+                else{
+                    r.isSelected = false; 
+                }           
+                
+            });
+            
+            lastSelected = (row.isSelected ? row : undefined);
+            
         } else {
           rows[index].isSelected = !rows[index].isSelected;
         }
