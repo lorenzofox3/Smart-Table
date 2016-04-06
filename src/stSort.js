@@ -13,6 +13,7 @@ ng.module('smart-table')
         var stateClasses = [classAscent, classDescent];
         var sortDefault;
         var skipNatural = attr.stSkipNatural !== undefined ? attr.stSkipNatural : stConfig.sort.skipNatural;
+        var descendingFirst = attr.stDescendingFirst !== undefined ? attr.stDescendingFirst : stConfig.sort.descendingFirst;
         var promise = null;
         var throttle = attr.stDelay || stConfig.sort.delay;
 
@@ -22,7 +23,12 @@ ng.module('smart-table')
 
         //view --> table state
         function sort () {
-          index++;
+          if (descendingFirst) {
+            index = index === 0 ? 2 : index - 1;
+          } else {
+            index++;
+          }
+
           var func;
           predicate = ng.isFunction(getter(scope)) || ng.isArray(getter(scope)) ? getter(scope) : attr.stSort;
           if (index % 3 === 0 && !!skipNatural !== true) {
@@ -38,7 +44,7 @@ ng.module('smart-table')
             $timeout.cancel(promise);
           }
           if (throttle < 0) {
-            scope.$apply(func);
+            func();
           } else {
             promise = $timeout(func, throttle);
           }
@@ -46,7 +52,7 @@ ng.module('smart-table')
 
         element.bind('click', function sortClick () {
           if (predicate) {
-            sort();
+            scope.$apply(sort);
           }
         });
 
