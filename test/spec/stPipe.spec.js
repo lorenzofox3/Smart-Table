@@ -48,4 +48,33 @@ describe('stPipe directive', function () {
             sort: {predicate: 'name', reverse: false}, search: {}, pagination: {start: 0, totalItemCount: 0}
         });
     }));
+
+    it('should call the pipe function with the current table state as argument on `callPipeFunction` event', inject(function ($timeout, $compile) {
+      var element;
+      var template = '<table st-pipe="customPipe" st-table="rowCollection">' +
+          '<thead>' +
+          '<tr><th st-sort="name">firstname</th>' +
+          '<th st-sort="lastname">lastname</th>' +
+          '<th st-sort="getters.age">age</th>' +
+          '</tr>' +
+          '</table>';
+      spyOn(scope, 'customPipe').andCallThrough();
+
+      element = $compile(template)(scope);
+
+      scope.$emit('callPipeFunction');
+
+      expect(firstArg).toBe(undefined);
+      expect(secondArg).toBe(undefined);
+
+      $timeout.flush();
+
+      expect(firstArg).toEqual({
+          sort : {  }, search : {  }, pagination : { start : 0, totalItemCount : 0 }
+      });
+
+      expect(secondArg.tableState()).toEqual({
+          sort : {  }, search : {  }, pagination : { start : 0, totalItemCount : 0 }
+      });
+    }));
 });

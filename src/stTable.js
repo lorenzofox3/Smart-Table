@@ -74,6 +74,9 @@ ng.module('smart-table')
       });
     }
 
+    $scope.$on('callPipeFunction', function (event, data) {
+      ctrl.pipe();
+    });
     /**
      * sort the rows
      * @param {Function | String} predicate - function or string which will be used as predicate for the sorting
