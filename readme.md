@@ -29,6 +29,8 @@ Any open issue which do not follow the steps above will be closed without invest
 
 The easiest way is to run `bower install angular-smart-table`, then you just have to add the script and register the module `smart-table` to you application.
 
+You can also install using NPM `npm install angular-smart-table`, so you can use with browserify or webpack
+
 ## Test
 
 Run `npm install` after you have installed the dependencies (`npm install` and `bower install`).
