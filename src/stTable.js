@@ -206,6 +206,7 @@ ng.module('smart-table')
       restrict: 'A',
       controller: 'stTableController',
       link: function (scope, element, attr, ctrl) {
+        element.addClass('st-table');
 
         if (attr.stSetFilter) {
           ctrl.setFilterFunction(attr.stSetFilter);

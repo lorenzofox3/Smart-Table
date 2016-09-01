@@ -1,7 +1,3 @@
-/** 
-* @version 2.1.8
-* @license MIT
-*/
 (function (ng, undefined){
     'use strict';
 
@@ -247,6 +243,7 @@ ng.module('smart-table')
       restrict: 'A',
       controller: 'stTableController',
       link: function (scope, element, attr, ctrl) {
+        element.addClass('st-table');
 
         if (attr.stSetFilter) {
           ctrl.setFilterFunction(attr.stSetFilter);
@@ -336,6 +333,7 @@ ng.module('smart-table')
       restrict: 'A',
       require: '^stTable',
       link: function (scope, element, attr, ctrl) {
+        element.addClass('st-sort-th');
 
         var predicate = attr.stSort;
         var getter = $parse(predicate);
