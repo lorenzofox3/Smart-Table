@@ -161,13 +161,13 @@ function(tableState, tableController){
 
 ## version 2.1.5
 
-* [#544](https://github.com/lorenzofox3/Smart-Table/issues/544)
-* [#533](https://github.com/lorenzofox3/Smart-Table/issues/533)
-* [#515](https://github.com/lorenzofox3/Smart-Table/issues/515)
+* added multiple sort support to st-sort, [#544](https://github.com/lorenzofox3/Smart-Table/issues/544)
+* fix [#533](https://github.com/lorenzofox3/Smart-Table/issues/533)
+* fix [#515](https://github.com/lorenzofox3/Smart-Table/issues/515)
 
 ## version 2.1.6
 
-* [#559](https://github.com/lorenzofox3/Smart-Table/issues/559)
+* fix [#559](https://github.com/lorenzofox3/Smart-Table/issues/559)
 
 ## version 2.1.7
 
