@@ -4,6 +4,7 @@ ng.module('smart-table')
       restrict: 'A',
       require: '^stTable',
       link: function (scope, element, attr, ctrl) {
+        element.addClass('st-sort-th');
 
         var predicate = attr.stSort;
         var getter = $parse(predicate);
