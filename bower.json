@@ -1,9 +1,10 @@
 {
-  "name": "angular-smart-table",
+  "name": "qj-smart-table",
   "version": "2.1.8",
-  "homepage": "https://github.com/lorenzofox3/Smart-Table",
+  "homepage": "https://github.com/e-cloud/Smart-Table",
   "authors": [
-    "lorenzofox3 <laurent34azerty@gmail.com>"
+    "lorenzofox3 <laurent34azerty@gmail.com>",
+    "e-cloud <saintscott119@gmail.com>"
   ],
   "description": "table module for angular",
   "main": "dist/smart-table.js",

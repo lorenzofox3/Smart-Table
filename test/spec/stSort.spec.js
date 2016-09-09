@@ -79,7 +79,7 @@ describe('stSort Directive', function () {
         '</table>';
 
       element = $compile(template)(scope);
-      scope.$apply();
+      scope.$digest();
 
 
       stConfig.sort.ascentClass = oldAscentClass;
@@ -172,7 +172,7 @@ describe('stSort Directive', function () {
         '</table>';
 
       element = $compile(template)(scope);
-      scope.$apply();
+      scope.$digest();
     }));
 
     it('should sort by clicked header', inject(function ($timeout) {
@@ -278,7 +278,7 @@ describe('stSort Directive', function () {
         predicate: 'lastname'
       };
 
-      scope.$apply();
+      scope.$digest();
       expect(hasClass(ths[1], 'st-sort-ascent')).toBe(false);
       expect(hasClass(ths[1], 'st-sort-descent')).toBe(false);
 
@@ -340,7 +340,7 @@ describe('stSort Directive', function () {
 
       element = $compile(template)(scope);
 
-      scope.$apply();
+      scope.$digest();
 
       var ths = element.find('th');
       var actual = trToModel(element.find('tr.test-row'));
@@ -410,7 +410,7 @@ describe('stSort Directive', function () {
 
       element = $compile(template)(scope);
 
-      scope.$apply();
+      scope.$digest();
 
       var ths = element.find('th');
       var th1 = angular.element(ths[1]);
@@ -419,6 +419,7 @@ describe('stSort Directive', function () {
       th1.triggerHandler('click');
       $timeout.flush();
       th1.triggerHandler('click');
+      scope.$digest();
       $timeout.flush();
       var actual = trToModel(element.find('tr.test-row'));
       expect(hasClass(ths[1], 'st-sort-ascent')).toBe(true);

@@ -402,4 +402,31 @@ describe('st table Controller', function () {
     });
   });
 
+  describe('listen select row event', function () {
+    beforeEach(inject(function ($rootScope, $controller, $filter, $parse) {
+      dataSet = [
+        {name: 'Renard', firstname: 'Laurent', age: 66},
+        {name: 'Francoise', firstname: 'Frere', age: 99},
+        {name: 'Renard', firstname: 'Olivier', age: 33},
+        {name: 'Leponge', firstname: 'Bob', age: 22},
+        {name: 'Faivre', firstname: 'Blandine', age: 44}
+      ];
+      scope = $rootScope;
+      childScope = scope.$new();
+      scope.data = dataSet;
+      ctrl = $controller('stTableController', {
+        $scope: scope, $parse: $parse, $filter: $filter, $attrs: {
+          stTable: 'data'
+        }
+      });
+
+      $rootScope.$broadcast('st-select-row', scope.data[2]);
+      $rootScope.$digest()
+    }));
+
+    it('should modify data property', function () {
+      expect(scope.data[2].isSelected).toBe(true);
+    });
+  })
+
 });

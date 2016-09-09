@@ -74,6 +74,10 @@ ng.module('smart-table')
       });
     }
 
+      $scope.$on('st-select-row', function(event, row, mode){
+        ctrl.select(row, mode||'single');
+      });
+
     /**
      * sort the rows
      * @param {Function | String} predicate - function or string which will be used as predicate for the sorting
@@ -138,12 +142,12 @@ ng.module('smart-table')
      * @param {String} [mode] - "single" or "multiple" (multiple by default)
      */
     this.select = function select (row, mode) {
-      var rows = copyRefs(displayGetter($scope));
+      var rows = copyRefs(filtered||safeCopy);
       var index = rows.indexOf(row);
       if (index !== -1) {
         if (mode === 'single') {
           row.isSelected = row.isSelected !== true;
-          if (lastSelected) {
+          if (lastSelected && lastSelected !== row) {
             lastSelected.isSelected = false;
           }
           lastSelected = row.isSelected === true ? row : undefined;

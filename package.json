@@ -1,16 +1,17 @@
 {
-  "name": "angular-smart-table",
+  "name": "qj-smart-table",
   "version": "2.1.8",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node ./node_modules/.bin/gulp karma-CI"
+    "test": "node ./node_modules/.bin/gulp karma-CI",
+    "build": "gulp build"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lorenzofox3/Smart-Table.git"
+    "url": "https://github.com/e-cloud/Smart-Table.git"
   },
-  "author": "Laurent Renard",
+  "author": ["Laurent Renard", "e-cloud"],
   "license": "MIT",
   "devDependencies": {
     "gulp": "^3.8.7",
