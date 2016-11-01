@@ -145,11 +145,33 @@ ng.module('smart-table')
 
       input = ng.isString(input) ? input.trim() : input;
       $parse(prop).assign(predicateObject, input);
+
       // to avoid to filter out null value
       if (!input) {
         deepDelete(predicateObject, prop);
       }
       tableState.search.predicateObject = predicateObject;
+      tableState.pagination.start = 0;
+      return this.pipe();
+    };
+	
+	/**
+     * strict search matching rows
+     * @param {String} input - the input string
+     * @param {String} [predicate] - the property name against you want to check the match, otherwise it will search on all properties
+     */
+    this.strictSearch = function strictSearch (input, predicate) {
+      var predicateObject = tableState.search.strictPredicateObject || {};
+      var prop = predicate ? predicate : '$';
+
+      input = ng.isString(input) ? input.trim() : input;
+      $parse(prop).assign(predicateObject, input);
+
+      // to avoid to filter out null value
+      if (!input) {
+        deepDelete(predicateObject, prop);
+      }
+      tableState.search.strictPredicateObject = predicateObject;
       tableState.pagination.start = 0;
       return this.pipe();
     };
@@ -160,7 +182,21 @@ ng.module('smart-table')
     this.pipe = function pipe () {
       var pagination = tableState.pagination;
       var output;
-      filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject) : safeCopy;
+      
+      filtered = safeCopy;
+
+      // filter on any non strict filters
+      if (tableState.search.predicateObject) {
+        filtered = filter(filtered, tableState.search.predicateObject);
+      }
+
+      // filter using the strict filters after non strict have been filtered
+      if (tableState.search.strictPredicateObject) {
+        filtered = filter(filtered, tableState.search.strictPredicateObject, true);
+      }
+      
+      //filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject) : safeCopy;
+
       if (tableState.sort.predicate) {
         filtered = orderBy(filtered, tableState.sort.predicate, tableState.sort.reverse);
       }
@@ -296,6 +332,50 @@ ng.module('smart-table')
 
           promise = $timeout(function () {
             tableCtrl.search(evt.target.value, attr.stSearch || '');
+            promise = null;
+          }, throttle);
+        });
+      }
+    };
+  }]);
+
+ng.module('smart-table')
+  .directive('stStrictSearch', ['stConfig', '$timeout','$parse', function (stConfig, $timeout, $parse) {
+    return {
+      require: '^stTable',
+      link: function (scope, element, attr, ctrl) {
+        var tableCtrl = ctrl;
+        var promise = null;
+        var throttle = attr.stDelay || stConfig.search.delay;
+        var event = attr.stInputEvent || stConfig.search.inputEvent;
+
+        attr.$observe('stStrictSearch', function (newValue, oldValue) {
+          var input = element[0].value;
+          if (newValue !== oldValue && input) {
+            programFees
+            tableCtrl.strictSearch(input, newValue);
+          }
+        });
+
+        //table state -> view
+        scope.$watch(function () {
+          return ctrl.tableState().search;
+        }, function (newValue, oldValue) {
+          var predicateExpression = attr.stStrictSearch || '$';
+          if (newValue.strictPredicateObject && $parse(predicateExpression)(newValue.strictPredicateObject) !== element[0].value) {
+            element[0].value = $parse(predicateExpression)(newValue.strictPredicateObject) || '';
+          }
+        }, true);
+
+        // view -> table state
+        element.bind(event, function (evt) {
+          evt = evt.originalEvent || evt;
+          if (promise !== null) {
+            $timeout.cancel(promise);
+          }
+
+          promise = $timeout(function () {
+            tableCtrl.strictSearch(evt.target.value, attr.stStrictSearch || '');
             promise = null;
           }, throttle);
         });

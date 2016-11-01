@@ -104,11 +104,33 @@ ng.module('smart-table')
 
       input = ng.isString(input) ? input.trim() : input;
       $parse(prop).assign(predicateObject, input);
+
       // to avoid to filter out null value
       if (!input) {
         deepDelete(predicateObject, prop);
       }
       tableState.search.predicateObject = predicateObject;
+      tableState.pagination.start = 0;
+      return this.pipe();
+    };
+	
+	/**
+     * strict search matching rows
+     * @param {String} input - the input string
+     * @param {String} [predicate] - the property name against you want to check the match, otherwise it will search on all properties
+     */
+    this.strictSearch = function strictSearch (input, predicate) {
+      var predicateObject = tableState.search.strictPredicateObject || {};
+      var prop = predicate ? predicate : '$';
+
+      input = ng.isString(input) ? input.trim() : input;
+      $parse(prop).assign(predicateObject, input);
+
+      // to avoid to filter out null value
+      if (!input) {
+        deepDelete(predicateObject, prop);
+      }
+      tableState.search.strictPredicateObject = predicateObject;
       tableState.pagination.start = 0;
       return this.pipe();
     };
@@ -119,7 +141,21 @@ ng.module('smart-table')
     this.pipe = function pipe () {
       var pagination = tableState.pagination;
       var output;
-      filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject) : safeCopy;
+      
+      filtered = safeCopy;
+
+      // filter on any non strict filters
+      if (tableState.search.predicateObject) {
+        filtered = filter(filtered, tableState.search.predicateObject);
+      }
+
+      // filter using the strict filters after non strict have been filtered
+      if (tableState.search.strictPredicateObject) {
+        filtered = filter(filtered, tableState.search.strictPredicateObject, true);
+      }
+      
+      //filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject) : safeCopy;
+
       if (tableState.sort.predicate) {
         filtered = orderBy(filtered, tableState.sort.predicate, tableState.sort.reverse);
       }
