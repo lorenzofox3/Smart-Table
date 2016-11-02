@@ -144,6 +144,10 @@ ng.module('smart-table')
       var prop = predicate ? predicate : '$';
 
       input = ng.isString(input) ? input.trim() : input;
+      // when using ng-options, numbers actually comeback as 'number:4'
+      var split = input.split(':');
+      if (split[0] === 'number') { input = parseFloat(split[1]); }
+      
       $parse(prop).assign(predicateObject, input);
 
       // to avoid to filter out null value
@@ -165,6 +169,10 @@ ng.module('smart-table')
       var prop = predicate ? predicate : '$';
 
       input = ng.isString(input) ? input.trim() : input;
+      // when using ng-options, numbers actually comeback as 'number:4'
+      var split = input.split(':');
+      if (split[0] === 'number') { input = parseFloat(split[1]); }
+
       $parse(prop).assign(predicateObject, input);
 
       // to avoid to filter out null value
