@@ -6,6 +6,8 @@ ng.module('smart-table')
       scope: {
         stItemsByPage: '=?',
         stDisplayedPages: '=?',
+        //Optionally expose the total number of pages in case of server-side pagination
+        stNumberOfPages: '=?',
         stPageChange: '&'
       },
       templateUrl: function (element, attrs) {
@@ -18,6 +20,8 @@ ng.module('smart-table')
 
         scope.stItemsByPage = scope.stItemsByPage ? +(scope.stItemsByPage) : stConfig.pagination.itemsByPage;
         scope.stDisplayedPages = scope.stDisplayedPages ? +(scope.stDisplayedPages) : stConfig.pagination.displayedPages;
+        // TODO : add default value to stConfig ?
+        scope.stNumberOfPages = scope.stNumberOfPages ? +(scope.stNumberOfPages) : 0;
 
         scope.currentPage = 1;
         scope.pages = [];
@@ -64,6 +68,14 @@ ng.module('smart-table')
         });
 
         scope.$watch('stDisplayedPages', redraw);
+
+        //If the outside world set a different total number of pages, reload the collection (change tableState, which trigggers above watch) and set it to first page. (just like in the case of a search / sort etc).
+        scope.$watch('stNumberOfPages', function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                ctrl.tableState().pagination.start = 0;
+                ctrl.tableState().pagination.numberOfPages = newValue;
+            }
+        });
 
         //view -> table state
         scope.selectPage = function (page) {
