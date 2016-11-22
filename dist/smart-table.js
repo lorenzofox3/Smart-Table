@@ -217,6 +217,13 @@ ng.module('smart-table')
     this.getFilteredCollection = function getFilteredCollection () {
       return filtered || safeCopy;
     };
+		
+		/**
+     * returns the unfiltered source of the table    
+     */
+		this.getUnfilteredCollection = function getUnfilteredCollection () {
+      return safeCopy;
+    };
 
     /**
      * Use a different filter function than the angular FilterFilter
