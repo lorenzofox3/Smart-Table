@@ -48,30 +48,44 @@ ng.module('smart-table')
 
     if ($attrs.stSafeSrc) {
       safeGetter = $parse($attrs.stSafeSrc);
-      $scope.$watch(function () {
-        var safeSrc = safeGetter($scope);
-        return safeSrc && safeSrc.length ? safeSrc[0] : undefined;
-      }, function (newValue, oldValue) {
-        if (newValue !== oldValue) {
-          updateSafeCopy();
-        }
-      });
-      $scope.$watch(function () {
-        var safeSrc = safeGetter($scope);
-        return safeSrc ? safeSrc.length : 0;
-      }, function (newValue, oldValue) {
-        if (newValue !== safeCopy.length) {
-          updateSafeCopy();
-        }
-      });
-      $scope.$watch(function () {
-        return safeGetter($scope);
-      }, function (newValue, oldValue) {
-        if (newValue !== oldValue) {
+      if (angular.isDefined($scope.$watchCollection)) {
+        $scope.$watch(function () {
+          return safeGetter($scope);
+        }, function () {
           tableState.pagination.start = 0;
+        });
+        $scope.$watchCollection(function () {
+          return safeGetter($scope);
+        }, function () {
           updateSafeCopy();
-        }
-      });
+        });
+      } else {
+        // backward compatible solution for angular 1.0
+	$scope.$watch(function () {
+	  var safeSrc = safeGetter($scope);
+	  return safeSrc && safeSrc.length ? safeSrc[0] : undefined;
+	}, function (newValue, oldValue) {
+	  if (newValue !== oldValue) {
+	    updateSafeCopy();
+	  }
+	});
+	$scope.$watch(function () {
+	  var safeSrc = safeGetter($scope);
+	  return safeSrc ? safeSrc.length : 0;
+	}, function (newValue, oldValue) {
+	  if (newValue !== safeCopy.length) {
+	    updateSafeCopy();
+	  }
+	});
+	$scope.$watch(function () {
+	  return safeGetter($scope);
+	}, function (newValue, oldValue) {
+	  if (newValue !== oldValue) {
+	    tableState.pagination.start = 0;
+	    updateSafeCopy();
+	  }
+	});
+      }
     }
 
     /**
