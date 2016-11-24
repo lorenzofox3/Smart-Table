@@ -33,12 +33,17 @@ describe('stPagination directive', function () {
     slice: function (start, number) {
       tableState.pagination.start = start;
       tableState.pagination.number = number;
+    },
+
+    pipe: function () {
+
     }
   };
 
   function ControllerMock() {
     this.tableState = controllerMock.tableState;
     this.slice = controllerMock.slice;
+    this.pipe = controllerMock.pipe;
   }
 
   var tableState = {
@@ -547,6 +552,38 @@ describe('stPagination directive', function () {
 
       expect(pages.length).toBe(5);
       expect(rootScope.onPageChange.calls.length).toBe(1);
+    });
+
+  });
+
+  describe('handle destroy events', function () {
+ 
+    it('should show full table on destroy event', function () {
+
+      spyOn(controllerMock, 'tableState').andCallThrough();
+
+      tableState.pagination = {
+        start: 1,
+        numberOfPages: 4,
+        number: 10,
+        totalItemCount: 5
+      };
+
+      rootScope.paginationToggle = true;
+
+      var template = '<table st-table="rowCollection"><tfoot ng-if="paginationToggle"><tr><td id="pagination" st-pagination="" st-displayed-pages="5"></td></tr></tfoot></table>';
+      element = compile(template)(rootScope);
+
+      rootScope.$apply();
+
+      rootScope.paginationToggle = false;
+
+      rootScope.$apply();
+
+      expect(tableState.pagination.start).toEqual(0);
+      expect(tableState.pagination.totalItemCount).toEqual(5);
+      expect(tableState.pagination.numberOfPages).not.toBeDefined(); 
+      expect(tableState.pagination.number).not.toBeDefined(); 
     });
 
   });

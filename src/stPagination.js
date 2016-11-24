@@ -75,6 +75,14 @@ ng.module('smart-table')
         if (!ctrl.tableState().pagination.number) {
           ctrl.slice(0, scope.stItemsByPage);
         }
+
+        scope.$on("$destroy", function() {
+            ctrl.tableState().pagination.start = 0;
+            ctrl.tableState().pagination.number = undefined;
+            ctrl.tableState().pagination.numberOfPages = undefined;
+            ctrl.pipe();
+        }); 
+
       }
     };
   }]);
