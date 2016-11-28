@@ -18,6 +18,7 @@ ng.module('smart-table')
     var filtered;
     var pipeAfterSafeCopy = true;
     var ctrl = this;
+    /** the last row that has been selected (or unselected) */
     var lastSelected;
 
     function copyRefs (src) {
@@ -119,6 +120,8 @@ ng.module('smart-table')
     this.pipe = function pipe () {
       var pagination = tableState.pagination;
       var output;
+      if(lastSelected) //if selection has been used, clear all selections
+    	  this.selectAll(safeCopy, false);
       filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject) : safeCopy;
       if (tableState.sort.predicate) {
         filtered = orderBy(filtered, tableState.sort.predicate, tableState.sort.reverse);
@@ -133,11 +136,15 @@ ng.module('smart-table')
     };
 
     /**
-     * select a dataRow (it will add the attribute isSelected to the row object)
+     * select a dataRow (it will add the attribute isSelected to the row object) or extend selection
+     * Extension means that the state of the last row that was selected is extended through to the currently
+     * selected row, so all in between will either be selected or deselected. If there was no previously
+     * selected row, extend will just select the current row.
      * @param {Object} row - the row to select
      * @param {String} [mode] - "single" or "multiple" (multiple by default)
+     * @param {Boolean} [extend] - extend the state of the last selected row. Works only in "multiple" mode
      */
-    this.select = function select (row, mode) {
+    this.select = function select (row, mode, extend) {
       var rows = copyRefs(displayGetter($scope));
       var index = rows.indexOf(row);
       if (index !== -1) {
@@ -148,10 +155,32 @@ ng.module('smart-table')
           }
           lastSelected = row.isSelected === true ? row : undefined;
         } else {
-          rows[index].isSelected = !rows[index].isSelected;
+          if(extend && lastSelected) {
+        	  var lastIndex = rows.indexOf(lastSelected);
+        	  var state = lastSelected.isSelected;
+        	  var min = Math.min(lastIndex, index);
+        	  var max = Math.max(lastIndex, index);
+        	  for(var i = min; i <= max; i++)
+        		  rows[i].isSelected = state;
+          } else {
+        	rows[index].isSelected = !rows[index].isSelected;
+          }
+          lastSelected = row;
         }
       }
     };
+    
+    /**
+     * select or de-select all rows.
+     * @param {Collection} rows - The array of rows to select or deselect
+     * @param {Boolean} state - The target state. If falsey, selectionUsed will also be reset
+     */
+    this.selectAll = function selectAll (rows, state) {
+    	for(var i = 0; i < rows.length; i++)
+    		rows[i].isSelected = state;
+    	if(!state)
+    		lastSelected = undefined;
+    } 
 
     /**
      * take a slice of the current sorted/filtered collection (pagination)
