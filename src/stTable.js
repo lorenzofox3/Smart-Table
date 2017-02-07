@@ -200,6 +200,14 @@ ng.module('smart-table')
     this.preventPipeOnWatch = function preventPipe () {
       pipeAfterSafeCopy = false;
     };
+
+    /**
+     * If custom stPipe supporting, e.g., custom filter control(s) is used together with usual $watch-ed data,
+     * we need default behaviour, so call this function once in your stPipe function
+     */
+    this.unpreventPipeOnWatch = function unpreventPipe () {
+      pipeAfterSafeCopy = true;
+    };
   }])
   .directive('stTable', function () {
     return {
