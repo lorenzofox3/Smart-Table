@@ -1,0 +1,32 @@
+Sample of using custom filter control via st-pipe with in-memory data in safe-src (all filtering/sorting/paging operations are client-side).
+There is custom-filters branch, so probably AST author already has better solution. See also src\SmartTableCustomizerService.js where processPipe is actually slightly modified copy of stTable pipe().
+
+	<table st-table="dashCtrl.completedSessionsDisplay" st-pipe="dashCtrl.filterCompleted" st-safe-src="dashCtrl.completedSessions" class="table table-striped">
+        	<tr class="table-filters">
+        		<th>
+        			<xm-date-time-range-picker set-range="dashCtrl.filterCompleted(null, null, range)"></xm-date-time-range-picker>
+        		</th>
+
+......................................................................
+
+      	this.selectedCompletedSessions = 0;
+      	this.completedSessions = [];
+      	this.completedSessionsDisplay = [];
+      	this.stState = { };
+      	this.$scope.dashCtrl = this;
+
+	filterCompleted(tableState, ctrl, range) {
+		let containerController = this.$parent && this.$parent.dashCtrl || this;
+		containerController.callSmartTablePipe("c", tableState, ctrl, containerController.completedSessions, range, (output) => { containerController.completedSessionsDisplay = output; });
+	}
+
+	callSmartTablePipe(gridType, tableState, ctrl, originalDataColl, range, callback) {
+		let customState = this.stState[gridType];
+		if (!customState) { // fix page-load double data load
+			customState = this.stState[gridType] = {};
+			ctrl.unpreventPipeOnWatch(); // necessary setup
+			return;
+		}
+
+		this.SmartTableCustomizerService.processPipe({ customState: customState, tableState: tableState, originalDataColl: originalDataColl, customFilter: range, addCustomFilter: this.setRange, callback: callback });
+	}
