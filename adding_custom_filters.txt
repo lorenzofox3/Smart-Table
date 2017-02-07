@@ -1,6 +1,8 @@
 Sample of using custom filter control via st-pipe with in-memory data in safe-src (all filtering/sorting/paging operations are client-side).
 There is custom-filters branch, so probably AST author already has better solution. See also src\SmartTableCustomizerService.js where processPipe is actually slightly modified copy of stTable pipe().
 
+Template markup:
+
 	<table st-table="dashCtrl.completedSessionsDisplay" st-pipe="dashCtrl.filterCompleted" st-safe-src="dashCtrl.completedSessions" class="table table-striped">
         	<tr class="table-filters">
         		<th>
@@ -9,11 +11,17 @@ There is custom-filters branch, so probably AST author already has better soluti
 
 ......................................................................
 
+Controller:
+  constructor(...
       	this.selectedCompletedSessions = 0;
-      	this.completedSessions = [];
+      	this.completedSessions = []; // data is AJAX-loaded later in controller constructor
       	this.completedSessionsDisplay = [];
       	this.stState = { };
       	this.$scope.dashCtrl = this;
+........
+  )
+
+.................
 
 	filterCompleted(tableState, ctrl, range) {
 		let containerController = this.$parent && this.$parent.dashCtrl || this;
