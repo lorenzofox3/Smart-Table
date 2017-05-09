@@ -4,9 +4,8 @@ ng.module('smart-table')
       restrict: 'A',
       require: '^stTable',
       link: function (scope, element, attr, ctrl) {
-
-        var predicate = attr.stSort;
-        var getter = $parse(predicate);
+        var getter = $parse(attr.stSort);
+        var predicate = parsePredicate();
         var index = 0;
         var classAscent = attr.stClassAscent || stConfig.sort.ascentClass;
         var classDescent = attr.stClassDescent || stConfig.sort.descentClass;
@@ -17,6 +16,12 @@ ng.module('smart-table')
         var promise = null;
         var throttle = attr.stDelay || stConfig.sort.delay;
 
+        function parsePredicate() {
+          var predicate = getter(scope);
+          predicate = ng.isFunction(predicate) || ng.isArray(predicate) ? predicate : attr.stSort;
+          return predicate;
+        }
+        
         if (attr.stSortDefault) {
           sortDefault = scope.$eval(attr.stSortDefault) !== undefined ? scope.$eval(attr.stSortDefault) : attr.stSortDefault;
         }
@@ -30,7 +35,7 @@ ng.module('smart-table')
           }
 
           var func;
-          predicate = ng.isFunction(getter(scope)) || ng.isArray(getter(scope)) ? getter(scope) : attr.stSort;
+          predicate = parsePredicate();
           if (index % 3 === 0 && !!skipNatural !== true) {
             //manual reset
             index = 0;
