@@ -298,6 +298,7 @@ ng.module('smart-table')
             tableCtrl.search(evt.target.value, attr.stSearch || '');
             promise = null;
           }, throttle);
+          promise.catch(function(){});
         });
       }
     };
@@ -379,6 +380,7 @@ ng.module('smart-table')
             func();
           } else {
             promise = $timeout(func, throttle);
+            promise.catch(function(){});
           }
         }
 
@@ -518,7 +520,7 @@ ng.module('smart-table')
               pipePromise = $timeout(function () {
                 scope.stPipe(ctrl.tableState(), ctrl);
               }, config.pipe.delay);
-
+              pipePromise.catch(function(){});
               return pipePromise;
             }
           }
