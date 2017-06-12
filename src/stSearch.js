@@ -9,7 +9,7 @@ ng.module('smart-table')
         var event = attr.stInputEvent || stConfig.search.inputEvent;
 
         attr.$observe('stSearch', function (newValue, oldValue) {
-          var input = element[0].value;
+          var input = element[0].value || attr.stSearchDefault;
           if (newValue !== oldValue && input) {
             ctrl.tableState().search = {};
             tableCtrl.search(input, newValue);
