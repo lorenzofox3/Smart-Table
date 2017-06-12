@@ -137,10 +137,12 @@ describe('stSelectRow Directive', function () {
                 {name: 'Leponge', firstname: 'Bob', age: 22},
                 {name: 'Faivre', firstname: 'Blandine', age: 44}
             ];
+            scope.rowsSelected = [];
 
             var template = '<table st-table="rowCollection">' +
                 '<tbody>' +
-                '<tr st-select-mode="multiple" st-select-row="row" ng-repeat="row in rowCollection"></tr>' +
+                '<tr st-select-mode="multiple" st-select-row="row" st-select-rows-selected="rowsSelected"' +
+                    ' ng-repeat="row in rowCollection"></tr>' +
                 '</tbody>' +
                 '</table>';
 
@@ -157,6 +159,16 @@ describe('stSelectRow Directive', function () {
             angular.element(trs[1]).triggerHandler('click');
             expect(scope.rowCollection[3].isSelected).toBe(true);
             expect(scope.rowCollection[1].isSelected).toBe(true);
+        });
+
+        it('should keep track of selected rows', function () {
+            var trs = element.find('tr');
+            expect(trs.length).toBe(5);
+            angular.element(trs[3]).triggerHandler('click');
+            angular.element(trs[1]).triggerHandler('click');
+            expect(scope.rowsSelected.length).toBe(2);
+            expect(scope.rowsSelected[0]).toBe(scope.rowCollection[3]);
+            expect(scope.rowsSelected[1]).toBe(scope.rowCollection[1]);            
         });
     });
 
