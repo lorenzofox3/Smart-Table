@@ -1,3 +1,7 @@
+/** 
+* @version 2.1.8
+* @license MIT
+*/
 (function (ng, undefined){
     'use strict';
 
