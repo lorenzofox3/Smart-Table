@@ -12,13 +12,18 @@ ng.module('smart-table')
         var classDescent = attr.stClassDescent || stConfig.sort.descentClass;
         var stateClasses = [classAscent, classDescent];
         var sortDefault;
-        var skipNatural = attr.stSkipNatural !== undefined ? attr.stSkipNatural : stConfig.sort.skipNatural;
-        var descendingFirst = attr.stDescendingFirst !== undefined ? attr.stDescendingFirst : stConfig.sort.descendingFirst;
+        var skipNatural = attr.stSkipNatural !== undefined ? (attr.stSkipNatural !== "" ? attr.stSkipNatural : true) : stConfig.sort.skipNatural;
+        var descendingFirst = attr.stDescendingFirst !== undefined ? (attr.stDescendingFirst !== "" ? attr.stDescendingFirst : true) : stConfig.sort.descendingFirst;
         var promise = null;
         var throttle = attr.stDelay || stConfig.sort.delay;
 
-        if (attr.stSortDefault) {
-          sortDefault = scope.$eval(attr.stSortDefault) !== undefined ? scope.$eval(attr.stSortDefault) : attr.stSortDefault;
+        if (attr.stSortDefault !== undefined) {
+          if(attr.stSortDefault !== "") {
+            var evaluated = scope.$eval(attr.stSortDefault)
+            sortDefault = evaluated !== undefined ? evaluated : attr.stSortDefault;
+          } else {
+            sortDefault = true;
+          }
         }
 
         //view --> table state
