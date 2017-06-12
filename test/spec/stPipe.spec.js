@@ -28,7 +28,7 @@ describe('stPipe directive', function () {
             '<th st-sort="getters.age">age</th>' +
             '</tr>' +
             '</table>';
-        spyOn(scope, 'customPipe').andCallThrough();
+        spyOn(scope, 'customPipe').and.callThrough();
 
         element = $compile(template)(scope);
 

@@ -1,28 +1,3 @@
-if (!Function.prototype.bind) {
-  Function.prototype.bind = function(oThis) {
-    if (typeof this !== 'function') {
-      // closest thing possible to the ECMAScript 5
-      // internal IsCallable function
-      throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
-    }
-
-    var aArgs   = Array.prototype.slice.call(arguments, 1),
-      fToBind = this,
-      fNOP    = function() {},
-      fBound  = function() {
-        return fToBind.apply(this instanceof fNOP
-            ? this
-            : oThis,
-          aArgs.concat(Array.prototype.slice.call(arguments)));
-      };
-
-    fNOP.prototype = this.prototype;
-    fBound.prototype = new fNOP();
-
-    return fBound;
-  };
-}
-
 describe('stPagination directive', function () {
 
   var controllerMock = {
@@ -441,7 +416,7 @@ describe('stPagination directive', function () {
 
     it('should select a page', function () {
 
-      spyOn(controllerMock, 'slice').andCallThrough();
+      spyOn(controllerMock, 'slice').and.callThrough();
 
       var template = '<table st-table="rowCollection"><tfoot><tr><td id="pagination" st-pagination=""></td></tr></tfoot></table>';
       element = compile(template)(rootScope);
@@ -487,7 +462,7 @@ describe('stPagination directive', function () {
 
     it('should call onPageChange method', function () {
       rootScope.onPageChange = jasmine.createSpy('onPageChange');
-      spyOn(controllerMock, 'slice').andCallThrough();
+      spyOn(controllerMock, 'slice').and.callThrough();
 
       tableState.pagination = {
         start: 1,
@@ -509,14 +484,14 @@ describe('stPagination directive', function () {
 
       expect(controllerMock.slice).toHaveBeenCalledWith(20, 10);
       expect(rootScope.onPageChange).toHaveBeenCalledWith(3);
-      expect(rootScope.onPageChange.calls.length).toBe(1);
+      expect(rootScope.onPageChange.calls.count()).toBe(1);
 
     });
 
     it('should should not call when current page is not changed', function () {
 
       rootScope.onPageChange = jasmine.createSpy('onPageChange');
-      spyOn(controllerMock, 'slice').andCallThrough();
+      spyOn(controllerMock, 'slice').and.callThrough();
 
       tableState.pagination = {
         start: 1,
@@ -538,7 +513,7 @@ describe('stPagination directive', function () {
 
       expect(controllerMock.slice).toHaveBeenCalledWith(20, 10);
       expect(rootScope.onPageChange).toHaveBeenCalledWith(3);
-      expect(rootScope.onPageChange.calls.length).toBe(1);
+      expect(rootScope.onPageChange.calls.count()).toBe(1);
 
       tableState.pagination.numberOfPages = 5;
 
@@ -546,7 +521,7 @@ describe('stPagination directive', function () {
       pages = getPages();
 
       expect(pages.length).toBe(5);
-      expect(rootScope.onPageChange.calls.length).toBe(1);
+      expect(rootScope.onPageChange.calls.count()).toBe(1);
     });
 
   });
