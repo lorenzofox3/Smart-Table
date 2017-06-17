@@ -37,6 +37,7 @@ ng.module('smart-table')
             tableCtrl.search(evt.target.value, attr.stSearch || '');
             promise = null;
           }, throttle);
+          promise.catch(function(){});
         });
       }
     };
