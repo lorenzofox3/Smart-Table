@@ -22,9 +22,7 @@ ng.module('smart-table')
               pipePromise = $timeout(function () {
                 scope.stPipe(ctrl.tableState(), ctrl);
               }, config.pipe.delay);
-              
               pipePromise.catch(function(){});
-              
               return pipePromise;
             }
           }
