@@ -47,6 +47,7 @@ ng.module('smart-table')
             func();
           } else {
             promise = $timeout(func, throttle);
+            promise.catch(function(){});
           }
         }
 
