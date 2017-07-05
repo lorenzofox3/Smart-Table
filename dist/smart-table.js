@@ -149,20 +149,41 @@ ng.module('smart-table').controller('stTableController', [
      * @param {String} input - the input string
      * @param {String} [predicate] - the property name against you want to check the match, otherwise it will search on all properties
      * @param {String | Function } [comparator] - a comparator to pass to the filter for the (pass true for stric mode)
+     * @param {String} [strictsearchEnabledFields] - list of properties aganist which you want to implement strict search
      */
-    this.search = function search(input, predicate, comparator) {
-      var predicateObject = tableState.search.predicateObject || {};
-      var prop = predicate ? predicate : '$';
+    this.search = function search(input, predicate, strictsearchEnabledFields) {
+        var prop = predicate ? predicate : '$';
+        var exactMatchProperties = {};
+		var isExactMatchInput = false;
+		if(strictsearchEnabledFields){
+		 exactMatchProperties =strictsearchEnabledFields.split(',');
+		 isExactMatchInput = exactMatchProperties.indexOf(prop) != -1;
+		}
+         
+        var predicateObject = {};
 
-      input = ng.isString(input) ? input.trim() : input;
-      $parse(prop).assign(predicateObject, input);
-      // to avoid to filter out null value
-      if (!input) {
-        deepDelete(predicateObject, prop);
-      }
-      tableState.search.predicateObject = predicateObject;
-      tableState.pagination.start = 0;
-      return this.pipe();
+        input = ng.isString(input) ? input.trim() : input;
+        if (isExactMatchInput) {
+            predicateObject = tableState.search.exactmatchPredicateObject || {};
+            formatPredicateObject(predicateObject, prop, input);
+            tableState.search.exactmatchPredicateObject = predicateObject; 
+        }
+        else {
+            predicateObject = tableState.search.wildcharPredicateObject || {};
+            formatPredicateObject(predicateObject, prop, input);
+            tableState.search.wildcharPredicateObject = predicateObject;
+        }
+        tableState.pagination.start = 0;
+        return this.pipe();
+    };
+
+    function formatPredicateObject(predicateObject, prop, input) {
+        $parse(prop).assign(predicateObject, input);
+        // to avoid to filter out null value
+        if (!input) {
+            deepDelete(predicateObject, prop);
+        }
+        return predicateObject;
     };
 
     /**
@@ -171,9 +192,17 @@ ng.module('smart-table').controller('stTableController', [
     this.pipe = function pipe() {
       var pagination = tableState.pagination;
       var output;
-      filtered = tableState.search.predicateObject
-        ? filter(safeCopy, tableState.search.predicateObject)
-        : safeCopy;
+      if (tableState.search.wildcharPredicateObject) {
+          // Third parameter tell angular to execute an exact match or not. 
+          filtered = tableState.search.wildcharPredicateObject ? filter(safeCopy, tableState.search.wildcharPredicateObject, false) : safeCopy;
+      }
+      else {
+          filtered = safeCopy;
+      }
+      
+      if (tableState.search.exactmatchPredicateObject) {
+          filtered = tableState.search.exactmatchPredicateObject ? filter(filtered, tableState.search.exactmatchPredicateObject, true) : filtered;
+      }
       if (tableState.sort.predicate) {
         filtered = orderBy(
           filtered,
@@ -318,7 +347,7 @@ ng.module('smart-table')
           }
 
           promise = $timeout(function () {
-            tableCtrl.search(evt.target.value, attr.stSearch || '');
+            tableCtrl.search(evt.target.value, attr.stSearch || '', attr.strictsearchEnabledFields );
             promise = null;
           }, throttle);
         });
