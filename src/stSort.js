@@ -46,7 +46,9 @@ ng.module('smart-table')
           if (throttle < 0) {
             func();
           } else {
-            promise = $timeout(func, throttle);
+            promise = $timeout(function(){
+              func();
+            }, throttle);
           }
         }
 
