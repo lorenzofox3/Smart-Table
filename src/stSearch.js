@@ -34,7 +34,7 @@ ng.module('smart-table')
           }
 
           promise = $timeout(function () {
-            tableCtrl.search(evt.target.value, attr.stSearch || '');
+            tableCtrl.search(evt.target.value, attr.stSearch || '', attr.strictsearchEnabledFields );
             promise = null;
           }, throttle);
         });
