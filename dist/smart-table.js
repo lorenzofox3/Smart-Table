@@ -1,5 +1,5 @@
 /** 
-* @version 2.1.8
+* @version 2.1.9
 * @license MIT
 */
 (function (ng, undefined){
@@ -8,7 +8,7 @@
 ng.module('smart-table', []).run(['$templateCache', function ($templateCache) {
     $templateCache.put('template/smart-table/pagination.html',
         '<nav ng-if="numPages && pages.length >= 2"><ul class="pagination">' +
-        '<li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a href="javascript: void(0);" ng-click="selectPage(page)">{{page}}</a></li>' +
+        '<li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a href="#" ng-click="selectPage(page); $event.preventDefault(); $event.stopPropagation();">{{page}}</a></li>' +
         '</ul></nav>');
 }]);
 
@@ -401,7 +401,9 @@ ng.module('smart-table')
           if (throttle < 0) {
             func();
           } else {
-            promise = $timeout(func, throttle);
+            promise = $timeout(function(){
+              func();
+            }, throttle);
           }
         }
 
