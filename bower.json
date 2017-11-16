@@ -1,0 +1,23 @@
+{
+  "name": "angular-smart-table",
+  "description": "smart table component for angular v < 2.0",
+  "main": "./dist/smart-table.js",
+  "authors": [
+    "Laurent Renard"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "smart-table",
+    "table",
+    "grid",
+    "angular"
+  ],
+  "homepage": "https://github.com/lorenzofox3/Smart-Table",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
