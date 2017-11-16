@@ -20,7 +20,8 @@ ng.module('smart-table').controller('stTableController', [
     var pipeAfterSafeCopy = true;
     var ctrl = this;
     var lastSelected;
-
+    var trimSearchInput = false;
+    
     function copyRefs(src) {
       return src ? [].concat(src) : [];
     }
@@ -45,6 +46,11 @@ ng.module('smart-table').controller('stTableController', [
       } else {
         delete object[path];
       }
+    }
+
+    if ($attrs.stTrimSearchInput) {
+      var getTrimSearchInput = $parse($attrs.stTrimSearchInput);
+      trimSearchInput = getTrimSearchInput();
     }
 
     if ($attrs.stSafeSrc) {
@@ -113,7 +119,10 @@ ng.module('smart-table').controller('stTableController', [
       var predicateObject = tableState.search.predicateObject || {};
       var prop = predicate ? predicate : '$';
 
-      input = ng.isString(input) ? input.trim() : input;
+      if (trimSearchInput && ng.isString(input)) {
+        input = input.trim();
+      }
+      
       $parse(prop).assign(predicateObject, input);
       // to avoid to filter out null value
       if (!input) {
