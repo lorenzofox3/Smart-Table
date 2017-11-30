@@ -375,7 +375,8 @@ describe('st table Controller', function () {
     beforeEach(inject(function ($rootScope, $controller, $filter, $parse) {
       dataSet = [
         {name: ' Starting with a space'},
-        {name: 'No space'},
+        {name: 'Containing a space'},
+        {name: 'Nospaces'},
         {name: 'Ending with a space '},
       ];
       scope = $rootScope;
@@ -444,17 +445,21 @@ describe('st table Controller', function () {
     }));
 
     describe('search', function () {
-      it('should NOT trim and show everything starting with a space', function () {
+      it('should NOT trim and show everything containing a space', function () {
         ctrl.search(' ', 'name');
         expect(scope.data).toEqual([
           {name: ' Starting with a space'},
+          {name: 'Containing a space'},
+          {name: 'Ending with a space '}
         ]);
       });
  
-      it('should NOT trim and search for everything containing the search string including space 1', function () {
+      it('should NOT trim and search for everything containing the search string including space and s', function () {
         ctrl.search(' S', 'name');
         expect(scope.data).toEqual([
           {name: ' Starting with a space'}
+          {name: 'Containing a space'},
+          {name: 'Ending with a space '}
         ]);
       });
 
