@@ -395,22 +395,17 @@ describe('st table Controller', function () {
         ctrl.search(' ', 'name');
         expect(scope.data).toEqual([
           {name: ' Starting with a space'},
-          {name: 'No space'},
+          {name: 'Containing a space'},
+          {name: 'Nospaces'},
           {name: 'Ending with a space '},
         ]);
       });
  
-      it('should trim if the input is a string and search containing S', function () {
-        ctrl.search(' S', 'name');
+      it('should trim if the input is a string and search containing h', function () {
+        ctrl.search(' h', 'name');
         expect(scope.data).toEqual([
-          {name: ' Starting with a space'}
-        ]);
-      });
-
-      it('should keep other spaces', function () {
-        ctrl.search('No S', 'name');
-        expect(scope.data).toEqual([
-          {name: 'No space'}
+          {name: ' Starting with a space'},
+          {name: 'Ending with a space '},
         ]);
       });
 
@@ -418,8 +413,9 @@ describe('st table Controller', function () {
         ctrl.search('space ', 'name');
         expect(scope.data).toEqual([
           {name: ' Starting with a space'},
-          {name: 'No space'},
-          {name: 'Ending with a space '},          
+          {name: 'Containing a space'},
+          {name: 'Nospaces'},
+          {name: 'Ending with a space '},
         ]);
       });
 
@@ -431,9 +427,10 @@ describe('st table Controller', function () {
     beforeEach(inject(function ($rootScope, $controller, $filter, $parse) {
       dataSet = [
         {name: ' Starting with a space'},
-        {name: 'No space'},
+        {name: 'Containing a space'},
+        {name: 'Nospaces'},
         {name: 'Ending with a space '},
-      ];
+    ];
       scope = $rootScope;
       childScope = scope.$new();
       scope.data = dataSet;
@@ -458,13 +455,6 @@ describe('st table Controller', function () {
         ctrl.search(' S', 'name');
         expect(scope.data).toEqual([
           {name: ' Starting with a space'}
-        ]);
-      });
-
-      it('should keep other spaces', function () {
-        ctrl.search('No S', 'name');
-        expect(scope.data).toEqual([
-          {name: 'No space'}
         ]);
       });
 
