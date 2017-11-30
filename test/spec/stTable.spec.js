@@ -22,7 +22,8 @@ describe('st table Controller', function () {
       scope.data = dataSet;
       ctrl = $controller('stTableController', {
         $scope: scope, $parse: $parse, $filter: $filter, $attrs: {
-          stTable: 'data'
+          stTable: 'data',
+          stTrimSearchInput: true
         }
       });
 
@@ -178,7 +179,6 @@ describe('st table Controller', function () {
       });
 
       it('should trim if the input is a string when trimSearchInput is set to true', function () {
-        ctrl.trimSearchInput = true; 
         ctrl.search(' re ', 'name');
         expect(scope.data).toEqual([
           {name: 'Renard', firstname: 'Laurent', age: 66},
