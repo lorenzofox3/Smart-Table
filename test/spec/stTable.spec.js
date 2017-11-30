@@ -22,7 +22,7 @@ describe('st table Controller', function () {
       scope.data = dataSet;
       ctrl = $controller('stTableController', {
         $scope: scope, $parse: $parse, $filter: $filter, $attrs: {
-          stTable: 'data'
+          stTable: 'data',
         }
       });
 
@@ -174,15 +174,6 @@ describe('st table Controller', function () {
 
         expect(scope.data).toEqual([
           {name: 'Renard', firstname: 'Laurent', age: 66}
-        ]);
-      });
-
-      it('should trim if the input is a string', function () {
-        ctrl.search(' re ', 'name');
-        expect(scope.data).toEqual([
-          {name: 'Renard', firstname: 'Laurent', age: 66},
-          {name: 'Renard', firstname: 'Olivier', age: 33},
-          {name: 'Faivre', firstname: 'Blandine', age: 44}
         ]);
       });
     });
@@ -379,6 +370,109 @@ describe('st table Controller', function () {
       });
     });
   });
+
+  describe('with stTrimSearchInput set to true', function () {
+    beforeEach(inject(function ($rootScope, $controller, $filter, $parse) {
+      dataSet = [
+        {name: ' Starting with a space'},
+        {name: 'Containing a space'},
+        {name: 'Nospaces'},
+        {name: 'Ending with a space '},
+      ];
+      scope = $rootScope;
+      childScope = scope.$new();
+      scope.data = dataSet;
+      ctrl = $controller('stTableController', {
+        $scope: scope, $parse: $parse, $filter: $filter, $attrs: {
+          stTable: 'data',
+          stTrimSearchInput: 'true'
+        }
+      });
+
+    }));
+
+    describe('search', function () {
+      it('should trim if the input is a string and show all', function () {
+        ctrl.search(' ', 'name');
+        expect(scope.data).toEqual([
+          {name: ' Starting with a space'},
+          {name: 'Containing a space'},
+          {name: 'Nospaces'},
+          {name: 'Ending with a space '},
+        ]);
+      });
+ 
+      it('should trim if the input is a string and search containing h', function () {
+        ctrl.search(' h', 'name');
+        expect(scope.data).toEqual([
+          {name: ' Starting with a space'},
+          {name: 'Ending with a space '},
+        ]);
+      });
+
+      it('should trim if the input is a string and search for everything before a trailing space', function () {
+        ctrl.search('space ', 'name');
+        expect(scope.data).toEqual([
+          {name: ' Starting with a space'},
+          {name: 'Containing a space'},
+          {name: 'Nospaces'},
+          {name: 'Ending with a space '},
+        ]);
+      });
+
+    });
+
+  });    
+
+  describe('with stTrimSearchInput set to false', function () {
+    beforeEach(inject(function ($rootScope, $controller, $filter, $parse) {
+      dataSet = [
+        {name: ' Starting with a space'},
+        {name: 'Containing a space'},
+        {name: 'Nospaces'},
+        {name: 'Ending with a space '},
+    ];
+      scope = $rootScope;
+      childScope = scope.$new();
+      scope.data = dataSet;
+      ctrl = $controller('stTableController', {
+        $scope: scope, $parse: $parse, $filter: $filter, $attrs: {
+          stTable: 'data',
+          stTrimSearchInput: 'false'
+        }
+      });
+
+    }));
+
+    describe('search', function () {
+      it('should NOT trim and show everything containing a space', function () {
+        ctrl.search(' ', 'name');
+        expect(scope.data).toEqual([
+          {name: ' Starting with a space'},
+          {name: 'Containing a space'},
+          {name: 'Ending with a space '}
+        ]);
+      });
+ 
+      it('should NOT trim and search for everything containing the search string including space and s', function () {
+        ctrl.search(' S', 'name');
+        expect(scope.data).toEqual([
+          {name: ' Starting with a space'},
+          {name: 'Containing a space'},
+          {name: 'Ending with a space '}
+        ]);
+      });
+
+      it('should NOT trim and search for everything containing the search string including space 2', function () {
+        ctrl.search('space ', 'name');
+        expect(scope.data).toEqual([
+          {name: 'Ending with a space '},          
+        ]);
+      });
+
+    });
+
+  });  
 
   describe('with safeSrc', function () {
     beforeEach(inject(function ($rootScope, $controller, $filter, $parse) {
