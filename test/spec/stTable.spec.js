@@ -457,7 +457,7 @@ describe('st table Controller', function () {
       it('should NOT trim and search for everything containing the search string including space and s', function () {
         ctrl.search(' S', 'name');
         expect(scope.data).toEqual([
-          {name: ' Starting with a space'}
+          {name: ' Starting with a space'},
           {name: 'Containing a space'},
           {name: 'Ending with a space '}
         ]);
