@@ -23,7 +23,7 @@ describe('st table Controller', function () {
       ctrl = $controller('stTableController', {
         $scope: scope, $parse: $parse, $filter: $filter, $attrs: {
           stTable: 'data',
-          stTrimSearchInput: true
+          stTrimSearchInput: 'true'
         }
       });
 
