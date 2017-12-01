@@ -9,6 +9,11 @@ describe('stSort Directive', function () {
     return Array.prototype.indexOf.call(element.classList, classname) !== -1
   }
 
+  function hasAttr (element, attr, value) {
+    if (!attr || !value) return false;
+    return element.getAttribute(attr) === value;
+  }
+
   function trToModel (trs) {
     return Array.prototype.map.call(trs, function (ele) {
       return {
@@ -593,6 +598,31 @@ describe('stSort Directive', function () {
       ]);
       expect(tableState.sort).toEqual({});
       expect(tableState.pagination.start).toEqual(0);
+    }));
+
+    it('should initialize headers with the aria role attribute set to columnheader', inject(function ($timeout) {
+      var ths = element.find('th');
+      expect((ths[1], ''))
+      expect(hasAttr(ths[1], 'role', 'columnheader')).toBe(true);
+    }));
+
+    it('should update aria-sort attribute when clicking', inject(function ($timeout) {
+      var ariaSort = 'aria-sort';
+      var ariaSortNone = 'none';
+      var ariaSortAscending = 'ascending';
+      var ariaSortDescending = 'descending';
+
+      var ths = element.find('th');
+      expect(hasAttr(ths[1], ariaSort, ariaSortNone)).toBe(true);
+      angular.element(ths[1]).triggerHandler('click');
+      $timeout.flush();
+      expect(hasAttr(ths[1], ariaSort, ariaSortAscending)).toBe(true);
+      angular.element(ths[1]).triggerHandler('click');
+      $timeout.flush();
+      expect(hasAttr(ths[1], ariaSort, ariaSortDescending)).toBe(true);
+      angular.element(ths[1]).triggerHandler('click');
+      $timeout.flush();
+      expect(hasAttr(ths[1], ariaSort, ariaSortNone)).toBe(true);
     }));
 
 
