@@ -107,13 +107,13 @@ ng.module('smart-table').controller('stTableController', [
      * search matching rows
      * @param {String} input - the input string
      * @param {String} [predicate] - the property name against you want to check the match, otherwise it will search on all properties
-     * @param {String | Function } [comparator] - a comparator to pass to the filter for the (pass true for stric mode)
+     * @param {Boolean} [trimSearch] - trim the search input
      */
-    this.search = function search(input, predicate, comparator) {
+    this.search = function search(input, predicate, trimSearch) {
       var predicateObject = tableState.search.predicateObject || {};
       var prop = predicate ? predicate : '$';
 
-      input = ng.isString(input) ? input.trim() : input;
+      input = ng.isString(input) && trimSearch ? input.trim() : input;
       $parse(prop).assign(predicateObject, input);
       // to avoid to filter out null value
       if (!input) {

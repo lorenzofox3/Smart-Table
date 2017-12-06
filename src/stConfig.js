@@ -7,7 +7,8 @@ ng.module('smart-table')
     },
     search: {
       delay: 400, // ms
-      inputEvent: 'input'
+      inputEvent: 'input',
+      trimSearch: false
     },
     select: {
       mode: 'single',
