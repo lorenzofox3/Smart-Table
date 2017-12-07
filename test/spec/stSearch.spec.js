@@ -31,7 +31,7 @@ describe('stSearch Directive', function () {
                 {name: 'Renard', firstname: 'Laurent', age: 66},
                 {name: 'Francoise', firstname: 'Frere', age: 99},
                 {name: 'Renard', firstname: 'Olivier', age: 33},
-                {name: 'Leponge', firstname: 'Bob', age: 22},
+                {name: 'Le Blond', firstname: 'Bob', age: 22},
                 {name: 'Faivre', firstname: 'Blandine', age: 44}
             ];
 
@@ -92,6 +92,87 @@ describe('stSearch Directive', function () {
             ]);
         }));
 
+        it('should keep leading space in search input by default', inject(function ($timeout) {
+            var ths = element.find('th');
+
+            var input = angular.element(ths[1].children[0]);
+            input[0].value = ' bl';
+            input.triggerHandler('input');
+            $timeout.flush();
+            trs = element.find('tr.test-filtered');
+            expect(trs.length).toBe(1);
+            expect(trToModel(trs)).toEqual([
+                {name: 'Le Blond', firstname: 'Bob', age: 22}
+            ]);
+        }));
+
+        it('should keep trailing space in search input by default', inject(function ($timeout) {
+            var ths = element.find('th');
+
+            var input = angular.element(ths[1].children[0]);
+            input[0].value = 'le ';
+            input.triggerHandler('input');
+            $timeout.flush();
+            trs = element.find('tr.test-filtered');
+            expect(trs.length).toBe(1);
+            expect(trToModel(trs)).toEqual([
+                {name: 'Le Blond', firstname: 'Bob', age: 22}
+            ]);
+        }));
+
+        it('should support trim leading and trailing space in search input', inject(function ($timeout, $rootScope, $compile) {
+            var oldTrimSearch= stConfig.search.trimSearch;
+            stConfig.search.trimSearch = true;
+
+            // Since we must set the stCofig before compiling, we must recompile after configuring a delay
+            scope = $rootScope.$new();
+            scope.rowCollection = [
+                {name: 'Renard', firstname: 'Laurent', age: 66},
+                {name: 'Francoise', firstname: 'Frere', age: 99},
+                {name: 'Renard', firstname: 'Olivier', age: 33},
+                {name: 'Le Blond', firstname: 'Bob', age: 22},
+                {name: 'Faivre', firstname: 'Blandine', age: 44}
+            ];
+
+            var template = '<table st-table="rowCollection">' +
+                '<thead>' +
+                '<tr>' +
+                '<th><input st-search="\'name\'" /></th>' +
+                '<th><input st-search="" /></th>' +
+                '<th>age</th>' +
+                '</tr>' +
+                '</thead>' +
+                '<tbody>' +
+                '<tr class="test-filtered" ng-repeat="row in rowCollection">' +
+                '<td>{{row.name}}</td>' +
+                '<td>{{row.firstname}}</td>' +
+                '<td>{{row.age}}</td>' +
+                '</tr>' +
+                '</tbody>' +
+                '</table>';
+
+            element = $compile(template)(scope);
+            scope.$apply();
+            var ths = element.find('th');
+
+            var input = angular.element(ths[1].children[0]);
+            input[0].value = ' re ';
+            input.triggerHandler('input');
+
+            $timeout.flush();
+            trs = element.find('tr.test-filtered');
+            expect(trs.length).toBe(4);
+            expect(trToModel(trs)).toEqual([
+                {name: 'Renard', firstname: 'Laurent', age: 66},
+                {name: 'Francoise', firstname: 'Frere', age: 99},
+                {name: 'Renard', firstname: 'Olivier', age: 33},
+                {name: 'Faivre', firstname: 'Blandine', age: 44}
+            ]);
+
+            stConfig.search.trimSearch = oldTrimSearch;
+
+        }));
+
         it('should throttle searching to 400ms by default', inject(function ($timeout) {
             var ths = element.find('th');
 
@@ -118,7 +199,7 @@ describe('stSearch Directive', function () {
                 {name: 'Renard', firstname: 'Laurent', age: 66},
                 {name: 'Francoise', firstname: 'Frere', age: 99},
                 {name: 'Renard', firstname: 'Olivier', age: 33},
-                {name: 'Leponge', firstname: 'Bob', age: 22},
+                {name: 'Le Blond', firstname: 'Bob', age: 22},
                 {name: 'Faivre', firstname: 'Blandine', age: 44}
             ];
 
@@ -169,7 +250,7 @@ describe('stSearch Directive', function () {
                 {name: 'Renard', firstname: 'Laurent', age: 66},
                 {name: 'Francoise', firstname: 'Frere', age: 99},
                 {name: 'Renard', firstname: 'Olivier', age: 33},
-                {name: 'Leponge', firstname: 'Bob', age: 22},
+                {name: 'Le Blond', firstname: 'Bob', age: 22},
                 {name: 'Faivre', firstname: 'Blandine', age: 44}
             ];
 
@@ -235,7 +316,7 @@ describe('stSearch Directive', function () {
                 {name: {lastname: 'Renard', firstname: 'Laurent'}, age: 66, description:'really silly description'},
                 {name: {lastname: 'Francoise', firstname: 'Frere'}, age: 99, description:'really silly description'},
                 {name: {lastname: 'Renard', firstname: 'Olivier'}, age: 33, description:'really silly description'},
-                {name: {lastname: 'Leponge', firstname: 'Bob'}, age: 22, description:'really silly description'},
+                {name: {lastname: 'Le Blond', firstname: 'Bob'}, age: 22, description:'really silly description'},
                 {name: {lastname: 'Faivre', firstname: 'Blandine'}, age: 44, description:'really silly description'},
                 {name: null, age: 33, description:'really silly description'}
             ];

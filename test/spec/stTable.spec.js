@@ -177,8 +177,22 @@ describe('st table Controller', function () {
         ]);
       });
 
-      it('should trim if the input is a string and trim is true', function () {
-        ctrl.search(' re ', 'name', true);
+      it('should search input string containing leading space', function () {
+        ctrl.search(' blond', 'name', true);
+        expect(scope.data).toEqual([
+            {name: 'Le Blond', firstname: 'Bob', age: 22}
+        ]);
+      });
+
+      it('should search input string containing trailing space', function () {
+        ctrl.search('le ', 'name', true);
+        expect(scope.data).toEqual([
+            {name: 'Le Blond', firstname: 'Bob', age: 22}
+        ]);
+      });
+
+      it('should search input string with no leading or trailing space', function () {
+        ctrl.search('re', 'name', true);
         expect(scope.data).toEqual([
           {name: 'Renard', firstname: 'Laurent', age: 66},
           {name: 'Renard', firstname: 'Olivier', age: 33},
@@ -186,21 +200,7 @@ describe('st table Controller', function () {
         ]);
       });
 
-      it('should not trim if the input is a string and trim is false', function () {
-        ctrl.search('Le ', 'name', false);
-        expect(scope.data).toEqual([
-          {name: 'Le Blond', firstname: 'Bob', age: 22}
-        ]);
-      });
-
-      it('should not trim if the input is a string by default', function () {
-        ctrl.search('Le ', 'name');
-        expect(scope.data).toEqual([
-          {name: 'Le Blond', firstname: 'Bob', age: 22}
-        ]);
-      });
-
-      it('should not trim if the input is not a string', function () {
+      it('should search when input is not a string', function () {
         ctrl.search(2, 'age');
         expect(scope.data).toEqual([
           {name: 'Le Blond', firstname: 'Bob', age: 22}
