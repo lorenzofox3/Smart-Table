@@ -1,5 +1,5 @@
 /** 
-* @version 2.1.9
+* @version 2.1.10
 * @license MIT
 */
 (function (ng, undefined){
@@ -22,7 +22,8 @@ ng.module('smart-table')
     },
     search: {
       delay: 400, // ms
-      inputEvent: 'input'
+      inputEvent: 'input',
+      trimSearch: false
     },
     select: {
       mode: 'single',
@@ -154,7 +155,6 @@ ng.module('smart-table').controller('stTableController', [
       var predicateObject = tableState.search.predicateObject || {};
       var prop = predicate ? predicate : '$';
 
-      input = ng.isString(input) ? input.trim() : input;
       $parse(prop).assign(predicateObject, input);
       // to avoid to filter out null value
       if (!input) {
@@ -291,11 +291,13 @@ ng.module('smart-table')
         var promise = null;
         var throttle = attr.stDelay || stConfig.search.delay;
         var event = attr.stInputEvent || stConfig.search.inputEvent;
+        var trimSearch = attr.trimSearch || stConfig.search.trimSearch;
 
         attr.$observe('stSearch', function (newValue, oldValue) {
           var input = element[0].value;
           if (newValue !== oldValue && input) {
             ctrl.tableState().search = {};
+            input = ng.isString(input) && trimSearch ? input.trim() : input;
             tableCtrl.search(input, newValue);
           }
         });
@@ -318,7 +320,9 @@ ng.module('smart-table')
           }
 
           promise = $timeout(function () {
-            tableCtrl.search(evt.target.value, attr.stSearch || '');
+            var input = evt.target.value;
+            input = ng.isString(input) && trimSearch ? input.trim() : input;
+            tableCtrl.search(input, attr.stSearch || '');
             promise = null;
           }, throttle);
         });
@@ -442,7 +446,7 @@ ng.module('smart-table')
             element
               .removeClass(stateClasses[index % 2])
               .addClass(stateClasses[index - 1])
-              .attr(ariaSort, newValue.reverse ? ariaSortDescending : ariaSortAscending);
+              .attr(ariaSort, newValue.reverse ? ariaSortAscending : ariaSortDescending);
           }
         }, true);
       }
