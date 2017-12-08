@@ -113,7 +113,6 @@ ng.module('smart-table').controller('stTableController', [
       var predicateObject = tableState.search.predicateObject || {};
       var prop = predicate ? predicate : '$';
 
-      input = ng.isString(input) ? input.trim() : input;
       $parse(prop).assign(predicateObject, input);
       // to avoid to filter out null value
       if (!input) {

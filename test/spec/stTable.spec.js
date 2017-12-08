@@ -14,7 +14,7 @@ describe('st table Controller', function () {
         {name: 'Renard', firstname: 'Laurent', age: 66},
         {name: 'Francoise', firstname: 'Frere', age: 99},
         {name: 'Renard', firstname: 'Olivier', age: 33},
-        {name: 'Leponge', firstname: 'Bob', age: 22},
+        {name: 'Le Blond', firstname: 'Bob', age: 22},
         {name: 'Faivre', firstname: 'Blandine', age: 44}
       ];
       scope = $rootScope;
@@ -49,7 +49,7 @@ describe('st table Controller', function () {
         ctrl.sortBy('firstname');
         expect(scope.data).toEqual([
           {name: 'Faivre', firstname: 'Blandine', age: 44},
-          {name: 'Leponge', firstname: 'Bob', age: 22},
+          {name: 'Le Blond', firstname: 'Bob', age: 22},
           {name: 'Francoise', firstname: 'Frere', age: 99},
           {name: 'Renard', firstname: 'Laurent', age: 66},
           {name: 'Renard', firstname: 'Olivier', age: 33}
@@ -62,7 +62,7 @@ describe('st table Controller', function () {
           {name: 'Renard', firstname: 'Olivier', age: 33},
           {name: 'Renard', firstname: 'Laurent', age: 66},
           {name: 'Francoise', firstname: 'Frere', age: 99},
-          {name: 'Leponge', firstname: 'Bob', age: 22},
+          {name: 'Le Blond', firstname: 'Bob', age: 22},
           {name: 'Faivre', firstname: 'Blandine', age: 44}
         ]);
       });
@@ -72,7 +72,7 @@ describe('st table Controller', function () {
           return row.firstname.length;
         });
         expect(scope.data).toEqual([
-          {name: 'Leponge', firstname: 'Bob', age: 22},
+          {name: 'Le Blond', firstname: 'Bob', age: 22},
           {name: 'Francoise', firstname: 'Frere', age: 99},
           {name: 'Renard', firstname: 'Laurent', age: 66},
           {name: 'Renard', firstname: 'Olivier', age: 33},
@@ -86,7 +86,7 @@ describe('st table Controller', function () {
         });
 
         expect(scope.data).toEqual([
-          {name: 'Leponge', firstname: 'Bob', age: 22},
+          {name: 'Le Blond', firstname: 'Bob', age: 22},
           {name: 'Francoise', firstname: 'Frere', age: 99},
           {name: 'Renard', firstname: 'Laurent', age: 66},
           {name: 'Renard', firstname: 'Olivier', age: 33},
@@ -177,12 +177,33 @@ describe('st table Controller', function () {
         ]);
       });
 
-      it('should trim if the input is a string', function () {
-        ctrl.search(' re ', 'name');
+      it('should search input string containing leading space', function () {
+        ctrl.search(' blond', 'name', true);
+        expect(scope.data).toEqual([
+            {name: 'Le Blond', firstname: 'Bob', age: 22}
+        ]);
+      });
+
+      it('should search input string containing trailing space', function () {
+        ctrl.search('le ', 'name', true);
+        expect(scope.data).toEqual([
+            {name: 'Le Blond', firstname: 'Bob', age: 22}
+        ]);
+      });
+
+      it('should search input string with no leading or trailing space', function () {
+        ctrl.search('re', 'name', true);
         expect(scope.data).toEqual([
           {name: 'Renard', firstname: 'Laurent', age: 66},
           {name: 'Renard', firstname: 'Olivier', age: 33},
           {name: 'Faivre', firstname: 'Blandine', age: 44}
+        ]);
+      });
+
+      it('should search when input is not a string', function () {
+        ctrl.search(2, 'age');
+        expect(scope.data).toEqual([
+          {name: 'Le Blond', firstname: 'Bob', age: 22}
         ]);
       });
     });
@@ -233,7 +254,7 @@ describe('st table Controller', function () {
         expect(scope.data.length).toBe(2);
         expect(scope.data).toEqual([
           {name: 'Faivre', firstname: 'Blandine', age: 44},
-          {name: 'Leponge', firstname: 'Bob', age: 22}
+          {name: 'Le Blond', firstname: 'Bob', age: 22}
         ]);
       });
 
@@ -257,7 +278,7 @@ describe('st table Controller', function () {
         ctrl.sortBy('firstname');
         expect(scope.data).toEqual([
           {name: 'Faivre', firstname: 'Blandine', age: 44},
-          {name: 'Leponge', firstname: 'Bob', age: 22},
+          {name: 'Le Blond', firstname: 'Bob', age: 22},
           {name: 'Francoise', firstname: 'Frere', age: 99},
           {name: 'Renard', firstname: 'Laurent', age: 66},
           {name: 'Renard', firstname: 'Olivier', age: 33}

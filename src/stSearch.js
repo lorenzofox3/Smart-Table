@@ -7,11 +7,13 @@ ng.module('smart-table')
         var promise = null;
         var throttle = attr.stDelay || stConfig.search.delay;
         var event = attr.stInputEvent || stConfig.search.inputEvent;
+        var trimSearch = attr.trimSearch || stConfig.search.trimSearch;
 
         attr.$observe('stSearch', function (newValue, oldValue) {
           var input = element[0].value;
           if (newValue !== oldValue && input) {
             ctrl.tableState().search = {};
+            input = ng.isString(input) && trimSearch ? input.trim() : input;
             tableCtrl.search(input, newValue);
           }
         });
@@ -34,7 +36,9 @@ ng.module('smart-table')
           }
 
           promise = $timeout(function () {
-            tableCtrl.search(evt.target.value, attr.stSearch || '');
+            var input = evt.target.value;
+            input = ng.isString(input) && trimSearch ? input.trim() : input;
+            tableCtrl.search(input, attr.stSearch || '');
             promise = null;
           }, throttle);
         });

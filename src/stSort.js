@@ -17,6 +17,15 @@ ng.module('smart-table')
         var promise = null;
         var throttle = attr.stDelay || stConfig.sort.delay;
 
+        // set aria attributes
+        var ariaSort = 'aria-sort';
+        var ariaSortNone = 'none';
+        var ariaSortAscending = 'ascending';
+        var ariaSortDescending = 'descending';
+        element
+          .attr('role', 'columnheader')
+          .attr(ariaSort, ariaSortNone);
+
         if (attr.stSortDefault) {
           sortDefault = scope.$eval(attr.stSortDefault) !== undefined ? scope.$eval(attr.stSortDefault) : attr.stSortDefault;
         }
@@ -71,12 +80,14 @@ ng.module('smart-table')
             index = 0;
             element
               .removeClass(classAscent)
-              .removeClass(classDescent);
+              .removeClass(classDescent)
+              .attr(ariaSort, ariaSortNone);
           } else {
             index = newValue.reverse === true ? 2 : 1;
             element
               .removeClass(stateClasses[index % 2])
-              .addClass(stateClasses[index - 1]);
+              .addClass(stateClasses[index - 1])
+              .attr(ariaSort, newValue.reverse ? ariaSortAscending : ariaSortDescending);
           }
         }, true);
       }
