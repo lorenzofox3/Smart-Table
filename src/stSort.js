@@ -76,7 +76,7 @@ ng.module('smart-table')
         scope.$watch(function () {
           return ctrl.tableState().sort;
         }, function (newValue) {
-          if (newValue.predicate !== predicate) {
+          if (typeof(predicate) === 'undefined' || newValue.predicate !== predicate) {
             index = 0;
             element
               .removeClass(classAscent)
