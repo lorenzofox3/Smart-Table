@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/lorenzofox3/Smart-Table.svg?branch=master)](https://travis-ci.org/lorenzofox3/Smart-Table)
 
+**Hey I am not too much into angular these days. If someone wants to maintain this project, please contact me !**
+
 # Smart Table
 
 Smart Table is a table module for angular js. It allows you to quickly compose your table in a declarative way including sorting, filtering, row selection, and pagination.
