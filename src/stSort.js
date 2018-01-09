@@ -31,7 +31,7 @@ ng.module('smart-table')
         }
 
         //view --> table state
-        function sort () {
+        function sort (defaultSortActive) {
           if (descendingFirst) {
             index = index === 0 ? 2 : index - 1;
           } else {
@@ -52,7 +52,7 @@ ng.module('smart-table')
           if (promise !== null) {
             $timeout.cancel(promise);
           }
-          if (throttle < 0) {
+          if (throttle < 0 || (defaultSortActive != undefined && defaultSortActive == true)) {
             func();
           } else {
             promise = $timeout(function(){
@@ -69,7 +69,7 @@ ng.module('smart-table')
 
         if (sortDefault) {
           index = sortDefault === 'reverse' ? 1 : 0;
-          sort();
+          sort(true);
         }
 
         //table state --> view
