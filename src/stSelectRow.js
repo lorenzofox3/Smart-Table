@@ -4,7 +4,8 @@ ng.module('smart-table')
       restrict: 'A',
       require: '^stTable',
       scope: {
-        row: '=stSelectRow'
+        row: '=stSelectRow',
+        stGetSelected: '=?'
       },
       link: function (scope, element, attr, ctrl) {
         var mode = attr.stSelectMode || stConfig.select.mode;
@@ -20,6 +21,7 @@ ng.module('smart-table')
           } else {
             element.removeClass(stConfig.select.selectedClass);
           }
+          scope.stGetSelected = ctrl.getFilteredCollection();
         });
       }
     };
