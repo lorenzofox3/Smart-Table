@@ -1,53 +1,95 @@
-(function (ng) {
-    'use strict';
-    ng.module('smart-table')
-        .directive('stSort', ['$parse', function ($parse) {
-            return {
-                restrict: 'A',
-                require: '^stTable',
-                link: function (scope, element, attr, ctrl) {
+ng.module('smart-table')
+  .directive('stSort', ['stConfig', '$parse', '$timeout', function (stConfig, $parse, $timeout) {
+    return {
+      restrict: 'A',
+      require: '^stTable',
+      link: function (scope, element, attr, ctrl) {
 
-                    var predicate = attr.stSort;
-                    var getter = $parse(predicate);
-                    var index = 0;
-                    var states = ['descent', 'ascent', 'natural'];
+        var predicate = attr.stSort;
+        var getter = $parse(predicate);
+        var index = 0;
+        var classAscent = attr.stClassAscent || stConfig.sort.ascentClass;
+        var classDescent = attr.stClassDescent || stConfig.sort.descentClass;
+        var stateClasses = [classAscent, classDescent];
+        var sortDefault;
+        var skipNatural = attr.stSkipNatural !== undefined ? attr.stSkipNatural : stConfig.sort.skipNatural;
+        var descendingFirst = attr.stDescendingFirst !== undefined ? attr.stDescendingFirst : stConfig.sort.descendingFirst;
+        var promise = null;
+        var throttle = attr.stDelay || stConfig.sort.delay;
 
-                    function reset() {
-                        index = 0;
-                        element
-                            .removeClass('st-sort-ascent')
-                            .removeClass('st-sort-descent');
-                    }
+        // set aria attributes
+        var ariaSort = 'aria-sort';
+        var ariaSortNone = 'none';
+        var ariaSortAscending = 'ascending';
+        var ariaSortDescending = 'descending';
+        element
+          .attr('role', 'columnheader')
+          .attr(ariaSort, ariaSortNone);
 
-                    if (ng.isFunction(getter(scope))) {
-                        predicate = getter(scope);
-                    }
+        if (attr.stSortDefault) {
+          sortDefault = scope.$eval(attr.stSortDefault) !== undefined ? scope.$eval(attr.stSortDefault) : attr.stSortDefault;
+        }
 
-                    element.bind('click', function sortClick() {
-                        if (predicate) {
-                            scope.$apply(function () {
-                                index++;
-                                var stateIndex = index % 2;
-                                if (index % 3 === 0) {
-                                    ctrl.reset();
-                                } else {
-                                    ctrl.sortBy(predicate, stateIndex === 0);
-                                    element
-                                        .removeClass('st-sort-' + states[(stateIndex + 1) % 2])
-                                        .addClass('st-sort-' + states[stateIndex]);
-                                }
-                            });
-                        }
-                    });
+        //view --> table state
+        function sort () {
+          if (descendingFirst) {
+            index = index === 0 ? 2 : index - 1;
+          } else {
+            index++;
+          }
 
-                    scope.$on('st:sort', function (event, args) {
-                        if (args.predicate !== predicate) {
-                            reset();
-                        }
-                    });
+          var func;
+          predicate = ng.isFunction(getter(scope)) || ng.isArray(getter(scope)) ? getter(scope) : attr.stSort;
+          if (index % 3 === 0 && !!skipNatural !== true) {
+            //manual reset
+            index = 0;
+            ctrl.tableState().sort = {};
+            ctrl.tableState().pagination.start = 0;
+            func = ctrl.pipe.bind(ctrl);
+          } else {
+            func = ctrl.sortBy.bind(ctrl, predicate, index % 2 === 0);
+          }
+          if (promise !== null) {
+            $timeout.cancel(promise);
+          }
+          if (throttle < 0) {
+            func();
+          } else {
+            promise = $timeout(function(){
+              func();
+            }, throttle);
+          }
+        }
 
-                    scope.$on('st:reset', reset);
-                }
-            };
-        }])
-})(angular);
+        element.bind('click', function sortClick () {
+          if (predicate) {
+            scope.$apply(sort);
+          }
+        });
+
+        if (sortDefault) {
+          index = sortDefault === 'reverse' ? 1 : 0;
+          sort();
+        }
+
+        //table state --> view
+        scope.$watch(function () {
+          return ctrl.tableState().sort;
+        }, function (newValue) {
+          if (newValue.predicate !== predicate) {
+            index = 0;
+            element
+              .removeClass(classAscent)
+              .removeClass(classDescent)
+              .attr(ariaSort, ariaSortNone);
+          } else {
+            index = newValue.reverse === true ? 2 : 1;
+            element
+              .removeClass(stateClasses[index % 2])
+              .addClass(stateClasses[index - 1])
+              .attr(ariaSort, newValue.reverse ? ariaSortAscending : ariaSortDescending);
+          }
+        }, true);
+      }
+    };
+  }]);

@@ -1,63 +1,80 @@
-/**
- * this is the implementation of https://github.com/angular-ui/bootstrap/blob/master/src/pagination/pagination.js adapted to smart-table needs
- */
+ng.module('smart-table')
+  .directive('stPagination', ['stConfig', function (stConfig) {
+    return {
+      restrict: 'EA',
+      require: '^stTable',
+      scope: {
+        stItemsByPage: '=?',
+        stDisplayedPages: '=?',
+        stPageChange: '&'
+      },
+      templateUrl: function (element, attrs) {
+        if (attrs.stTemplate) {
+          return attrs.stTemplate;
+        }
+        return stConfig.pagination.template;
+      },
+      link: function (scope, element, attrs, ctrl) {
 
-(function (ng) {
-    'use strict';
-    ng.module('smart-table')
-        .directive('stPagination', function () {
-            return {
-                restrict: 'EA',
-                require: '^stTable',
-                scope: {},
-                template: '<div class="pagination"><ul class="pagination"><li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li></ul></div>',
-                replace: true,
-                link: function (scope, element, attrs, ctrl) {
+        scope.stItemsByPage = scope.stItemsByPage ? +(scope.stItemsByPage) : stConfig.pagination.itemsByPage;
+        scope.stDisplayedPages = scope.stDisplayedPages ? +(scope.stDisplayedPages) : stConfig.pagination.displayedPages;
 
-                    var itemsByPage = attrs.stItemsByPage || 10;
-                    var displayedPages = attrs.stDisplayedPages || 5;
+        scope.currentPage = 1;
+        scope.pages = [];
 
-                    scope.currentPage = 1;
-                    scope.pages = [];
+        function redraw () {
+          var paginationState = ctrl.tableState().pagination;
+          var start = 1;
+          var end;
+          var i;
+          var prevPage = scope.currentPage;
+          scope.totalItemCount = paginationState.totalItemCount;
+          scope.currentPage = Math.floor(paginationState.start / paginationState.number) + 1;
 
+          start = Math.max(start, scope.currentPage - Math.abs(Math.floor(scope.stDisplayedPages / 2)));
+          end = start + scope.stDisplayedPages;
 
-                    scope.$watch(function () {
-                            return ctrl.tableState().pagination;
-                        },
-                        function () {
-                            var paginationState = ctrl.tableState().pagination;
-                            var start = 1;
-                            var end = start + displayedPages;
-                            var i;
-                            scope.currentPage = Math.floor(paginationState.start / paginationState.number) + 1;
+          if (end > paginationState.numberOfPages) {
+            end = paginationState.numberOfPages + 1;
+            start = Math.max(1, end - scope.stDisplayedPages);
+          }
 
-                            start = Math.max(start, scope.currentPage - Math.abs(Math.floor(displayedPages / 2)));
-                            end = start + displayedPages;
+          scope.pages = [];
+          scope.numPages = paginationState.numberOfPages;
 
-                            if (end > paginationState.numberOfPages) {
-                                end = paginationState.numberOfPages + 1;
-                                start = Math.max(1, end - displayedPages);
-                            }
+          for (i = start; i < end; i++) {
+            scope.pages.push(i);
+          }
 
-                            scope.pages = [];
-                            scope.numPages = paginationState.numberOfPages;
+          if (prevPage !== scope.currentPage) {
+            scope.stPageChange({newPage: scope.currentPage});
+          }
+        }
 
-                            for (i = start; i < end; i++) {
-                                scope.pages.push(i);
-                            }
+        //table state --> view
+        scope.$watch(function () {
+          return ctrl.tableState().pagination;
+        }, redraw, true);
 
-
-                        }, true);
-
-                    scope.selectPage = function (page) {
-                        if (page > 0 && page <= scope.numPages) {
-                            ctrl.slice((page - 1) * itemsByPage, itemsByPage);
-                        }
-                    };
-
-                    //select the first page
-                    ctrl.slice(0, itemsByPage);
-                }
-            };
+        //scope --> table state  (--> view)
+        scope.$watch('stItemsByPage', function (newValue, oldValue) {
+          if (newValue !== oldValue) {
+            scope.selectPage(1);
+          }
         });
-})(angular);
+
+        scope.$watch('stDisplayedPages', redraw);
+
+        //view -> table state
+        scope.selectPage = function (page) {
+          if (page > 0 && page <= scope.numPages) {
+            ctrl.slice((page - 1) * scope.stItemsByPage, scope.stItemsByPage);
+          }
+        };
+
+        if (!ctrl.tableState().pagination.number) {
+          ctrl.slice(0, scope.stItemsByPage);
+        }
+      }
+    };
+  }]);
