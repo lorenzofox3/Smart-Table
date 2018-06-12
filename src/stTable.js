@@ -3,7 +3,8 @@ ng.module('smart-table').controller('stTableController', [
   '$parse',
   '$filter',
   '$attrs',
-  function StTableController($scope, $parse, $filter, $attrs) {
+  'stConfig',
+  function StTableController($scope, $parse, $filter, $attrs, stConfig) {
     var propertyName = $attrs.stTable;
     var displayGetter = $parse(propertyName);
     var displaySetter = displayGetter.assign;
@@ -14,7 +15,7 @@ ng.module('smart-table').controller('stTableController', [
     var tableState = {
       sort: {},
       search: {},
-      pagination: { start: 0, totalItemCount: 0 }
+      pagination: { start: 0, totalItemCount: 0, number: stConfig.pagination.itemsByPage }
     };
     var filtered;
     var pipeAfterSafeCopy = true;
