@@ -16,9 +16,10 @@ src.unshift('src/top.txt');
 
 
 gulp.task('karma-CI', function (done) {
+    process.env.CHROMIUM_BIN = require('puppeteer').executablePath();
     var conf = require('./test/karma.common.js');
     conf.singleRun = true;
-    conf.browsers = ['PhantomJS'];
+    conf.browsers = ['ChromiumHeadless']
     conf.basePath = './';
     karma.start(conf, done);
 });
