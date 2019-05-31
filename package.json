@@ -14,8 +14,8 @@
   "author": "Laurent Renard",
   "license": "MIT",
   "devDependencies": {
-    "angular": "^1.6.4",
-    "angular-mocks": "^1.6.4",
+    "angular": "~1.6.10",
+    "angular-mocks": "~1.6.10",
     "gulp": "^4.0.2",
     "gulp-concat": "^2.6.1",
     "gulp-inject-string": "^1.1.2",
