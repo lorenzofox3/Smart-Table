@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node ./node_modules/.bin/gulp karma-CI",
+    "test": "node ./node_modules/.bin/gulp test",
     "build": "node ./node_modules/.bin/gulp build"
   },
   "repository": {
@@ -16,10 +16,10 @@
   "devDependencies": {
     "angular": "^1.6.4",
     "angular-mocks": "^1.6.4",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
     "gulp-concat": "^2.6.1",
-    "gulp-insert": "^0.5.0",
-    "gulp-sourcemaps": "2.6.4",
+    "gulp-inject-string": "^1.1.2",
+    "gulp-sourcemaps": "2.6.5",
     "gulp-uglify": "^3.0.2",
     "jasmine-core": "^2.99.1",
     "jquery": "^3.4.1",
