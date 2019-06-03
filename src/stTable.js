@@ -119,6 +119,7 @@ ng.module('smart-table').controller('stTableController', [
         deepDelete(predicateObject, prop);
       }
       tableState.search.predicateObject = predicateObject;
+      tableState.pagination.start = 0;
       return this.pipe();
     };
 
